@@ -1,0 +1,42 @@
+/* Heading primitive */
+.title {
+  font-family: var(--font-kit-header-font, 'Roboto', sans-serif);
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+.size_xs { font-size: 18px; letter-spacing: -0.2px; line-height: 1.35; }
+.size_sm { font-size: 22px; letter-spacing: -0.3px; line-height: 1.3; }
+.size_md { font-size: 30px; line-height: 1.22; }
+.size_lg { font-size: 40px; line-height: 1.14; }
+.size_xl { font-size: 54px; letter-spacing: -1.4px; line-height: 1.06; }
+
+.tone_default { color: #0d1112; }
+.tone_muted { color: #6a7275; }
+.tone_accent { color: var(--color-kit-key1, #f26d22); }
+.tone_inverse { color: #ffffff; }
+
+.align_left { text-align: left; }
+.align_center { text-align: center; }
+
+.title em {
+  font-style: normal;
+  color: var(--color-kit-key1, #f26d22);
+}
+
+@media (max-width: 900px) {
+  .size_xl { font-size: 40px; letter-spacing: -1px; }
+  .size_lg { font-size: 32px; }
+  .size_md { font-size: 25px; }
+}
+
+@media (max-width: 600px) {
+  .size_xl { font-size: 33px; letter-spacing: -0.7px; }
+  .size_lg { font-size: 27px; }
+  .size_md { font-size: 22px; }
+  .size_sm { font-size: 19px; }
+}

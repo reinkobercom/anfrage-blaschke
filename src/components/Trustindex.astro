@@ -1,0 +1,50 @@
+---
+/**
+ * Trustindex-Widget. Steuerung (Code, an/aus, Mindesthöhe) in src/data/trustindex.ts.
+ * Das Script wird erst geladen, wenn das Widget in Sichtweite kommt.
+ */
+import { trustindex, type TrustindexKey } from '../data/trustindex';
+interface Props {
+  widget: TrustindexKey;
+  class?: string;
+  /** Zentrieren (wie Badge unter den Hero-Cards) */
+  center?: boolean;
+}
+const { widget, class: className = '', center = false } = Astro.props;
+const cfg = trustindex[widget];
+---
+
+{
+  cfg.enabled && (
+    <div
+      class:list={['ti-slot', className, { 'ti-slot--center': center }]}
+      style={`min-height:${cfg.minHeight}px`}
+      data-ti-loader={cfg.loaderId}
+    />
+  )
+}
+
+<script>
+  const slots = document.querySelectorAll<HTMLElement>('[data-ti-loader]');
+  const load = (el: HTMLElement) => {
+    if (el.dataset.tiLoaded) return;
+    el.dataset.tiLoaded = '1';
+    const s = document.createElement('script');
+    s.src = `https://cdn.trustindex.io/loader.js?${el.dataset.tiLoader}`;
+    s.defer = true;
+    s.async = true;
+    el.appendChild(s);
+  };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { load(e.target as HTMLElement); io.unobserve(e.target); } }),
+      { rootMargin: '300px 0px' },
+    );
+    slots.forEach((el) => io.observe(el));
+  } else slots.forEach(load);
+</script>
+
+<style>
+  .ti-slot { width: 100%; }
+  .ti-slot--center { display: flex; justify-content: center; }
+</style>

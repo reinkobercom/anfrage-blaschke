@@ -1,0 +1,151 @@
+---
+/**
+ * Grundlayout aller Seiten: Meta-Daten, Schriften, Einwilligung/Tracking, JSON-LD.
+ */
+import '../styles/global.css';
+import CookieBanner from '../components/CookieBanner.astro';
+import { site } from '../data/site';
+import { isNoindex } from '../data/seo';
+import ogDefault from '../assets/img/logo-blaschke-it.png';
+import { getImage } from 'astro:assets';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Eigenes OG-Bild (importiertes Asset); Standard: Logo */
+  ogImage?: ImageMetadata;
+  /** Hotjar laden (nur /support und /it-support, nach Einwilligung) */
+  hotjar?: boolean;
+  /** Zusätzliches JSON-LD je Seite (z. B. FAQPage) */
+  jsonLd?: Record<string, unknown>[];
+  /** Hintergrundfarbe von <body> */
+  bodyBg?: string;
+  /** Schrift-Dateien, die vorgeladen werden (Dateinamen in /public/fonts) */
+  preloadFonts?: string[];
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  hotjar = false,
+  jsonLd = [],
+  bodyBg,
+  preloadFonts = ['roboto-600.woff2', 'manrope-regular.woff2'],
+} = Astro.props;
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonical = new URL(pathname, site.domain).href;
+const noindex = isNoindex(pathname);
+const og = await getImage({ src: ogImage ?? ogDefault, width: 1200, format: 'png' });
+const ogUrl = new URL(og.src, site.domain).href;
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${site.mainWebsite}#organization`,
+  name: site.name,
+  description: 'IT-Systemhaus mit eigenen Rechenzentren in Nürnberg und Düsseldorf – Managed Services, Cloud-Server und IT-Support für kleine und mittlere Unternehmen.',
+  url: site.mainWebsite,
+  logo: new URL(ogDefault.src, site.domain).href,
+  telephone: '+49 202 31907033',
+  email: site.emails.info,
+  address: { '@type': 'PostalAddress', addressLocality: site.address.locality, addressRegion: site.address.region, addressCountry: site.address.country },
+  areaServed: 'DE',
+  founder: { '@type': 'Person', name: site.person.name, jobTitle: site.person.role },
+};
+const webpage = { '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url: canonical, inLanguage: 'de-DE', isPartOf: { '@type': 'WebSite', name: site.name, url: site.domain } };
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f26d22" />
+
+    {preloadFonts.map((f) => <link rel="preload" href={`/fonts/${f}`} as="font" type="font/woff2" crossorigin />)}
+
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      // UTM-Parameter merken und mit jeder Anfrage mitsenden (wie bisher auf Onepage)
+      (function () {
+        try {
+          var p = new URLSearchParams(location.search), u = {};
+          p.forEach(function (v, k) { if (k.indexOf('utm_') === 0) u[k.slice(4)] = v; });
+          if (Object.keys(u).length) localStorage.setItem('bit_utm', JSON.stringify(u));
+        } catch (e) {}
+      })();
+    </script>
+
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify([organization, webpage, ...jsonLd])} />}
+    <slot name="head" />
+  </head>
+  <body style={bodyBg ? `background:${bodyBg}` : undefined}>
+    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+    <main id="inhalt">
+      <slot />
+    </main>
+    <slot name="after-main" />
+    <CookieBanner hotjar={hotjar} />
+
+    <script>
+      // Scroll-Einblendungen: [data-reveal] wird sichtbar, sobald es ins Bild kommt.
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); } }),
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        );
+        els.forEach((el) => io.observe(el));
+      } else els.forEach((el) => el.classList.add('is-visible'));
+    </script>
+
+    <script is:inline>
+      // Instagram-/Facebook-In-App-Browser: verhindert ungewollte Scroll-Sprünge beim Laden (von der alten Seite übernommen)
+      (function () {
+        if (!/Instagram|FBAN|FBAV|FB_IAB/.test(navigator.userAgent)) { return; }
+        if (window.location.hash) { return; }
+        var restore = false;
+        try { if ('scrollRestoration' in history && history.scrollRestoration === 'auto') { history.scrollRestoration = 'manual'; restore = true; } } catch (e) {}
+        var armedUntil = Date.now() + 15000, maxCorrections = 6, corrections = 0;
+        var lastY = window.scrollY || 0, lastT = Date.now(), userTouching = false, touchedAt = 0;
+        function start(e) { if (e.isTrusted) { userTouching = true; touchedAt = Date.now(); } }
+        function end(e) { if (e.isTrusted) { touchedAt = Date.now(); userTouching = false; } }
+        function gesture(e) { if (e.isTrusted) { touchedAt = Date.now(); } }
+        window.addEventListener('touchstart', start, { capture: true, passive: true });
+        window.addEventListener('touchend', end, { capture: true, passive: true });
+        window.addEventListener('touchcancel', end, { capture: true, passive: true });
+        window.addEventListener('pointerdown', gesture, { capture: true, passive: true });
+        window.addEventListener('keydown', gesture, { capture: true, passive: true });
+        function tick() {
+          var now = Date.now(), y = window.scrollY, dt = now - lastT, dy = y - lastY;
+          var jump = Math.max(window.innerHeight * 1.5, 800);
+          var recent = userTouching || now - touchedAt < 1000;
+          if (dy > jump && dt < 250 && !recent && corrections < maxCorrections) { window.scrollTo(0, lastY); y = lastY; corrections++; }
+          lastY = y; lastT = now;
+          if (now < armedUntil) requestAnimationFrame(tick);
+          else if (restore) { try { history.scrollRestoration = 'auto'; } catch (e) {} }
+        }
+        requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+</html>

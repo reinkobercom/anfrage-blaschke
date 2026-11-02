@@ -1,0 +1,58 @@
+/* Form field primitive */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.label {
+  font-family: var(--font-kit-text-font, 'Manrope', sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+}
+
+.labelLight { color: #6a7275; }
+.labelInverse { color: #ffffffa6; }
+
+.control {
+  font-family: inherit;
+  font-size: 15px;
+  padding: 12px 13px;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--color-kit-key1, #f26d22);
+  box-shadow: 0 0 0 3px #f26d2233;
+}
+
+.themeLight {
+  color: #16191a;
+  background-color: #ffffff;
+  border: 1px solid #dfe4e4;
+}
+
+.themeInverse {
+  color: #ffffff;
+  background-color: #ffffff0f;
+  border: 1px solid #ffffff2e;
+}
+
+.themeInverse::placeholder { color: #ffffff59; }
+
+.hasError { border-color: #cc3b3b; }
+
+.textarea { min-height: 96px; resize: vertical; }
+
+.error {
+  font-family: var(--font-kit-text-font, 'Manrope', sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  color: #e06565;
+}

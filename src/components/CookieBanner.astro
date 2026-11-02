@@ -1,0 +1,136 @@
+---
+/**
+ * Einwilligung für Meta-Pixel und Hotjar. Ohne „Alle akzeptieren“ wird kein Tracking geladen.
+ * Vercel Web Analytics ist cookielos und läuft unabhängig davon.
+ * Erneut öffnen: Link/Button mit dem Attribut data-consent-open.
+ */
+import { site } from '../data/site';
+interface Props {
+  hotjar?: boolean;
+}
+const { hotjar = false } = Astro.props;
+---
+
+<div id="bit-consent" class="consent" role="dialog" aria-modal="false" aria-labelledby="bit-consent-title" hidden>
+  <div class="consent__inner">
+    <p id="bit-consent-title" class="consent__title">Cookies &amp; Datenschutz</p>
+    <p class="consent__text">
+      Wir nutzen Cookies und vergleichbare Technologien (Meta-Pixel{hotjar ? ', Hotjar' : ''}), um die Wirkung unserer
+      Anzeigen zu messen und die Seite zu verbessern. Das geschieht nur mit Ihrer Einwilligung, die Sie jederzeit
+      widerrufen können. Mehr dazu in der <a href={site.legal.datenschutz} target="_blank" rel="noopener">Datenschutzerklärung</a>.
+    </p>
+    <div class="consent__actions">
+      <button type="button" class="consent__btn consent__btn--ghost" data-consent="necessary">Nur notwendige</button>
+      <button type="button" class="consent__btn consent__btn--primary" data-consent="all">Alle akzeptieren</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ pixelId: site.tracking.metaPixelId, hotjarId: site.tracking.hotjarId, hotjar }}>
+  (function () {
+    var KEY = 'bit_consent';
+    var banner = document.getElementById('bit-consent');
+    var queue = [];
+    var loaded = false;
+
+    function get() {
+      try { return localStorage.getItem(KEY); } catch (e) { return null; }
+    }
+    function set(v) {
+      try { localStorage.setItem(KEY, v); localStorage.setItem(KEY + '_at', new Date().toISOString()); } catch (e) {}
+    }
+
+    function loadPixel() {
+      if (loaded) return;
+      loaded = true;
+      !function (f, b, e, v, n, t, s) {
+        if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+        t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+      }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      window.fbq('init', pixelId);
+      window.fbq('track', 'PageView');
+      queue.splice(0).forEach(function (a) { window.fbq.apply(null, a); });
+      if (hotjar) {
+        (function (h, o, t, j, a, r) {
+          h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments); };
+          h._hjSettings = { hjid: hotjarId, hjsv: 6 };
+          a = o.getElementsByTagName('head')[0]; r = o.createElement('script'); r.async = 1;
+          r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv; a.appendChild(r);
+        })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+      }
+    }
+
+    // Einheitlicher Einstieg für Pixel-Events (siehe src/lib/client.ts → track()).
+    window.bitTrack = function (method, event, params) {
+      var args = params ? [method, event, params] : [method, event];
+      if (loaded && window.fbq) window.fbq.apply(null, args);
+      else if (get() !== 'necessary') queue.push(args);
+    };
+
+    function show() { banner.hidden = false; }
+    function hide() { banner.hidden = true; }
+
+    banner.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-consent]');
+      if (!btn) return;
+      var v = btn.getAttribute('data-consent');
+      set(v);
+      hide();
+      if (v === 'all') loadPixel(); else queue.length = 0;
+    });
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-consent-open]')) { e.preventDefault(); show(); }
+    });
+
+    var c = get();
+    if (c === 'all') loadPixel();
+    else if (c !== 'necessary') show();
+  })();
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .consent[hidden] { display: none; }
+  .consent__inner {
+    pointer-events: auto;
+    max-width: 640px;
+    width: 100%;
+    background: #ffffff;
+    color: #16191a;
+    border: 1px solid #e4e8e8;
+    border-radius: 8px;
+    box-shadow: 0 18px 44px -18px rgba(13, 17, 18, 0.35);
+    padding: 20px 22px;
+    font-family: var(--font-text);
+  }
+  .consent__title { margin: 0 0 6px; font-family: var(--font-heading); font-weight: 600; font-size: 17px; }
+  .consent__text { margin: 0 0 14px; font-size: 14px; line-height: 1.55; color: #4d5557; }
+  .consent__text a { color: inherit; text-decoration: underline; }
+  .consent__actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .consent__btn {
+    min-height: 44px;
+    padding: 11px 18px;
+    border-radius: 4px;
+    font: 600 14.5px/1.2 var(--font-text);
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .consent__btn--ghost { background: #f2f4f4; border-color: #e4e8e8; color: #12181a; }
+  .consent__btn--ghost:hover { background: #e8ecec; }
+  .consent__btn--primary { background: var(--color-key1); color: #fff; }
+  .consent__btn--primary:hover { background: #d95c14; }
+  @media (max-width: 480px) {
+    .consent { left: 8px; right: 8px; bottom: 8px; }
+    .consent__btn { flex: 1 1 auto; }
+  }
+</style>

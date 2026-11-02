@@ -1,0 +1,65 @@
+/* Ansprechpartner */
+.person {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatarRing {
+  flex: 0 0 auto;
+  border-radius: 50%;
+  padding: 3px;
+  border: 2px solid var(--color-kit-key1, #f26d22);
+  display: inline-flex;
+}
+
+.avatar {
+  display: block;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #eceeee;
+}
+
+.avatarFallback {
+  border-radius: 50%;
+  background-color: #eceeee;
+  color: #6a7275;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-kit-header-font, 'Roboto', sans-serif);
+  font-weight: 700;
+}
+
+.meta { min-width: 0; }
+
+.name {
+  font-family: var(--font-kit-header-font, 'Roboto', sans-serif);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin: 0 0 3px;
+  line-height: 1.25;
+}
+
+.role {
+  font-family: var(--font-kit-text-font, 'Manrope', sans-serif);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.themeLight .name { color: #0d1112; }
+.themeLight .role { color: #6a7275; }
+
+.themeInverse .name { color: #ffffff; }
+.themeInverse .role { color: #ffffffa6; }
+
+.size_sm .name { font-size: 15px; }
+.size_sm .role { font-size: 13px; }
+
+.size_md .name { font-size: 17px; }
+.size_md .role { font-size: 14px; }
+
+@media (max-width: 600px) {
+  .person { gap: 13px; }
+  .size_md .name { font-size: 16px; }
+}

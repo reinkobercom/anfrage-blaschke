@@ -1,0 +1,52 @@
+/* Pill / badge primitive */
+.badge {
+  font-family: var(--font-kit-text-font, 'Manrope', sans-serif);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.size_sm { padding: 6px 11px; font-size: 11.5px; letter-spacing: 0.3px; }
+.size_md { padding: 9px 15px; font-size: 13px; letter-spacing: 0.2px; }
+
+.variant_light {
+  background-color: #f2f4f4;
+  color: #3d4547;
+  border-color: #e2e7e7;
+}
+
+.variant_accent {
+  background-color: #fdf0e7;
+  color: #b34d12;
+  border-color: #f8d9c4;
+}
+
+.variant_dark {
+  background-color: #12181a;
+  color: #ffffff;
+}
+
+.variant_outline {
+  background-color: #ffffff;
+  color: #3d4547;
+  border-color: #d5dadb;
+}
+
+.variant_alert {
+  background-color: #fdecec;
+  color: #a32222;
+  border-color: #f6d3d3;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex: 0 0 auto;
+}

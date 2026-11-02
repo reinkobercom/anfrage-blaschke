@@ -1,0 +1,42 @@
+{
+  "name": "anfrage-blaschke",
+  "version": "1.0.0",
+  "description": "Landingpages anfrage.blaschke.cloud (Astro + Vercel)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reinkobercom/anfrage-blaschke.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/reinkobercom/anfrage-blaschke/issues"
+  },
+  "homepage": "https://github.com/reinkobercom/anfrage-blaschke#readme",
+  "dependencies": {
+    "@astrojs/react": "^7.1.2",
+    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/vercel": "^11.0.17",
+    "astro": "^7.4.4",
+    "framer-motion": "^14.9.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "resend": "^6.37.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  }
+}
