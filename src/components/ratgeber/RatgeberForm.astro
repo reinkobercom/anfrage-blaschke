@@ -1,0 +1,309 @@
+---
+/**
+ * PDF-Opt-in-Formular (Sicherheitsleitfaden / Krisenratgeber).
+ * Felder wie live: Name*, E-Mail*, Firmenname*, Telefon* – live nur Platzhalter, Beschriftung hier für
+ * Screenreader. Versand an /api/lead (Definition: src/data/form-definitions/ratgeber.ts).
+ * Ohne JavaScript: normaler POST, das Backend leitet auf die Dankeseite weiter.
+ * Mit JavaScript: Feldfehler direkt im Formular, nach Erfolg Weiterleitung inkl. UTM-Parametern
+ * (live: „forward_utm_only“).
+ */
+import { site } from '../../data/site';
+
+interface Props {
+  formId: string;
+  page: string;
+  redirect: string;
+  phonePlaceholder: string;
+  note?: string;
+  button: string;
+  buttonSubtitle: string;
+  /** Abstand unter dem Telefonfeld in px */
+  phoneGap: number;
+  /** Abstand unter dem Telefonfeld mobil in px (Standard: wie Desktop) */
+  phoneGapMobile?: number;
+  /** Abstand unter dem Abschluss-Hinweis (Desktop) in px */
+  afterGapDesktop: number;
+}
+
+const { formId, page, redirect, phonePlaceholder, note, button, buttonSubtitle, phoneGap, phoneGapMobile = phoneGap, afterGapDesktop } = Astro.props;
+---
+
+<form
+  class="rg-form"
+  method="post"
+  action="/api/lead"
+  novalidate
+  data-rg-form
+  data-redirect={redirect}
+  style={`--phone-gap:${phoneGap}px;--phone-gap-m:${phoneGapMobile}px;--after-gap:${afterGapDesktop}px`}
+>
+  <input type="hidden" name="formId" value={formId} />
+  <input type="hidden" name="page" value={page} />
+
+  <div class="rg-field" style="--gap:10px">
+    <label class="sr-only" for="rg-name">Vollständiger Name (Pflichtfeld)</label>
+    <input id="rg-name" name="name" type="text" placeholder="Vollständiger Name" autocomplete="name" required aria-describedby="rg-name-err" />
+    <p class="rg-field__error" id="rg-name-err" hidden></p>
+  </div>
+
+  <div class="rg-field" style="--gap:10px">
+    <label class="sr-only" for="rg-email">E-Mail (Pflichtfeld)</label>
+    <input id="rg-email" name="email" type="email" placeholder="example@gmail.com" autocomplete="email" inputmode="email" required aria-describedby="rg-email-err" />
+    <p class="rg-field__error" id="rg-email-err" hidden></p>
+  </div>
+
+  <div class="rg-field" style="--gap:9px">
+    <label class="sr-only" for="rg-firma">Firmenname (Pflichtfeld)</label>
+    <input id="rg-firma" name="firma" type="text" placeholder="Firmenname" autocomplete="organization" required aria-describedby="rg-firma-err" />
+    <p class="rg-field__error" id="rg-firma-err" hidden></p>
+  </div>
+
+  <div class="rg-field rg-field--phone" style="--gap:var(--phone-gap)">
+    <label class="sr-only" for="rg-telefon">Telefonnummer (Pflichtfeld)</label>
+    <span class="rg-field__flag" aria-hidden="true">
+      <svg viewBox="0 0 24 16" width="24" height="16"><rect width="24" height="5.34" y="0" fill="#000" /><rect width="24" height="5.33" y="5.33" fill="#dd0000" /><rect width="24" height="5.34" y="10.66" fill="#ffce00" /></svg>
+    </span>
+    <input id="rg-telefon" name="telefon" type="tel" placeholder={phonePlaceholder} autocomplete="tel" inputmode="tel" required aria-describedby="rg-telefon-err" />
+    <p class="rg-field__error" id="rg-telefon-err" hidden></p>
+  </div>
+
+  {note && <p class="rg-form__note">{note}</p>}
+
+  <div class="hp-field" aria-hidden="true">
+    <label>Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <p class="rg-form__msg" role="alert" hidden data-phone-display={site.phone.display} data-phone-href={site.phone.href}></p>
+
+  <button type="submit" class="rg-submit rg-shadow">
+    <svg class="rg-submit__icon" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="14 8 10 12 6 8"></polyline><line x1="10" y1="3" x2="10" y2="12"></line><path d="m17,13v1c0,1.657-1.343,3-3,3H6c-1.657,0-3-1.343-3-3v-1"></path>
+    </svg>
+    <span class="rg-submit__text">
+      <span class="rg-submit__label">{button}</span>
+      <span class="rg-submit__sub">{buttonSubtitle}</span>
+    </span>
+  </button>
+
+  <p class="rg-form__after">✓ Sofort erhalten ✓ Kostenlos &amp; unverbindlich</p>
+</form>
+
+<script>
+  import { submitLead, goTo } from '../../lib/client';
+
+  const MESSAGES: Record<string, string> = {
+    name: 'Bitte gib deinen vollständigen Namen ein.',
+    email: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+    firma: 'Bitte gib deinen Firmennamen ein.',
+    telefon: 'Bitte gib eine gültige Telefonnummer ein.',
+  };
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const PHONE_RE = /^[0-9+()/.\-\s]{6,}$/;
+
+  function withUtm(url: string) {
+    const params = new URLSearchParams(location.search);
+    const utm = new URLSearchParams();
+    params.forEach((v, k) => { if (k.startsWith('utm_')) utm.append(k, v); });
+    const q = utm.toString();
+    return q ? `${url}${url.includes('?') ? '&' : '?'}${q}` : url;
+  }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-rg-form]').forEach((form) => {
+    const msg = form.querySelector<HTMLElement>('.rg-form__msg')!;
+    const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const fields = ['name', 'email', 'firma', 'telefon'];
+
+    const setError = (name: string, text?: string) => {
+      const input = form.elements.namedItem(name) as HTMLInputElement | null;
+      const err = form.querySelector<HTMLElement>(`#rg-${name}-err`);
+      if (!input || !err) return;
+      if (text) {
+        input.setAttribute('aria-invalid', 'true');
+        err.textContent = text;
+        err.hidden = false;
+      } else {
+        input.removeAttribute('aria-invalid');
+        err.textContent = '';
+        err.hidden = true;
+      }
+    };
+
+    const showMessage = (text?: string) => {
+      if (!text) { msg.hidden = true; msg.textContent = ''; return; }
+      msg.textContent = '';
+      const display = msg.dataset.phoneDisplay || '';
+      const idx = display ? text.indexOf(display) : -1;
+      if (idx >= 0) {
+        msg.append(text.slice(0, idx));
+        const a = document.createElement('a');
+        a.href = msg.dataset.phoneHref || '#';
+        a.textContent = display;
+        msg.append(a, text.slice(idx + display.length));
+      } else {
+        msg.append(text, ' ');
+        const a = document.createElement('a');
+        a.href = msg.dataset.phoneHref || '#';
+        a.textContent = display;
+        msg.append('Telefon: ', a);
+      }
+      msg.hidden = false;
+    };
+
+    const validate = (values: Record<string, string>) => {
+      const errors: Record<string, string> = {};
+      if (!values.name) errors.name = MESSAGES.name;
+      if (!EMAIL_RE.test(values.email)) errors.email = MESSAGES.email;
+      if (!values.firma) errors.firma = MESSAGES.firma;
+      if (!PHONE_RE.test(values.telefon)) errors.telefon = MESSAGES.telefon;
+      return errors;
+    };
+
+    // Rückkehr vom Formular-POST ohne JavaScript (?fehler=…)
+    const fehler = new URLSearchParams(location.search).get('fehler');
+    if (fehler) {
+      showMessage(
+        fehler === 'pflichtfelder'
+          ? 'Bitte fülle alle Felder aus.'
+          : `Das hat leider nicht geklappt. Bitte versuche es erneut oder ruf uns direkt an: ${msg.dataset.phoneDisplay}.`,
+      );
+    }
+
+    fields.forEach((name) => {
+      const input = form.elements.namedItem(name) as HTMLInputElement | null;
+      input?.addEventListener('input', () => {
+        if (input.getAttribute('aria-invalid')) setError(name);
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (btn.disabled) return;
+      const fd = new FormData(form);
+      const values = Object.fromEntries(fields.map((n) => [n, String(fd.get(n) ?? '').trim()]));
+      const honeypot = String(fd.get('website') ?? '');
+
+      showMessage();
+      fields.forEach((n) => setError(n));
+      const errors = validate(values);
+      if (Object.keys(errors).length) {
+        Object.entries(errors).forEach(([n, t]) => setError(n, t));
+        (form.elements.namedItem(Object.keys(errors)[0]) as HTMLInputElement | null)?.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      const res = await submitLead({ formId: String(fd.get('formId')), values, honeypot });
+      if (res.ok) {
+        goTo(withUtm(res.redirect || form.dataset.redirect || '/'));
+        return;
+      }
+      btn.disabled = false;
+      btn.removeAttribute('aria-busy');
+      if (res.errors) Object.entries(res.errors).forEach(([n, t]) => setError(n, t));
+      showMessage(res.message);
+    });
+  });
+</script>
+
+<style>
+  .rg-form { display: flex; flex-direction: column; color: #fff; }
+
+  .rg-field { position: relative; margin-bottom: var(--gap, 10px); }
+  .rg-field input {
+    display: block;
+    width: 100%;
+    height: 48px;
+    margin: 0;
+    padding: 11.3px 14px 12.7px;
+    border: 0;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: rgba(255, 255, 255, 0.2) 0 0 0 1px, rgba(255, 255, 255, 0.2) 0 0 0 0.1px inset;
+    color: #fff;
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 24px;
+    outline: none;
+    transition: box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .rg-field input::placeholder { color: rgba(255, 255, 255, 0.3); opacity: 1; }
+  .rg-field input:focus-visible {
+    box-shadow: var(--color-key1) 0 0 0 2px;
+  }
+  .rg-field input[aria-invalid='true'] {
+    box-shadow: #ff9b7a 0 0 0 1px, #ff9b7a 0 0 0 0.1px inset;
+  }
+  .rg-field--phone input { padding-left: 48px; }
+  .rg-field__flag {
+    position: absolute;
+    left: 12px;
+    top: 16px;
+    width: 24px;
+    height: 16px;
+    line-height: 0;
+    pointer-events: none;
+  }
+  .rg-field__error {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: #ffb4a2;
+  }
+
+  .rg-form__note {
+    margin: 0 0 15px;
+    font-size: 14px;
+    line-height: 21px;
+    text-align: left;
+  }
+
+  .rg-form__msg {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: rgba(255, 155, 122, 0.12);
+    color: #ffd2c4;
+    font-size: 14px;
+    line-height: 21px;
+  }
+  .rg-form__msg :global(a) { color: #fff; font-weight: 700; }
+
+  .rg-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 61px;
+    margin: 0 0 10px;
+    padding: 7px 28px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--color-key1);
+    color: #fff;
+    font-family: var(--font-text);
+    text-align: left;
+    cursor: pointer;
+  }
+  .rg-submit[aria-busy='true'] { cursor: progress; opacity: 0.85; }
+  .rg-submit__icon { flex: 0 0 26px; width: 26px; height: 26px; }
+  .rg-submit__text { display: flex; flex-direction: column; }
+  .rg-submit__label { padding: 4px 0; font-size: 15px; font-weight: 600; line-height: 22.5px; }
+  .rg-submit__sub { font-size: 12px; line-height: 18px; letter-spacing: 0.5px; opacity: 0.7; }
+
+  .rg-form__after {
+    margin: 0 0 var(--after-gap);
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+  }
+
+  @media (max-width: 767px) {
+    .rg-field--phone { margin-bottom: var(--phone-gap-m); }
+    .rg-submit__label { line-height: 18px; }
+    .rg-form__after { margin-bottom: 30px; }
+  }
+</style>

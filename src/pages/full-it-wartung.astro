@@ -1,0 +1,126 @@
+---
+/**
+ * /full-it-wartung – „3 Monate Full-IT-Wartung“ (Nachbau der Onepage-Seite, alle Sektionen nativ).
+ * Sektionen ein-/ausschalten: src/data/sections/full-it-wartung.ts
+ */
+import Base from '../layouts/Base.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+import Header from '../components/support/Header.astro';
+import Hero from '../components/support/Hero.astro';
+import Kacheln from '../components/support/Kacheln.astro';
+import Angebot from '../components/support/Angebot.astro';
+import Ablauf from '../components/support/Ablauf.astro';
+import FormSection from '../components/support/FormSection.astro';
+import Zahlen from '../components/support/Zahlen.astro';
+import Testimonial from '../components/support/Testimonial.astro';
+import Slider from '../components/support/Slider.astro';
+import Faq from '../components/support/Faq.astro';
+import Cta from '../components/support/Cta.astro';
+import { faqWartung, faqJsonLd } from '../components/support/faq-data';
+import { isOn } from '../data/sections';
+import '../components/support/support.css';
+
+const P = 'full-it-wartung';
+const zahlen = [
+  { prefix: '<', value: 10, suffix: 'Min', desc: 'Minuten mittlere Reaktionszeit bei Supportanfragen' },
+  { value: 2, desc: 'Eigene Rechenzentren in Deutschland – Nürnberg & Düsseldorf', descColor: 'rgba(10, 15, 16, 0.5)' },
+  { value: 86, suffix: '+', desc: 'Server-Migrationen ohne Ausfallzeit erfolgreich abgeschlossen' },
+  { value: 100, unit: '%', desc: 'Daten in Deutschland – kein US-Anbieter, DSGVO-konform' },
+];
+---
+
+<Base
+  title="IT Support Blaschke: 3 Monate kostenlose IT-Wartung"
+  description="Erleben Sie 3 Monate kostenlose IT-Wartung von IT Support Blaschke! Schnelle Hilfe, Expertenberatung & Soforthilfe bei IT-Problemen in Haan."
+  jsonLd={isOn(P, 'faq') ? [faqJsonLd(faqWartung)] : []}
+>
+  {isOn(P, 'header') && <Header ctaText="3 Monate Full-IT-Wartung" ctaSubtitle="Jetzt sichern - kostenlos testen" />}
+
+  {isOn(P, 'hero') && (
+    <Hero label="zuverlässiger IT-Support · Remote & Vor Ort" labelGap={60} buttonText="Jetzt kostenlos sichern" buttonSubtitle="Für Unternehmen ab 10 Mitarbeiter" buttonIcon note="Keine Laufzeit - jederzeit kündbar">
+      <Fragment slot="title"><span class="w">3 Monate </span>Full-IT-Wartung<span class="w">.<br />Komplett kostenlos.</span></Fragment>
+      <p>Kein Ticket-System. Kein Callcenter. Kein anonymer Hoster. Teste Blaschke IT 3 Monate lang mit vollständiger IT-Betreuung – ohne Vertrag, jederzeit kündbar.</p>
+    </Hero>
+  )}
+
+  {isOn(P, 'probleme') && (
+    <Kacheln
+      cards={[
+        { label: 'Erreichbarkeit', title: 'Du kennst die Warteschleifenmusik deines IT-Systemhauses', titleEnd: 'auswendig.', text: 'Du hast ein IT-Problem, meldest es – und wartest. Wieder. Kein Rückruf, keine Lösung, nur eine Ticket-Nummer. Das ist kein Support. Das ist Zeitverschwendung.' },
+        { label: 'Performance', title: 'Dein ITler hat euch umgezogen, aber du merkst doch, dass irgendwas', titleEnd: 'einfach nicht stimmt.', text: 'Migration abgeschlossen. Rechnung bezahlt. Und trotzdem: langsam, instabil, Fehler, die niemand erklären kann. Du meldest es. Es wird „angeschaut“. Drei Wochen später das gleiche Problem. Das kennen wir. Und wir lösen es.' },
+        { label: 'Betreuung', title: 'Du hast schon zweimal gewechselt, und es ist jedes Mal nur', titleEnd: 'kurzfristig besser geworden.', text: 'Große Versprechen beim Onboarding. Netter Ansprechpartner am Anfang. Und dann: Standardlösungen, lange Reaktionszeiten, das Gefühl, dass du einer von hundert Kunden bist – nicht einer von wenigen. Wechseln lohnt sich. Wenn man zum richtigen wechselt.' },
+      ]}
+    />
+  )}
+
+  {isOn(P, 'angebot') && (
+    <Angebot
+      intro="Jeder IT-Dienstleister behauptet von sich, er sei gut. Wir zeigen es dir – ohne Vorleistung, ohne Risiko. Jederzeit kündbar."
+      items={[
+        { text: 'Vollständige IT-Wartung – alles was an IT anfällt ist abgedeckt' },
+        { text: 'Server-Wartung, Updates, Patches – proaktiv, ohne dass du fragen musst' },
+        { text: 'Netzwerk & WLAN – Überwachung und Entstörung inklusive' },
+        { text: 'Microsoft 365, Outlook, E-Mail – alles läuft oder wir sorgen dafür' },
+        { text: 'Backup-Überwachung – täglich geprüft, ob deine Daten gesichert sind', href: isOn(P, 'faq') ? '#faq' : undefined },
+        { text: 'Security-Monitoring – Angriffserkennung und direkte Reaktion' },
+        { text: 'Persönlicher Ansprechpartner – direkt erreichbar, kein Ticketsystem' },
+        { text: 'Remote & vor Ort – je nachdem was dein Problem erfordert' },
+      ]}
+      cardText="Wir sind von unserem Service überzeugt. Deshalb geben wir dir drei volle Monate, um uns kennenzulernen. Wenn wir nicht liefern und du dich nicht wohlfühlst, gehst du einfach. Ohne Risiko."
+      cardItems={['Keine versteckten Kosten', 'Keine Mindestlaufzeit – jederzeit kündbar', 'Für Unternehmen ab 10 Mitarbeitern', 'Kein Wechselzwang des aktuellen Anbieters nötig']}
+    />
+  )}
+
+  {isOn(P, 'ablauf') && (
+    <Ablauf
+      steps={[
+        { title: 'Anfrage senden', text: 'Füll das Anfrageformular aus. Wir melden uns innerhalb von 24h (werktags).' },
+        { title: 'Kostenloses Vorab-Gespräch', text: 'Wir lernen deine IT-Umgebung kennen – welche Systeme, welche Probleme, wo wir ansetzen.' },
+        { title: '3 Monate genießen', text: 'Wir übernehmen alles. Proaktiv, persönlich, remote & vor Ort. Keine Kosten, kein Knebelvertrag.' },
+        { title: 'Du entscheidest', text: 'Überzeugt? Dann geht’s weiter – zu transparenten Konditionen. Nicht überzeugt? Kein Problem.' },
+      ]}
+    >In 4 Schritten zu deinen <span class="sp-o">3 Monaten kostenlose</span> IT-Betreuung.</Ablauf>
+  )}
+
+  {isOn(P, 'formular') && (
+    <FormSection
+      formId="PygUSIzSqQyoHAdYNYB_M"
+      page="/full-it-wartung"
+      label="Unser Angebot"
+      text="Überzeug dich selbst – vollständige IT-Betreuung für 3 Monate, jederzeit kündbar. Für Unternehmen ab 10 Mitarbeitern im Raum Haan."
+      items={[
+        { text: 'Alles was an IT anfällt – vollständig abgedeckt' },
+        { text: 'Persönlicher Ansprechpartner ab Tag eins' },
+        { text: 'Remote & vor Ort Support möglich' },
+        { text: 'Keine Laufzeit – keine Bindung' },
+        { text: 'Kostenloses Erstgespräch zur Vorbereitung inklusive' },
+        { text: 'Danach: ca. 50 €/MA/Monat – nur wenn du willst' },
+      ]}
+      buttonText="3 Monate kostenlos sichern"
+      buttonSubtitle="Keine Laufzeit · Keine Kosten · Jederzeit kündbar"
+      note="Nach der Anfrage: kostenloses Erstgespräch zur IT-Analyse"
+    >
+      <Fragment slot="title">3 Monate Full-Wartung kostenlos. <span class="sp-o">Ohne Risiko.</span></Fragment>
+      <Fragment slot="formTitle">3 Monate Full-Wartung kostenlos sichern</Fragment>
+      <Fragment slot="quote">🟢&nbsp; Wir melden uns <b>innerhalb</b> <b>24h werktags</b></Fragment>
+    </FormSection>
+  )}
+
+  {isOn(P, 'zahlen') && <Zahlen label="Warum Blaschke IT" items={zahlen}>Zahlen, die für sich sprechen.</Zahlen>}
+
+  {isOn(P, 'testimonial') && (
+    <Testimonial
+      quote="„Der vorherige IT-Dienstleister hat uns umgezogen – aber das System lief einfach nicht sauber. Blaschke IT hat das Problem direkt gelöst. Wir fühlen uns sehr gut beraten und aufgehoben.“"
+      meta={['Geschäftsführer', 'Elektrounternehmen, 18 Mitarbeiter', 'Düsseldorf']}
+    />
+  )}
+
+  {isOn(P, 'slider') && <Slider />}
+  {isOn(P, 'faq') && <Faq items={faqWartung} />}
+
+  {isOn(P, 'cta') && (
+    <Cta title="Bereit den Unterschied zu erleben?" text="3 Monate Full-IT-Wartung – kostenlos, keine Vertragslaufzeit, jederzeit kündbar." buttonText="Jetzt kostenlos sichern" buttonSubtitle="Für Unternehmen ab 10 Mitarbeiter" />
+  )}
+
+  {isOn(P, 'footer') && <GlobalFooter slot="after-main" />}
+</Base>

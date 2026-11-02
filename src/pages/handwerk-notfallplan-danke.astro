@@ -1,0 +1,33 @@
+---
+/**
+ * /handwerk-notfallplan-danke – Dankeseite nach dem Notfallplan-Optin (noindex über src/data/seo.ts).
+ * Inhalte: src/components/vibe-landing/content/handwerk-notfallplan-danke.ts
+ */
+import Base from '../layouts/Base.astro';
+import DankeDownload from '../components/vibe-landing/DankeDownload.astro';
+import Rueckruf from '../components/vibe-landing/Rueckruf.astro';
+import DankeFooter from '../components/vibe-landing/DankeFooter';
+import vl from '../components/vibe-landing/vl.module.css';
+import * as c from '../components/vibe-landing/content/handwerk-notfallplan-danke';
+import { isOn } from '../data/sections';
+
+const page = 'handwerk-notfallplan-danke';
+---
+
+<Base title="Danke – Ihr IT-Notfallplan steht bereit | Blaschke IT" description="Ihr IT-Notfallplan für Handwerksbetriebe steht zum Download bereit.">
+  <div class={vl.page}>
+    {isOn(page, 'download') && <DankeDownload content={c.download} />}
+    {
+      isOn(page, 'rueckruf') && (
+        <Rueckruf content={c.rueckruf} formId={c.rueckruf.formId} org="betrieb" dense eventName={c.rueckruf.eventLeadName} idPrefix="dr" />
+      )
+    }
+  </div>
+  {
+    isOn(page, 'footer') && (
+      <div slot="after-main" class={vl.page}>
+        <DankeFooter content={c.footer} />
+      </div>
+    )
+  }
+</Base>

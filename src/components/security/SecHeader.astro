@@ -1,0 +1,105 @@
+---
+/**
+ * Kopfzeile (Onepage „Header“, ab 768 px sichtbar): Logo + Hinweis-Button „SSL-verschlüsselt · DSGVO-konform“,
+ * der zum Formular scrollt. Live 57 px hoch, Container 1250 px, beide Spalten mittig.
+ * Mobil ersetzt durch SecMobileBadge (live getauscht).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import { site } from '../../data/site';
+import { lockIcon } from './icons';
+import { shared } from './content';
+
+interface Props {
+  /** Anker des Formulars auf DIESER Seite (live auf /security-check defekt → repariert) */
+  formAnchor?: string;
+}
+const { formAnchor = '#formular' } = Astro.props;
+const logo = imageMeta('logo-blaschke-it');
+const logoW = 188;
+const logoH = Math.round((logoW * logo.height) / logo.width);
+---
+
+<header class="sh sec-only-desktop">
+  <div class="sh__inner">
+    <div class="sh__col">
+      <a class="sh__logo" href="/" aria-label={`${site.name} – Startseite`}>
+        <Image
+          src={logo}
+          alt={site.name}
+          widths={[188, 375]}
+          sizes="188px"
+          width={logoW}
+          height={logoH}
+          loading="eager"
+          fetchpriority="high"
+          format="webp"
+        />
+      </a>
+    </div>
+    <div class="sh__col">
+      <a class="sh__badge" href={formAnchor}>
+        <span class="sh__icon" set:html={lockIcon('sh-lock-')} />
+        <span>{shared.sslBadge}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .sh {
+    background: #fff;
+    padding: 0 24px;
+  }
+  .sh__inner {
+    max-width: 1250px;
+    margin: 0 auto;
+    min-height: 57px;
+    display: grid;
+    grid-template-columns: 49.12fr 47.04fr;
+    column-gap: 3.84%;
+    align-items: center;
+  }
+  .sh__col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .sh__logo {
+    display: block;
+    padding: 7px 0;
+  }
+  .sh__logo img {
+    width: 187.5px;
+    height: auto;
+  }
+  .sh__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    font-family: var(--font-text);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 22.5px;
+    color: var(--color-dark);
+    text-decoration: none;
+  }
+  .sh__badge:hover {
+    color: var(--color-dark);
+  }
+  .sh__icon {
+    width: 21px;
+    height: 21px;
+    display: inline-flex;
+  }
+  .sh__icon :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  @media (max-width: 991px) {
+    .sh__inner {
+      max-width: 798px;
+    }
+  }
+</style>

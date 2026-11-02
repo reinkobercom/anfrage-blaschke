@@ -1,0 +1,24 @@
+---
+/** Logo-Kopfzeile der Dankeseiten (erstes sichtbares Bild → eager/priority). */
+import { Image } from 'astro:assets';
+import { imageMeta, images } from '../../data/images';
+interface Props {
+  topbarClass: string;
+  logoClass: string;
+  alt?: string;
+}
+const { topbarClass, logoClass, alt = images['logo-blaschke-it'].alt } = Astro.props;
+---
+
+<div class={topbarClass}>
+  <Image
+    class={logoClass}
+    src={imageMeta('logo-blaschke-it')}
+    widths={[150, 300, 450]}
+    sizes="147px"
+    alt={alt}
+    loading="eager"
+    fetchpriority="high"
+    style="height:32px"
+  />
+</div>

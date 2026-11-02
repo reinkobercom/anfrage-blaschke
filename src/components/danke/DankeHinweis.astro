@@ -1,0 +1,43 @@
+---
+/**
+ * Dunkles Band mit oranger Linie und Rückruf-Hinweis (alle drei Dankeseiten).
+ */
+import { hinweisHtml } from './content';
+import './shared.css';
+
+interface Props {
+  /** Hinweistext als HTML (Standard: Rückruf-Hinweis aus content.ts) */
+  html?: string;
+}
+
+const { html = hinweisHtml } = Astro.props;
+---
+
+<section class="dk-section dkn" style="--dk-pt:0px;--dk-pb:100px">
+  <div class="dk-wrap dkn__inner">
+    <div class="dk-line" aria-hidden="true"></div>
+    <p class="dkn__text dk-inline-link" set:html={html} />
+  </div>
+</section>
+
+<style>
+  .dkn {
+    background: var(--color-dark);
+    color: #fff;
+    z-index: 1;
+  }
+  .dkn .dk-line { margin-bottom: 60px; }
+  .dkn__text {
+    width: 68.27%;
+    margin: 0 auto;
+    text-align: center;
+    font-family: var(--font-text);
+    font-size: 18px;
+    line-height: 27px;
+    overflow-wrap: break-word;
+  }
+  .dkn__text :global(b) { font-weight: 700; }
+  @media (max-width: 768px) {
+    .dkn__text { width: 100%; }
+  }
+</style>

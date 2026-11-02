@@ -8,7 +8,7 @@ export type TextProps = {
   weight?: 'regular' | 'medium' | 'bold';
   align?: 'left' | 'center' | 'right';
   kicker?: boolean;
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
   className?: string;
   id?: string;
   style?: React.CSSProperties;

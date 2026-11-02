@@ -1,0 +1,46 @@
+/* Gemeinsame Basis der React-Landingpages (Kanzlei, Handwerk).
+   Onepage setzt auf <body> 14px / Zeilenhöhe 24px / Schwarz – alles, was diese Werte erbt
+   (z. B. Überschriften in Karten, Trustindex-/Galerie-Headline), sieht nur damit identisch aus. */
+.page {
+  font-size: 14px;
+  line-height: 24px;
+  color: #000;
+}
+
+/* Ersetzt framer-motion „initial → animate“ beim Laden (ohne JavaScript). */
+@keyframes vlFadeUp {
+  from { opacity: 0; transform: translateY(var(--fade-y, 18px)); }
+  to { opacity: 1; transform: none; }
+}
+.fadeUp {
+  animation: vlFadeUp var(--fade-duration, 0.5s) cubic-bezier(0.22, 0.61, 0.36, 1) var(--fade-delay, 0s) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fadeUp { animation: none; }
+}
+
+/* Wrapper für Scroll-Einblendung, wenn das innere Element eigene Hover-Transformationen hat:
+   streckt das Kind auf die volle Rasterzellen-Höhe. */
+.revealCell {
+  display: flex;
+  min-width: 0;
+}
+.revealCell > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Klickfläche ≥ 44 px ohne sichtbare Änderung */
+.tap {
+  position: relative;
+}
+.tap::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  min-height: 44px;
+  height: 100%;
+  transform: translateY(-50%);
+}

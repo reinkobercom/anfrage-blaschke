@@ -1,0 +1,30 @@
+---
+/** „Was Kunden sagen.“ – Zitatkarte (Hintergrund #f5f5f5, 2/3 Breite). */
+interface Props { quote: string; meta: string[]; }
+const { quote, meta } = Astro.props;
+---
+<section class="te sp-sec" style="--pt:100px;--pb:100px;--ptm:50px;--pbm:50px">
+  <div class="sp-in">
+    <p class="sp-label">Stimme aus der Praxis</p>
+    <h2 class="sp-t sp-t--m te__title">Was Kunden sagen.</h2>
+    <figure class="te__card">
+      <blockquote class="te__quote"><p>{quote}</p></blockquote>
+      <figcaption class="te__meta">
+        {meta.map((m) => <span>{m}</span>)}
+      </figcaption>
+    </figure>
+  </div>
+</section>
+<style>
+  .te__title { margin-top: 8px; }
+  .te__card { width: 65.385%; margin: 30px 0 0; padding: 32px 32px 24px; background: #f5f5f5; }
+  .te__quote { margin: 0 40px 0 4px; padding-left: 28px; border-left: 2px solid var(--color-key1); color: var(--color-key1); font: 400 22px/33px var(--font-text); }
+  .te__quote p { margin: 0; }
+  .te__meta { display: flex; flex-wrap: wrap; margin: 12px 0 0 -8px; }
+  .te__meta span { padding: 8px; font: 400 16.8px/25.2px var(--font-text); color: #000; }
+  @media (max-width: 992px) { .te__card { width: 100%; } }
+  @media (max-width: 768px) {
+    .te__card { padding: 24px 24px 16px; }
+    .te__meta { flex-direction: column; }
+  }
+</style>

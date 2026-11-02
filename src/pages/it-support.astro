@@ -1,0 +1,22 @@
+---
+/**
+ * /it-support – kompakte Formular-Landingpage (Onepage: nur Formular-Sektion + Fußzeile, kein Kopf).
+ * Sektionen ein-/ausschalten: src/data/sections/it-support.ts
+ */
+import Base from '../layouts/Base.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+import ItSupportSection from '../components/support/ItSupportSection.astro';
+import { isOn } from '../data/sections';
+import '../components/support/support.css';
+
+const P = 'it-support';
+---
+
+<Base
+  title="IT-Support"
+  description="IT Support Blaschke: Sofortige Hilfe bei IT-Problemen. Kostenlose Beratung, keine Vertragsbindung und persönliche Betreuung. Jetzt anrufen!"
+  hotjar
+>
+  {isOn(P, 'formular') && <ItSupportSection formId="w-d5rakJS8vcnXx7Pp4ea" page="/it-support" />}
+  {isOn(P, 'footer') && <GlobalFooter slot="after-main" />}
+</Base>

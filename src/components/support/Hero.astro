@@ -1,0 +1,81 @@
+---
+/**
+ * Hero (Onepage „Hero“): Hintergrundfoto + 78 % schwarzes Overlay, Label, H1, Text, schwebender Button, Hinweis.
+ * Abstände live gemessen: Padding 158/160 (mobil 79/80), Label→H1 29 bzw. 60 px, H1→Text 11, Text→Button 13, Button→Hinweis 10.
+ */
+import { Picture } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import Icon from './Icon.astro';
+
+interface Props {
+  label: string;
+  /** Abstand Label → H1 (live: /support 29, /full-it-wartung 60) */
+  labelGap?: number;
+  buttonText: string;
+  buttonSubtitle: string;
+  /** Pfeil-Icon links im Button (/full-it-wartung) */
+  buttonIcon?: boolean;
+  note: string;
+  href?: string;
+}
+const { label, labelGap = 29, buttonText, buttonSubtitle, buttonIcon = false, note, href = '#formular' } = Astro.props;
+const bg = imageMeta('support-mitarbeiterin-monitore');
+---
+
+<section class="hero sp-sec" style={`--pt:158px;--pb:160px;--ptm:79px;--pbm:80px;--label-gap:${labelGap}px`}>
+  <div class="hero__bg" aria-hidden="true">
+    <Picture
+      src={bg}
+      alt=""
+      widths={[480, 768, 1080, 1440, 1920, 2400]}
+      sizes="100vw"
+      formats={['avif', 'webp']}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+  <div class="sp-in hero__in">
+    <p class="sp-label sp-label--hero hero__label">{label}</p>
+    <h1 class="sp-t sp-t--xl hero__title"><slot name="title" /></h1>
+    <div class="hero__text sp-text sp-text--l"><slot /></div>
+    <a class:list={['hero__btn sp-btn sp-btn--l sp-btn--primary sp-float', { 'hero__btn--icon': buttonIcon }]} href={href}>
+      {buttonIcon && <Icon name="arrow-right" class="hero__btn-icon" />}
+      <span class="hero__btn-txt">
+        <span class="sp-btn__label">{buttonText}</span>
+        <span class="sp-btn__sub">{buttonSubtitle}</span>
+      </span>
+    </a>
+    <p class="hero__note">{note}</p>
+  </div>
+</section>
+
+<style>
+  .hero { --bg: #575756; color: #fff; overflow: hidden; }
+  .hero__bg, .hero__bg :global(picture) { position: absolute; inset: 0; }
+  .hero__bg :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 60% 25%; }
+  .hero__bg::after { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.78); }
+  .hero__in { z-index: 1; }
+  .hero__label { display: block; width: fit-content; max-width: 100%; }
+  .hero__title { margin-top: var(--label-gap); color: var(--color-key1); }
+  .hero__title :global(.w) { color: #fff; }
+  .hero__text { margin-top: 11px; max-width: 760px; }
+  .hero__text :global(p) { margin: 0; }
+  .hero__text :global(p + p) { margin-top: 16px; }
+  /* Brush-Marker-Hervorhebung (Onepage highlight „brush-marker“) */
+  .hero__text :global(mark) {
+    position: relative;
+    padding: 0 0.5ch;
+    background: none;
+    color: inherit;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    background-image: linear-gradient(90deg, rgba(242, 109, 34, 0.4), rgba(242, 109, 34, 0.9) 4%, rgba(242, 109, 34, 0.1));
+    border-radius: 0.12em;
+  }
+  .hero__btn { display: flex; width: fit-content; max-width: 100%; margin-top: 13.25px; }
+  .hero__btn--icon { flex-direction: row; justify-content: flex-start; padding-left: 22.5px; text-align: left; }
+  .hero__btn--icon .hero__btn-txt { margin-left: 15.6px; }
+  .hero__btn-icon { width: 29.8px; height: 29.8px; flex: none; }
+  .hero__note { margin: 10px 0 28px; padding: 12px 0; font: 400 15.2px/22.8px var(--font-text); }
+</style>

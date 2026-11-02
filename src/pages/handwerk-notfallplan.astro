@@ -1,0 +1,42 @@
+---
+/**
+ * /handwerk-notfallplan – IT-Notfallplan für Handwerksbetriebe (ehemals Onepage, alle Sektionen React/vibe).
+ * Inhalte: src/components/vibe-landing/content/handwerk.ts · Sektionen schalten: src/data/sections/handwerk-notfallplan.ts
+ */
+import Base from '../layouts/Base.astro';
+import HeroShell from '../components/vibe-landing/HeroShell.astro';
+import BetriebDigital from '../components/vibe-landing/BetriebDigital';
+import Situation from '../components/vibe-landing/Situation';
+import Pruefpunkte from '../components/vibe-landing/Pruefpunkte';
+import TrustindexSection from '../components/vibe-landing/TrustindexSection.astro';
+import WerDahinter from '../components/vibe-landing/WerDahinter';
+import TeamGalerie from '../components/vibe-landing/TeamGalerie.astro';
+import Rueckruf from '../components/vibe-landing/Rueckruf.astro';
+import Faq from '../components/vibe-landing/Faq.astro';
+import Abschluss from '../components/vibe-landing/Abschluss';
+import { faqJsonLd } from '../components/vibe-landing/faq-jsonld';
+import vl from '../components/vibe-landing/vl.module.css';
+import * as c from '../components/vibe-landing/content/handwerk';
+import { isOn } from '../data/sections';
+
+const page = 'handwerk-notfallplan';
+---
+
+<Base
+  title="IT-Notfallplan für Handwerksbetriebe | Blaschke IT"
+  description="Was ein Serverausfall im Handwerksbetrieb kostet, wie Sie Ihr Backup selbst prüfen und was ein Umzug ins Rechenzentrum kostet. Kostenlos als PDF."
+  jsonLd={isOn(page, 'faq') ? [faqJsonLd(c.faq.faqs)] : []}
+>
+  <div class={vl.page}>
+    {isOn(page, 'hero') && <HeroShell variant="handwerk" content={c.hero} />}
+    {isOn(page, 'digital') && <BetriebDigital content={c.digital} />}
+    {isOn(page, 'situation') && <Situation content={c.situation} />}
+    {isOn(page, 'kapitel') && <Pruefpunkte content={c.kapitel} columns={3} />}
+    {isOn(page, 'trustindex') && <TrustindexSection content={c.trustindex} />}
+    {isOn(page, 'werDahinter') && <WerDahinter content={c.werDahinter} />}
+    {isOn(page, 'galerie') && <TeamGalerie content={c.galerie} />}
+    {isOn(page, 'rueckruf') && <Rueckruf content={c.rueckruf} formId={c.rueckruf.formId} org="betrieb" />}
+    {isOn(page, 'faq') && <Faq content={c.faq} />}
+    {isOn(page, 'abschluss') && <Abschluss content={c.abschluss} />}
+  </div>
+</Base>

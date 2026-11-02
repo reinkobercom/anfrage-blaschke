@@ -1,0 +1,120 @@
+---
+/**
+ * ENTWURF /sicherheitscheck – NICHT VERÖFFENTLICHT (liegt außerhalb von src/pages → wird nicht gebaut).
+ * Onepage: „Sicherheitscheck“ (page_id a13152fa-4460-40ae-8916-21b987856c41), Quiz-Variante von /securitycheck,
+ * Formular „Quiz IT-Sicherheitscheck“ (838cca75-d091-4c7e-b87d-6d770a7c95ff).
+ *
+ * VERÖFFENTLICHEN:
+ *   1. Datei nach src/pages/sicherheitscheck.astro verschieben (Importpfade bleiben gültig).
+ *   2. Sektionsschalter unten (const show) nach src/data/sections/sicherheitscheck.ts auslagern
+ *      und hier durch isOn('sicherheitscheck', …) ersetzen.
+ *   3. noindex-Liste prüfen: src/data/seo.ts (noindexPaths) – Landingpages sind laut Entscheidung indexierbar;
+ *      soll der Entwurf erst getestet werden, '/sicherheitscheck' dort vorübergehend eintragen.
+ *   4. Formular-Definition ist bereits in src/data/form-definitions/security.ts (ID 838cca75-…);
+ *      Dankeschritt erscheint auf der Seite (im Entwurf keine Weiterleitung) – ggf. redirect setzen.
+ *   5. Texte des Dankeschritts mit dem Kunden klären (im Entwurf Onepage-Vorlagentexte).
+ *
+ * Sektionen 4–8 sind im Entwurf strukturell identisch mit /securitycheck (laut Onepage-Übersicht) und nutzen
+ * deshalb dieselben Komponenten/Texte; vor Veröffentlichung einmal gegen get_section abgleichen.
+ */
+import Base from '../layouts/Base.astro';
+import '../components/security/security.css';
+import { securitycheck as variant } from '../components/security/content';
+import SecHeader from '../components/security/SecHeader.astro';
+import SecMobileBadge from '../components/security/SecMobileBadge.astro';
+import SecQuiz from '../components/security/SecQuiz.astro';
+import SecQuoteStats from '../components/security/SecQuoteStats.astro';
+import SecWhy from '../components/security/SecWhy.astro';
+import SecTestimonial from '../components/security/SecTestimonial.astro';
+import SecWhyFree from '../components/security/SecWhyFree.astro';
+import SecCta from '../components/security/SecCta.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+
+/** Sektionsschalter (beim Veröffentlichen → src/data/sections/sicherheitscheck.ts) */
+const show = {
+  /** Kopfzeile Desktop/Tablet: Logo + „SSL-verschlüsselt · DSGVO-konform“ → Quiz */
+  header: true,
+  /** Mobile Kopfzeile: Logo + „🔒 SSL-verschlüsselt · DSGVO-konform“ */
+  logoSslMobil: true,
+  /** Einleitung: H1 „Der IT-Sicherheitscheck für dein Unternehmen“ */
+  einleitung: true,
+  /** Quiz IT-Sicherheitscheck (6 Fragen + Kontaktdaten) */
+  quiz: true,
+  /** Lukas Blaschke + Zitat, 3 Zahlen-Karten */
+  zitatZahlen: true,
+  /** Problempunkte + „Was du bekommst“ */
+  warumWasDuBekommst: true,
+  /** Kundenstimme */
+  referenzen: true,
+  /** „Warum kostenlos?“ */
+  warumKostenlos: true,
+  /** CTA „Was hast Du zu verlieren?“ */
+  ctaVerlieren: true,
+  /** Globale Fußzeile */
+  fusszeile: true,
+};
+
+const title = 'Kostenloser IT-Sicherheitscheck: Daten sichern & schützen';
+const description =
+  'Sicherheitscheck für Ihr Unternehmen: Überprüfen Sie Ihre IT-Sicherheit, Backup, DSGVO-Konformität und mehr mit Blaschke Securitycheck.';
+---
+
+<Base title={title} description={description} bodyBg="#0a0f10">
+  <div class="sec-page">
+    {show.header && <SecHeader formAnchor="#quiz" />}
+    {show.logoSslMobil && <SecMobileBadge />}
+    {
+      show.einleitung && (
+        <section class="sci-intro" aria-labelledby="sci-h1">
+          <div class="sci-intro__inner">
+            <h1 id="sci-h1" class="sec-h-l">Der IT-Sicherheitscheck für dein Unternehmen</h1>
+            <p class="sec-text">Finde in 2 Minuten heraus, wie gut dein Betrieb wirklich geschützt ist.</p>
+          </div>
+        </section>
+      )
+    }
+    {
+      show.quiz && (
+        <section class="sci-quiz" id="quiz" aria-label="Quiz IT-Sicherheitscheck">
+          <SecQuiz />
+        </section>
+      )
+    }
+    {show.zitatZahlen && <SecQuoteStats stats={variant.stats} />}
+    {show.warumWasDuBekommst && <SecWhy problems={variant.problems} />}
+    {show.referenzen && <SecTestimonial image={variant.testimonialImage} />}
+    {show.warumKostenlos && <SecWhyFree />}
+    {show.ctaVerlieren && <SecCta image={variant.ctaImage} formAnchor="#quiz" />}
+  </div>
+  {show.fusszeile && <GlobalFooter slot="after-main" />}
+</Base>
+
+<style>
+  /* Entwurf: Werte aus der DSL (keine Live-Messung möglich). Hintergrund key2 (#575756). */
+  .sci-intro {
+    background: var(--color-key2);
+    padding: 90px 24px 0;
+  }
+  .sci-intro__inner {
+    max-width: 1250px;
+    margin: 0 auto;
+  }
+  .sci-intro h1 {
+    margin-bottom: 10px;
+  }
+  .sci-intro p {
+    margin-bottom: 30px;
+  }
+  .sci-quiz {
+    background: var(--color-key2);
+    padding: 43px 24px 100px;
+  }
+  @media (max-width: 767px) {
+    .sci-intro {
+      padding-top: 45px;
+    }
+    .sci-quiz {
+      padding: 22px 24px 50px;
+    }
+  }
+</style>

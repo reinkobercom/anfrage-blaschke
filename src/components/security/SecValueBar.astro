@@ -1,0 +1,43 @@
+---
+/**
+ * Orange Leiste „Kostenloser Security-Check im [Wert von 500 €]“ (Highlight: dunkler 30-%-Hintergrund, 2 px oranger Rahmen).
+ * Live: Desktop 54 px (Padding 21/12), Mobil 43 px (10/12).
+ */
+import { shared } from './content';
+const v = shared.valueBar;
+---
+
+<div class="svb">
+  <p class="svb__text">
+    <b>{v.lead}</b> <b>{v.pre} <span class="svb__hl">{v.highlight}</span></b>
+  </p>
+</div>
+
+<style>
+  .svb {
+    background: var(--color-key1);
+    padding: 21px 24px 12px;
+    text-align: center;
+  }
+  .svb__text {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .svb__hl {
+    padding: 0 2px;
+    border: 2px solid var(--color-key1);
+    border-radius: 4px;
+    background: rgba(10, 15, 16, 0.3);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  @media (max-width: 767px) {
+    .svb {
+      padding-top: 10px;
+    }
+  }
+</style>

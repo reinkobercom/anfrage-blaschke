@@ -1,0 +1,140 @@
+---
+/**
+ * /support – „1 Std. IT-Support“ (Nachbau der Onepage-Seite, alle Sektionen nativ).
+ * Sektionen ein-/ausschalten: src/data/sections/support.ts
+ */
+import Base from '../layouts/Base.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+import Header from '../components/support/Header.astro';
+import Hero from '../components/support/Hero.astro';
+import Probleme from '../components/support/Probleme.astro';
+import VsCompare from '../components/support/VsCompare.astro';
+import Ablauf from '../components/support/Ablauf.astro';
+import Zahlen from '../components/support/Zahlen.astro';
+import Versprechen from '../components/support/Versprechen.astro';
+import FormSection from '../components/support/FormSection.astro';
+import Testimonial from '../components/support/Testimonial.astro';
+import Slider from '../components/support/Slider.astro';
+import Faq from '../components/support/Faq.astro';
+import Cta from '../components/support/Cta.astro';
+import { faqSupport, faqJsonLd } from '../components/support/faq-data';
+import { isOn } from '../data/sections';
+import '../components/support/support.css';
+
+const P = 'support';
+const vs = {
+  bad: {
+    label: 'so läuft es meistens',
+    title: '"Ihre Anfrage wird in 2–3 Werktagen bearbeitet."',
+    items: ['Ticket erstellen, Nummer zurückbekommen', 'Stunden in der Warteschleife', 'Mitarbeiter, der dein System nicht kennt', 'Problem gelöst? Manchmal. Irgendwann. Oder auch nicht.'],
+  },
+  good: {
+    label: 'Blaschke IT',
+    title: 'Du rufst an und dir wird sofort weitergeholfen.',
+    items: ['Persönlicher Ansprechpartner, der dein System kennt', 'Erste Stunde kostenlos – remote oder vor Ort', 'Wir geben uns erst zufrieden, wenn dein Problem gelöst ist.', 'Persönlich. Schnell. Hands-on.'],
+  },
+};
+const zahlen = [
+  { prefix: '<', value: 10, suffix: 'Min', desc: 'Minuten mittlere Reaktionszeit bei Supportanfragen' },
+  { value: 2, desc: 'Eigene Rechenzentren in Deutschland – Nürnberg & Düsseldorf', descColor: 'rgba(10, 15, 16, 0.5)' },
+  { value: 86, suffix: '+', desc: 'Server-Migrationen ohne Ausfallzeit erfolgreich abgeschlossen' },
+  { value: 100, unit: '%', desc: 'Daten in Deutschland – kein US-Anbieter, DSGVO-konform' },
+];
+const konditionen = [
+  { label: 'Abrechnungseinheit', value: 25, suffix: '€ / 15 Min.', desc: 'Faire Abrechnung im 15-Minuten-Takt – du zahlst nur, was du brauchst.' },
+  { label: 'Stundensatz', value: 100, suffix: '€ / Std.', desc: 'Transparenter Stundensatz ohne versteckte Kosten oder Pauschalen.' },
+  { label: 'Verfügbarkeit', prefix: 'In', value: 24, suffix: 'Std.', desc: 'Stellen wir die kostenlose Servicestunde werktags zur Verfügung.' },
+  { label: 'Einsatzgebiet', value: 100, suffix: 'km', desc: 'Um Haan vor Ort oder remote für Dich im Einsatz – auch für Hardwareprobleme' },
+];
+---
+
+<Base
+  title="IT Support Blaschke: Schnelle Hilfe & Kostenlose Beratung"
+  description="IT Support Blaschke: Sofortige Hilfe bei IT-Problemen. Kostenlose Beratung, keine Vertragsbindung und persönliche Betreuung. Jetzt anrufen!"
+  hotjar
+  jsonLd={isOn(P, 'faq') ? [faqJsonLd(faqSupport)] : []}
+>
+  {isOn(P, 'header') && <Header ctaText="Kostenloser IT-Support" ctaSubtitle="1 Stunde lang - kostenlos - ohne Vertrag" />}
+
+  {isOn(P, 'hero') && (
+    <Hero label="zuverlässiger IT-Support · Remote & Vor Ort" buttonText="Jetzt in Anspruch nehmen" buttonSubtitle="Für Unternehmen ab 10 Mitarbeiter" note="100% unverbindliches Angebot">
+      <Fragment slot="title">Kostenloser IT-Support.</Fragment>
+      <p><mark>Bring dein größtes IT-Problem mit – wir lösen es.</mark></p>
+      <p>Erste Supportstunde kostenlos, ohne wenn &amp; aber. Keine Pitches, kein Verkaufsgespräch. Einfach Hilfe.</p>
+    </Hero>
+  )}
+
+  {isOn(P, 'probleme') && (
+    <Probleme
+      title="Kommt dir das bekannt vor?"
+      items={['IT-Ticket erstellt, 3 Tage später noch keine Antwort', 'Dauerwarteschleife statt echtem Support', '„Standardlösungen“, die das Problem nicht lösen', 'Kein persönlicher Ansprechpartner erreichbar']}
+    />
+  )}
+
+  {isOn(P, 'vsDesktop') && <VsCompare variant="desktop" {...vs} />}
+  {isOn(P, 'vsMobile') && <VsCompare variant="mobile" {...vs} />}
+
+  {isOn(P, 'ablauf') && (
+    <Ablauf
+      steps={[
+        { title: 'Anfrage senden', text: 'Füll das Anfrageformular aus. Wir melden uns innerhalb von 24h (werktags).' },
+        { title: 'Kostenloses Vorab-Gespräch', text: 'Wir besprechen vorab deinen Status quo, wo das Problem liegt und wie wir die Stunde optimal für dich nutzen.' },
+        { title: 'Erste Stunde kostenlos', text: 'Remote oder vor Ort – wir lösen dein IT-Problem. Kein Pitch, kein Verkaufsgespräch. Nur Hilfe.' },
+        { title: 'Du entscheidest', text: 'Überzeugt? Dann geht’s weiter – zu transparenten Konditionen. Nicht überzeugt? Kein Problem.' },
+      ]}
+    >Vier Schritte. Null Risiko.</Ablauf>
+  )}
+
+  {isOn(P, 'konditionen') && (
+    <Zahlen label="Transparente Konditionen" items={konditionen}>
+      Was passiert nach der kostenlosen ersten Stunde?
+      <Versprechen
+        slot="after"
+        title="Unser Versprechen: optimale Vorbereitung inklusive"
+        text="Unabhängig von der kostenlosen Servicestunde bieten wir immer ein unverbindliches Expertengespräch vorab an, damit wir deinen Status quo kennen, deine Probleme verstehen und die operative Stunde bestmöglich für dich nutzen können. Kostenlos und ohne Verpflichtung."
+      />
+    </Zahlen>
+  )}
+
+  {isOn(P, 'formular') && (
+    <FormSection
+      formId="46a49a2b-ee3d-4f12-a96e-f0cb8befc119"
+      page="/support"
+      label="Unser Angebot"
+      text="Jeder IT-Dienstleister behauptet, er sei gut. Wir zeigen es dir – ohne Vorleistung, ohne Risiko. Eine Stunde 100% kostenlos."
+      items={[
+        { text: 'Für Unternehmen ab 10 Mitarbeitern' },
+        { text: 'Remote oder vor Ort – auch Hardware-Probleme' },
+        { text: 'Kostenloses Vorab-Gespräch zur Vorbereitung' },
+        { text: 'Erste Stunde vollständig kostenlos', sub: 'Danach: 25 € / 15 Min. – transparent & fair' },
+        { text: 'Die Lösung deines Problems dauert länger als eine Stunde?', sub: 'Entweder wir lösen es zu den Konditionen von 25 € / 15 Min. oder wir beenden den Versuch. Deine Entscheidung.', href: isOn(P, 'faq') ? '#faq' : undefined, icon: 'c-question' },
+        { text: 'Keine Folgepflicht, kein versteckter Vertrag' },
+      ]}
+      buttonText="Meine Anfrage absenden"
+      buttonSubtitle="Kein Vertrag · Keine Kosten · Nur Hilfe"
+      note="Nach der Anfrage melden wir uns für ein kostenloses Vorab-Gespräch"
+    >
+      <Fragment slot="title">Fordere uns <span class="sp-o">heraus</span>.</Fragment>
+      <Fragment slot="formTitle">Eine Stunde kostenlosen IT-Support sichern</Fragment>
+      <Fragment slot="quote">🟢&nbsp; Verfügbarkeit: <b>innerhalb</b> <b>24h werktags</b></Fragment>
+    </FormSection>
+  )}
+
+  {isOn(P, 'zahlen') && <Zahlen label="Warum Blaschke IT" items={zahlen}>Zahlen, die für sich sprechen.</Zahlen>}
+
+  {isOn(P, 'testimonial') && (
+    <Testimonial
+      quote="„Der vorherige IT-Dienstleister hat uns umgezogen – aber das System lief einfach nicht sauber. Blaschke IT hat das Problem in der ersten Stunde gefunden und direkt gelöst.“"
+      meta={['Geschäftsführer', 'Elektrounternehmen, 18 Mitarbeiter', 'Düsseldorf']}
+    />
+  )}
+
+  {isOn(P, 'slider') && <Slider />}
+  {isOn(P, 'faq') && <Faq items={faqSupport} />}
+
+  {isOn(P, 'cta') && (
+    <Cta narrow title="Bereit uns herauszufordern?" text="Erste Stunde kostenlos – kein Vertrag, kein Risiko, nur Hilfe." buttonText="Ja, ich will mein IT-Problem endlich lösen." buttonSubtitle="Für Unternehmen ab 10 Mitarbeiter" />
+  )}
+
+  {isOn(P, 'footer') && <GlobalFooter slot="after-main" />}
+</Base>

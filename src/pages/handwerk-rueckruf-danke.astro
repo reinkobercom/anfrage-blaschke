@@ -1,0 +1,30 @@
+---
+/**
+ * /handwerk-rueckruf-danke – Dankeseite nach einer Rückrufanfrage (noindex über src/data/seo.ts).
+ * Inhalte: src/components/vibe-landing/content/handwerk-rueckruf-danke.ts
+ */
+import Base from '../layouts/Base.astro';
+import DankeRueckruf from '../components/vibe-landing/DankeRueckruf.astro';
+import DankeFooter from '../components/vibe-landing/DankeFooter';
+import vl from '../components/vibe-landing/vl.module.css';
+import * as c from '../components/vibe-landing/content/handwerk-rueckruf-danke';
+import { isOn } from '../data/sections';
+
+const page = 'handwerk-rueckruf-danke';
+---
+
+<Base
+  title="Danke – wir rufen zurück | Blaschke IT"
+  description="Ihre Rückrufanfrage ist eingegangen. Wir melden uns werktags innerhalb von 24 Stunden."
+>
+  <div class={vl.page}>
+    {isOn(page, 'danke') && <DankeRueckruf content={c.danke} />}
+  </div>
+  {
+    isOn(page, 'footer') && (
+      <div slot="after-main" class={vl.page}>
+        <DankeFooter content={c.footer} />
+      </div>
+    )
+  }
+</Base>

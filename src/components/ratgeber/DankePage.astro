@@ -1,0 +1,34 @@
+---
+/**
+ * Seitenvorlage Dankeseite nach PDF-Opt-in: /danke-pdf und /danke-notfallratgeber.
+ * noindex setzt das Layout (src/data/seo.ts).
+ */
+import Base from '../../layouts/Base.astro';
+import GlobalFooter from '../native/GlobalFooter.astro';
+import { isOn } from '../../data/sections';
+import DankeHeader from './DankeHeader.astro';
+import DankeInfo from './DankeInfo.astro';
+import DankeDownload from './DankeDownload.astro';
+import DankeTimeline from './DankeTimeline.astro';
+import DankeZitat from './DankeZitat.astro';
+import DankeCta from './DankeCta.astro';
+import { danke } from './content';
+import './ratgeber.css';
+
+interface Props {
+  slug: keyof typeof danke;
+}
+const { slug } = Astro.props;
+const c = danke[slug];
+const on = (key: string) => isOn(slug, key);
+---
+
+<Base title={c.seo.title} description={c.seo.description} bodyBg="#0a0f10">
+  {on('header') && <DankeHeader />}
+  {on('info') && <DankeInfo content={c} />}
+  {on('download') && <DankeDownload content={c.download} />}
+  {on('timeline') && <DankeTimeline />}
+  {on('zitat') && <DankeZitat />}
+  {on('cta') && <DankeCta />}
+  {on('fusszeile') && <GlobalFooter slot="after-main" />}
+</Base>

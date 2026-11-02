@@ -1,0 +1,91 @@
+---
+/**
+ * /handwerk-notfallplan-danke – „Danke + PDF-Download“.
+ * Pixel wie live: beim Laden „Lead“ + „LeadHandwerk“ (custom), Klick auf Download „NotfallplanDownload“ (custom).
+ */
+import Title from '../siteui/title';
+import Text from '../siteui/text';
+import Icon from '../siteui/icon';
+import PdfButton from './PdfButton';
+import DankeKopf from './DankeKopf.astro';
+import { resolveImage } from '../../lib/resolve-image';
+import styles from './danke-download.module.css';
+import vl from './vl.module.css';
+
+interface Props {
+  content: Record<string, any>;
+}
+const { content: c } = Astro.props;
+const steps: { title: string; body: string }[] = Array.isArray(c.steps) ? c.steps : [];
+const cover = await resolveImage('notfallplan-handwerk-cover', { widths: [300, 600, 900], sizes: '300px', alt: c.coverCaption });
+---
+
+<section id={c.anchorId} class={styles.section} style={`background-color:${c.bgColor}`}>
+  <div class={styles.inner}>
+    <DankeKopf topbarClass={styles.topbar} logoClass={styles.logoImg} alt={c.logoAlt} />
+
+    <div class={styles.grid}>
+      <div class={vl.fadeUp}>
+        <span class={styles.check} aria-hidden="true">
+          <Icon name="check" size={26} />
+        </span>
+
+        <div class={styles.kicker}>
+          <span class={styles.kickerRule}></span>
+          <Text kicker tone="accent" as="span">{c.kicker}</Text>
+        </div>
+
+        <Title as="h1" size="xl" className={styles.headline}>
+          {c.headStart}{' '}<em>{c.headAccent}</em>
+        </Title>
+
+        <Text size="lg" tone="muted" className={styles.subline}>{c.subline}</Text>
+
+        <div class={styles.ctaBlock}>
+          <PdfButton href={c.pdfHref} label={c.pdfLabel} size="lg" trackDownload />
+          <Text size="xs" tone="muted">{c.pdfMeta}</Text>
+        </div>
+
+        <p class={styles.stepsTitle}>{c.stepsTitle}</p>
+        <ul class={styles.stepList}>
+          {
+            steps.map((s, i) => (
+              <li class={styles.stepItem}>
+                <span class={styles.stepNum} aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <span class={styles.stepTitle}>{s.title}</span>
+                  <Text size="sm" tone="muted">{s.body}</Text>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class:list={[styles.coverWrap, vl.fadeUp]} style="--fade-y:26px;--fade-duration:.55s;--fade-delay:.1s">
+        <img
+          class={styles.coverImg}
+          src={cover.src}
+          srcset={cover.srcSet}
+          sizes={cover.sizes}
+          width={cover.width}
+          height={cover.height}
+          alt={cover.alt}
+          loading="lazy"
+          decoding="async"
+        />
+        <Text size="xs" tone="muted" className={styles.coverCaption}>{c.coverCaption}</Text>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { track } from '../../lib/client';
+  // Beim Laden der Dankeseite (wie live, inkl. Doppelzählung mit dem Lead-Event der Landingpage)
+  track('track', 'Lead');
+  track('trackCustom', 'LeadHandwerk');
+  document.querySelectorAll('[data-track-download]').forEach((a) =>
+    a.addEventListener('click', () => track('trackCustom', 'NotfallplanDownload')),
+  );
+</script>

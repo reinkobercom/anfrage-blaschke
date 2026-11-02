@@ -1,0 +1,33 @@
+---
+/**
+ * Seitenvorlage Lead-Magnet (PDF-Opt-in): /sicherheitsleitfaden und /krisenratgeber.
+ */
+import Base from '../../layouts/Base.astro';
+import GlobalFooter from '../native/GlobalFooter.astro';
+import { isOn } from '../../data/sections';
+import LogoHeader from './LogoHeader.astro';
+import OptinHero from './OptinHero.astro';
+import TrustSection from './TrustSection.astro';
+import ProductSection from './ProductSection.astro';
+import CtaSection from './CtaSection.astro';
+import { optin } from './content';
+import './ratgeber.css';
+
+interface Props {
+  slug: keyof typeof optin;
+}
+const { slug } = Astro.props;
+const c = optin[slug];
+const on = (key: string) => isOn(slug, key);
+const showDesktop = on('formularDesktop');
+const showMobile = on('formularMobil');
+---
+
+<Base title={c.seo.title} description={c.seo.description}>
+  {on('logo') && <LogoHeader />}
+  {(showDesktop || showMobile) && <OptinHero content={c} page={`/${slug}`} showDesktop={showDesktop} showMobile={showMobile} />}
+  {on('bewertungen') && <TrustSection />}
+  {on('inhalt') && <ProductSection content={c.product} />}
+  {on('cta') && <CtaSection content={c.cta} />}
+  {on('fusszeile') && <GlobalFooter slot="after-main" />}
+</Base>

@@ -1,0 +1,139 @@
+---
+/**
+ * „Wie es weitergehen kann, entscheidest Du“ – zwei Szenario-Karten (nur /danke).
+ * Karte A grau (Key 2) mit weißer Schrift, Karte B weiß; Preis-Label in Karte B.
+ */
+import { szenarien as defaults } from './content';
+import './shared.css';
+
+type Card = { label: string; title: string; text: string; points: string[]; price?: string };
+interface Props {
+  label?: string;
+  title?: string;
+  a?: Card;
+  b?: Card;
+}
+
+const { label = defaults.label, title = defaults.title, a = defaults.a, b = defaults.b } = Astro.props;
+const headingId = 'dk-szenarien-titel';
+const arrow = 'M10.707,2.293A1,1,0,0,0,9.293,3.707L12.586,7H1A1,1,0,0,0,1,9H12.586L9.293,12.293a1,1,0,1,0,1.414,1.414l5-5a1,1,0,0,0,0-1.414Z';
+const cards = [
+  { ...a, mod: 'a' },
+  { ...b, mod: 'b' },
+];
+---
+
+<section class="dk-section dks" style="--dk-pt:100px;--dk-pb:100px" aria-labelledby={headingId}>
+  <div class="dk-wrap">
+    <div class="dks__head">
+      <p class="dk-pill dks__pill">{label}</p>
+      <h2 class="dk-h2 dks__title" id={headingId}>{title}</h2>
+    </div>
+    <div class="dks__cards">
+      {
+        cards.map((c) => (
+          <article class:list={['dks__card', `dks__card--${c.mod}`]}>
+            <p class="dks__label">{c.label}</p>
+            <h3 class="dk-h3 dks__card-title">{c.title}</h3>
+            <p class="dk-text dks__text">{c.text}</p>
+            <ul class="dks__list">
+              {c.points.map((p) => (
+                <li>
+                  <span class="dks__arrow" aria-hidden="true">
+                    <svg viewBox="0 0 16 16"><path fill="currentColor" d={arrow} /></svg>
+                  </span>
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+            {c.price && <p class="dks__price"><b>{c.price}</b></p>}
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .dks { background: #f5f5f5; color: var(--color-dark); }
+  .dks__head { text-align: center; margin-bottom: 30px; }
+  .dks__pill { margin-bottom: 8px; }
+  .dks__title { color: #010101; }
+
+  .dks__cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  .dks__card {
+    padding: 48px;
+    text-align: left;
+  }
+  .dks__card--a { background: var(--color-key2); color: #fff; }
+  .dks__card--b { background: #fff; color: var(--color-dark); }
+
+  .dks__label {
+    margin: 0 0 8px;
+    color: var(--color-key1);
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .dks__card-title { margin-bottom: 10px; }
+  .dks__text { margin-bottom: 20px; }
+
+  .dks__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-text);
+    font-size: 15.2px;
+    line-height: 22.8px;
+  }
+  .dks__card--a .dks__list { margin-bottom: 40px; }
+  .dks__card--b .dks__list { margin-bottom: 20px; }
+  .dks__list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+  }
+  .dks__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    color: var(--color-key1);
+  }
+  .dks__arrow svg { width: 17px; height: 17px; }
+
+  .dks__price {
+    display: inline-block;
+    margin: 0 0 20px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    background: #fff6e6;
+    color: var(--color-key1);
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .dks__price b { font-weight: 700; }
+
+  @media (max-width: 992px) {
+    .dks__cards { grid-template-columns: 1fr; gap: 24px; }
+  }
+  @media (max-width: 768px) {
+    .dks__card { padding: 24px; }
+  }
+</style>

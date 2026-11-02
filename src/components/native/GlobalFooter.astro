@@ -1,0 +1,110 @@
+---
+/**
+ * Globale Fußzeile aller nativen Onepage-Seiten (Onepage: „Fußzeile“, global).
+ * Werte gemessen live auf /support: Desktop 199 px hoch (Padding 41/40), Mobil (≤ 768 px) 185 px (Padding 20/20).
+ * Rechtstext-Links zentral aus site.ts. „Cookie-Einstellungen“ öffnet den Einwilligungsdialog erneut.
+ */
+import { Image } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import { site } from '../../data/site';
+
+const year = 2026; // live fest „© 2026“
+---
+
+<footer class="gf">
+  <div class="gf__frame">
+    <div class="gf__col">
+      <a class="gf__logo" href="/" aria-label={`${site.name} – Startseite`}>
+        <Image
+          src={imageMeta('logo-blaschke-it')}
+          alt={site.name}
+          widths={[158, 316]}
+          sizes="158px"
+          width={158}
+          height={34}
+          loading="lazy"
+          decoding="async"
+          format="webp"
+        />
+      </a>
+      <p class="gf__copy"><b>© {year} Blaschke Solutions GmbH. Alle Rechte vorbehalten.</b></p>
+      <p class="gf__links">
+        <a href={site.legal.impressum} rel="noopener">Impressum</a> | <a href={site.legal.datenschutz} rel="noopener">Datenschutz</a><span class="gf__sep"> | </span><button type="button" data-consent-open>Cookie-Einstellungen</button>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .gf {
+    background: #ffffff;
+    color: var(--color-dark);
+    margin-top: -1px;
+    padding: 0 32px;
+  }
+  .gf__frame {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 41px 0 40px;
+  }
+  .gf__col {
+    max-width: 775px; /* 15 von 24 Spalten */
+    margin: 0 auto;
+    text-align: center;
+  }
+  .gf__logo {
+    display: block;
+    width: 157.5px;
+    height: 34.33px;
+    margin: 0 auto;
+  }
+  .gf__logo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .gf__copy,
+  .gf__links {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 18px;
+    line-height: 27px;
+  }
+  .gf__copy { margin-top: 20px; }
+  .gf__copy b { font-weight: 700; }
+  .gf__links { margin-top: 10px; }
+  .gf__links a,
+  .gf__links button {
+    position: relative;
+    color: var(--color-dark);
+    text-decoration: none;
+    border: 0;
+    border-bottom: 1px solid var(--color-dark);
+    background: none;
+    padding: 0;
+    font: inherit;
+    line-height: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  /* Klickfläche ≥ 44 px ohne Optikänderung */
+  .gf__links a::after,
+  .gf__links button::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    right: -4px;
+    top: 50%;
+    height: 44px;
+    transform: translateY(-50%);
+  }
+  @media (max-width: 480px) {
+    /* schmal: „Cookie-Einstellungen“ in eigener Zeile statt hängendem Trennstrich */
+    .gf__sep { display: none; }
+    .gf__links button { display: table; margin: 0 auto; }
+  }
+  @media (max-width: 768px) {
+    .gf { padding: 0 24px; }
+    .gf__frame { padding: 20px 0; }
+  }
+</style>

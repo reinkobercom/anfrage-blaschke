@@ -1,0 +1,68 @@
+---
+/**
+ * FAQ-Sektion: linke Spalte (sticky, top 72px) statisch, Akkordeon als React-Insel (client:visible).
+ * Das FAQPage-JSON-LD baut die Seite mit faqJsonLd().
+ */
+import Title from '../siteui/title';
+import Text from '../siteui/text';
+import Button from '../siteui/button';
+import Icon from '../siteui/icon';
+import FaqList from './FaqList';
+import { site } from '../../data/site';
+import styles from './faq.module.css';
+import vl from './vl.module.css';
+
+interface Props {
+  content: Record<string, any>;
+  /** „Rufen Sie an …“ im Kontaktkasten mit Telefonnummer als tel:-Link ergänzen */
+  phoneInContact?: boolean;
+}
+const { content: c, phoneInContact = false } = Astro.props;
+const faqs = Array.isArray(c.faqs) ? c.faqs : [];
+const callPrefix = 'Rufen Sie an ';
+const withPhone = phoneInContact && String(c.contactBody).startsWith(callPrefix);
+---
+
+<section class={styles.section} style={`background-color:${c.bgColor}`}>
+  <div class={styles.inner}>
+    <div class={styles.grid}>
+      <div class={styles.left}>
+        <div class={styles.kicker}>
+          <span class={styles.kickerRule}></span>
+          <Text kicker tone="accent" as="span">{c.kicker}</Text>
+        </div>
+
+        <Title as="h2" size="lg" className={styles.head}>
+          {c.headStart}{' '}<em>{c.headAccent}</em>{' '}{c.headEnd}
+        </Title>
+
+        <div class={styles.ctaWrap}>
+          <Button href={c.ctaHref} variant="primary" size="md" className={vl.tap}>{c.ctaLabel}</Button>
+          <Text size="xs" tone="muted">{c.ctaNote}</Text>
+        </div>
+
+        <div class={styles.contactBox}>
+          <h3 class={styles.contactTitle}>{c.contactTitle}</h3>
+          {
+            withPhone ? (
+              <p class={styles.contactBody}>
+                Rufen Sie an unter <a class={styles.phoneLink} href={site.phone.href}>{site.phone.display}</a>{' '}
+                {String(c.contactBody).slice(callPrefix.length)}
+              </p>
+            ) : (
+              <Text size="sm" tone="muted">{c.contactBody}</Text>
+            )
+          }
+          <a class={styles.contactLink} href={c.contactLinkHref}>
+            <span>{c.contactLinkLabel}</span>
+            <Icon name="arrowRight" size={15} />
+          </a>
+        </div>
+      </div>
+
+      <div class={styles.list}>
+        <FaqList client:visible faqs={faqs} />
+      </div>
+    </div>
+  </div>
+</section>

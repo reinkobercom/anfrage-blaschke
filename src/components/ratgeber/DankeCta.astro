@@ -1,0 +1,59 @@
+---
+/**
+ * Orange CTA-Box zum Security-Check (Onepage „layout“, Container 960).
+ * Gemessen: Box 834 px breit, Radius 4, Innenabstand 48 px (mobil 24), Abstand 50/100 px (mobil 25/50),
+ * Button weiß mit dunkler Schrift, Animation „breath“ (2 s), Untertitel 12 px, Deckkraft 0,7.
+ */
+import { dankeShared } from './content';
+---
+
+<section class="rg-dcta" aria-labelledby="rg-dcta-title">
+  <div class="rg-dcta__box">
+    <h2 id="rg-dcta-title" class="rg-h rg-h--m rg-dcta__title">{dankeShared.ctaTitle}</h2>
+    <p class="rg-dcta__text">{dankeShared.ctaText}</p>
+    <a class="rg-dcta__btn rg-shadow rg-breathe" href={dankeShared.ctaHref}>
+      <span class="rg-dcta__label">{dankeShared.ctaButton}</span>
+      <span class="rg-dcta__sub">{dankeShared.ctaButtonSubtitle}</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .rg-dcta {
+    background: var(--color-dark);
+    padding: 51px 0 100px;
+  }
+  .rg-dcta__box {
+    width: min(834px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 48px;
+    border-radius: 4px;
+    background: var(--color-key1);
+    color: #fff;
+    text-align: center;
+  }
+  .rg-dcta__title { margin-bottom: 18px; color: #fff; }
+  .rg-dcta__text { margin: 0 0 30px; font-size: 16px; line-height: 24px; }
+  .rg-dcta__btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    margin-bottom: 20px;
+    padding: 7px 28px;
+    border-radius: 4px;
+    background: #fff;
+    color: var(--color-dark);
+    text-decoration: none;
+  }
+  .rg-dcta__label { padding: 4px 0; font-size: 15px; font-weight: 600; line-height: 22.5px; }
+  .rg-dcta__sub { font-size: 12px; line-height: 18px; letter-spacing: 0.5px; opacity: 0.7; }
+
+  @media (max-width: 768px) {
+    .rg-dcta { padding: 25px 0 50px; }
+    .rg-dcta__box { padding: 24px; }
+  }
+  @media (max-width: 767px) {
+    .rg-dcta__label { line-height: 18px; }
+  }
+</style>

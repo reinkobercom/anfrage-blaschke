@@ -1,0 +1,96 @@
+---
+/**
+ * „Was jetzt passiert“ (Onepage-Timeline, 3 Schritte) auf grauem Grund (key2 #575756).
+ * Desktop: Zähler mittig (40 × 40 px, Radius 8), Inhalte abwechselnd rechts (linksbündig) und links
+ * (rechtsbündig), Verbindungslinie 2 px rgb(130,130,129). Mobil: Zähler links, Inhalte rechts daneben
+ * (Ausrichtung bleibt wie live). Abstand 60/60 px, mobil halbiert.
+ */
+import { dankeShared } from './content';
+---
+
+<section class="rg-tl" aria-labelledby="rg-tl-title">
+  <div class="rg-container">
+    <h2 id="rg-tl-title" class="rg-h rg-h--m rg-tl__title">{dankeShared.timelineTitle}</h2>
+    <ol class="rg-tl__list">
+      {
+        dankeShared.timeline.map((step, i) => (
+          <li class:list={['rg-tl__item', i % 2 === 1 ? 'rg-tl__item--left' : 'rg-tl__item--right']}>
+            <span class="rg-tl__counter" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div class="rg-tl__content">
+              <p class="rg-label rg-label--tag rg-tl__label">{step.label}</p>
+              <h3 class="rg-h rg-h--m rg-tl__step-title">{step.title}</h3>
+              <p class="rg-tl__text">{step.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .rg-tl {
+    background: var(--color-key2);
+    color: #fff;
+    padding: 61px 0 60px;
+  }
+  .rg-tl__title { margin-bottom: 28px; text-align: center; color: #fff; }
+
+  .rg-tl__list { list-style: none; margin: 0; padding: 0 56px; }
+  .rg-tl__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    column-gap: 56px;
+    padding-bottom: 76px;
+  }
+  .rg-tl__item:last-child { padding-bottom: 47px; }
+  .rg-tl__counter {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--color-key1);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+  }
+  /* Verbindungslinie vom Zähler bis zum nächsten Zähler */
+  .rg-tl__item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    left: calc(50% - 1px);
+    width: 2px;
+    background: rgb(130, 130, 129);
+  }
+
+  .rg-tl__content { grid-row: 1; min-width: 0; }
+  .rg-tl__item--right .rg-tl__content { grid-column: 3; text-align: left; }
+  .rg-tl__item--left .rg-tl__content { grid-column: 1; text-align: right; }
+
+  .rg-tl__label { margin: 0 0 20px; background: #fff; }
+  .rg-tl__step-title { margin-bottom: 20px; color: #fff; }
+  .rg-tl__text { margin: 0; font-size: 16px; line-height: 24px; }
+
+  @media (max-width: 991px) {
+    .rg-tl__list { padding: 0; }
+    .rg-tl__item { grid-template-columns: 40px 1fr; column-gap: 12px; }
+    .rg-tl__counter { grid-column: 1; }
+    .rg-tl__item--right .rg-tl__content,
+    .rg-tl__item--left .rg-tl__content { grid-column: 2; }
+    .rg-tl__item:not(:last-child)::after { left: 19px; }
+  }
+  @media (max-width: 768px) {
+    .rg-tl { padding: 30px 0 30px; }
+    .rg-tl__item:last-child { padding-bottom: 48px; }
+  }
+</style>

@@ -1,0 +1,228 @@
+---
+/**
+ * /service – Sektion 7 „Team Galerie“ mit Lightbox.
+ * Lightbox: natives <dialog> + kleines Script (kein Framework). Klick irgendwo / Esc / ✕ schließt.
+ */
+import { Image, getImage } from 'astro:assets';
+import { imageMeta, images } from '../../data/images';
+import { team } from './content';
+
+const items = await Promise.all(
+  team.images.map(async (key) => {
+    const meta = imageMeta(key);
+    const big = await getImage({ src: meta, widths: [900, 1350, 1800].filter((w) => w <= meta.width), format: 'webp', quality: 80 });
+    return { key, meta, alt: images[key].alt, bigSrc: big.src, bigSrcSet: big.srcSet.attribute };
+  }),
+);
+---
+
+<section class="section">
+  <div class="container">
+    <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <p class="eyebrow">{team.eyebrow}</p>
+      <h2 class="headline">{team.headline}</h2>
+      <p class="subline">{team.subline}</p>
+    </div>
+
+    <ul class="grid">
+      {items.map((item, i) => (
+        <li class="imgCard" data-reveal style={`--reveal-y:0px;--reveal-duration:.4s;--reveal-delay:${(i * 0.08).toFixed(2)}s`}>
+          <button
+            type="button"
+            class="imgBtn"
+            data-lightbox-src={item.bigSrc}
+            data-lightbox-srcset={item.bigSrcSet}
+            data-lightbox-alt={item.alt}
+            aria-label={`Bild vergrößern: ${item.alt}`}
+          >
+            <Image
+              src={item.meta}
+              alt={item.alt}
+              class="img"
+              widths={[320, 480, 640, 900]}
+              sizes="(max-width: 600px) calc(50vw - 32px), (max-width: 1298px) calc(25vw - 36px), 290px"
+              format="webp"
+              loading="lazy"
+            />
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <dialog class="lightbox" aria-label="Bildansicht" data-svc-lightbox>
+    <div class="lightboxInner">
+      <img class="lightboxImg" alt="" sizes="(max-width: 948px) calc(100vw - 48px), 900px" decoding="async" />
+      <button type="button" class="lightboxClose" aria-label="Schließen">&#10005;</button>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('[data-svc-lightbox]');
+  if (dlg) {
+    const img = dlg.querySelector<HTMLImageElement>('.lightboxImg')!;
+    let opener: HTMLElement | null = null;
+    document.querySelectorAll<HTMLButtonElement>('[data-lightbox-src]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        opener = btn;
+        img.srcset = btn.dataset.lightboxSrcset || '';
+        img.src = btn.dataset.lightboxSrc || '';
+        img.alt = btn.dataset.lightboxAlt || '';
+        dlg.showModal();
+      }),
+    );
+    // wie live: Klick irgendwo (Bild, Hintergrund, ✕) schließt
+    dlg.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('close', () => opener?.focus());
+  }
+</script>
+
+<style>
+  .section {
+    background: var(--color-kit-dark);
+    padding: 72px 0;
+  }
+  .container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0 0 12px;
+  }
+  .headline {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .subline {
+    font-family: var(--font-kit-text-font);
+    font-size: 17px;
+    color: #ddd;
+    font-weight: 300;
+    line-height: 1.65;
+    margin-bottom: 40px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .imgCard {
+    overflow: hidden;
+    background: #111;
+  }
+  /* framer-motion: scale 0.97 → 1 (statt y) */
+  :global(html.js) .imgCard[data-reveal] {
+    transform: scale(0.97);
+  }
+  :global(html.js) .imgCard[data-reveal].is-visible {
+    transform: none;
+  }
+  .imgBtn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .imgBtn:focus-visible {
+    outline-offset: -2px;
+  }
+  .img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.2s;
+  }
+  .imgBtn:hover .img {
+    opacity: 0.88;
+  }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 9999;
+    padding: 24px;
+  }
+  .lightbox[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox::backdrop {
+    background: transparent;
+  }
+  .lightboxInner {
+    position: relative;
+    max-width: 900px;
+    width: 100%;
+  }
+  .lightboxImg {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    display: block;
+  }
+  .lightboxClose {
+    position: absolute;
+    top: -16px;
+    right: -16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-kit-key1);
+    color: #fff;
+    border: none;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: normal;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Klickfläche ≥ 44 px ohne Optikänderung */
+  .lightboxClose::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+  }
+  .lightboxClose:focus-visible {
+    outline-color: #fff;
+  }
+  @media (max-width: 600px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .img {
+      height: 160px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .imgCard[data-reveal] { transform: none; }
+  }
+</style>

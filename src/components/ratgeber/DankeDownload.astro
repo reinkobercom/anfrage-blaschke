@@ -1,0 +1,96 @@
+---
+/**
+ * Download-Bereich der Dankeseiten (Onepage „layout“): animiertes Cover links, rechts Linie, Titel,
+ * Meta, Download-Button (öffnet das PDF in neuem Tab wie live), Hinweis.
+ * Gemessen (1440): Cover 547 × 774 px (Radius 8), Textspalte ab x 690 (655 px), Abstand 0/102 px
+ * (mobil 0/51 px), Button 17 px/600, Innenabstand 8/31 px, Radius 4.
+ */
+import CoverVideo from './CoverVideo.astro';
+import { dankeShared, type DankeContent } from './content';
+
+interface Props {
+  content: DankeContent['download'];
+}
+const { content: c } = Astro.props;
+---
+
+<section class="rg-ddl" aria-labelledby="rg-ddl-title">
+  <div class="rg-container rg-ddl__grid">
+    <div class="rg-ddl__media">
+      <CoverVideo class="rg-ddl__video" video={c.video} label={c.videoLabel} posterWidth={560} />
+    </div>
+    <div class="rg-ddl__body">
+      <span class="rg-ddl__line" aria-hidden="true"></span>
+      <h2 id="rg-ddl-title" class="rg-h rg-h--m rg-ddl__title">{c.title}</h2>
+      <p class="rg-ddl__meta">{dankeShared.meta}</p>
+      <a class="rg-ddl__btn rg-shadow" href={c.href} target="_blank" rel="noopener">
+        <svg class="rg-ddl__icon" viewBox="0 0 32 32" width="24" height="24" aria-hidden="true">
+          <path fill="currentColor" d="M16,1a1,1,0,0,0-1,1V13H9a1,1,0,0,0-.79,1.614l7,9a1,1,0,0,0,1.58,0l7-9A1,1,0,0,0,23,13H17V2A1,1,0,0,0,16,1Z" />
+          <path fill="currentColor" d="M30,21a1,1,0,0,0-1,1v5a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V22a1,1,0,0,0-2,0v5a4,4,0,0,0,4,4H27a4,4,0,0,0,4-4V22A1,1,0,0,0,30,21Z" />
+        </svg>
+        <span class="rg-ddl__label">{dankeShared.button}</span>
+        <span class="sr-only">(PDF, öffnet in neuem Tab)</span>
+      </a>
+      <p class="rg-ddl__hint"><i>{dankeShared.hint}</i></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rg-ddl {
+    background: var(--color-dark);
+    color: #fff;
+    padding: 0 0 102px;
+  }
+  .rg-ddl__grid {
+    display: grid;
+    grid-template-columns: 11fr 13fr;
+    column-gap: 48px;
+    align-items: start;
+  }
+  .rg-ddl__media { display: flex; justify-content: flex-end; }
+  .rg-ddl :global(.rg-ddl__video) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 793 / 1122;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: #ececec;
+  }
+  .rg-ddl__line {
+    display: block;
+    height: 2px;
+    margin: 2px 0 33px;
+    background: var(--color-key1);
+  }
+  .rg-ddl__title { margin-bottom: 20px; color: #fff; }
+  .rg-ddl__meta { margin: 0 0 20px; font-size: 16px; line-height: 24px; }
+  .rg-ddl__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 61px;
+    margin-bottom: 21px;
+    padding: 8px 31px;
+    border-radius: 4px;
+    background: var(--color-key1);
+    color: #fff;
+    text-decoration: none;
+  }
+  .rg-ddl__icon { flex: 0 0 24px; }
+  .rg-ddl__label { padding: 4px 0; font-size: 17px; font-weight: 600; line-height: 25.5px; }
+  .rg-ddl__hint { margin: 0; font-size: 16px; line-height: 24px; }
+
+  @media (max-width: 991px) {
+    .rg-ddl__grid { grid-template-columns: 1fr; }
+    .rg-ddl :global(.rg-ddl__video) { margin-bottom: 37px; }
+  }
+  @media (max-width: 768px) {
+    .rg-ddl { padding-bottom: 51px; }
+  }
+  @media (max-width: 767px) {
+    .rg-ddl__label { line-height: 20.4px; }
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+/**
+ * /danke-service – Danke-Seite nach Anfrage zu 3 Monaten kostenloser IT-Betreuung
+ * (Ziel des Formulars von /service). noindex setzt das Layout.
+ */
+import Base from '../layouts/Base.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+import DankeHeader from '../components/danke/DankeHeader.astro';
+import DankeIntro from '../components/danke/DankeIntro.astro';
+import DankeTimeline from '../components/danke/DankeTimeline.astro';
+import DankeHinweis from '../components/danke/DankeHinweis.astro';
+import DankeKontakt from '../components/danke/DankeKontakt.astro';
+import { stepsService } from '../components/danke/content';
+import { isOn } from '../data/sections';
+
+const page = 'danke-service';
+---
+
+<Base
+  title="Danke"
+  description="Danke für deine Anfrage bei Blaschke IT: Wir melden uns innerhalb von 24 Stunden an Werktagen – danach Vorab-Gespräch und 3 Monate volle IT-Betreuung ohne Kosten."
+>
+  {/* Live führt „Zurück zur Webseite“ hier auf /service (nicht blaschke.cloud) */}
+  {isOn(page, 'header') && <DankeHeader backHref="/service" />}
+  {isOn(page, 'intro') && <DankeIntro bg="dark" />}
+  {isOn(page, 'schritte') && <DankeTimeline steps={stepsService} />}
+  {isOn(page, 'hinweis') && <DankeHinweis />}
+  {isOn(page, 'kontakt') && <DankeKontakt />}
+  {isOn(page, 'footer') && <GlobalFooter slot="after-main" />}
+</Base>

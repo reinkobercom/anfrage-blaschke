@@ -1,0 +1,231 @@
+---
+/**
+ * Hero mit PDF-Opt-in (Onepage „Formular Kostenloses E-Book/ PDF“).
+ * Live gab es zwei Sektionen (nur Desktop ≥ 768 px / nur Mobil ≤ 767 px) mit zwei CRM-Formularen.
+ * Hier EIN responsives Formular; die optischen Unterschiede der Mobil-Variante (dunkelgraue Box mit
+ * Schatten, Cover-Bild randlos oben, andere Größe der Formular-Überschrift, ggf. ohne Unterstreichung)
+ * per Media-Query.
+ * Werte gemessen live (1440 / 1024 / 991 / 768 / 767 / 390 px).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta, images } from '../../data/images';
+import RatgeberForm from './RatgeberForm.astro';
+import { highlight, type OptinContent } from './content';
+
+interface Props {
+  content: OptinContent;
+  page: string;
+  /** Schalter „formularDesktop“ (≥ 768 px) */
+  showDesktop?: boolean;
+  /** Schalter „formularMobil“ (≤ 767 px) */
+  showMobile?: boolean;
+}
+
+const { content: c, page, showDesktop = true, showMobile = true } = Astro.props;
+const { form, box } = c;
+const sameImage = box.desktopImage === box.mobileImage;
+---
+
+<section
+  class:list={['rg-hero', 'rg-root', { 'rg-hide-desktop': !showDesktop, 'rg-hide-mobile': !showMobile }]}
+  aria-labelledby="rg-hero-title"
+>
+  <div class="rg-container">
+    <div class="rg-hero__intro">
+      <p class="rg-label rg-label--pill rg-hero__label">{c.label}</p>
+      <h1
+        id="rg-hero-title"
+        class:list={['rg-h', 'rg-h--l', 'rg-hero__title', { 'rg-nohl-mobile': !c.titleHighlightMobile }]}
+        set:html={highlight(c.title)}
+      />
+      <p class:list={['rg-hero__text', { 'rg-hero__text--tight': !!c.label2 }]} set:html={c.text} />
+      {c.label2 && <p class="rg-label rg-label--pill rg-hero__label2">{c.label2}</p>}
+    </div>
+
+    <div id="formular" class:list={['rg-box', `rg-box--${box.desktopBg}`]}>
+      {
+        box.desktopBg === 'image' && (
+          <Image
+            class="rg-box__bg"
+            src={imageMeta('sicherheitsleitfaden-cover-dunkel')}
+            alt=""
+            widths={[960, 1280, 1920, 2400]}
+            sizes="(max-width: 1304px) calc(100vw - 54px), 1250px"
+            format="webp"
+            loading="lazy"
+          />
+        )
+      }
+
+      <div class="rg-box__media">
+        {
+          sameImage && box.desktopImage ? (
+            <Image
+              class="rg-box__img rg-box__img--both"
+              src={imageMeta(box.desktopImage)}
+              alt={images[box.desktopImage].alt}
+              widths={[400, 600, 800, 1122]}
+              sizes="(max-width: 767px) 100vw, (max-width: 991px) calc(100vw - 134px), 561px"
+              format="webp"
+              loading="lazy"
+            />
+          ) : (
+            <>
+              {box.desktopImage && (
+                <Image
+                  class="rg-box__img rg-box__img--desk"
+                  src={imageMeta(box.desktopImage)}
+                  alt={images[box.desktopImage].alt}
+                  widths={[600, 800, 1122]}
+                  sizes="(max-width: 991px) calc(100vw - 134px), 561px"
+                  format="webp"
+                  loading="lazy"
+                />
+              )}
+              <Image
+                class="rg-box__img rg-box__img--mob"
+                src={imageMeta(box.mobileImage)}
+                alt={images[box.mobileImage].alt}
+                widths={[400, 600, 800]}
+                sizes="100vw"
+                format="webp"
+                loading="lazy"
+              />
+            </>
+          )
+        }
+      </div>
+
+      <div class="rg-box__form">
+        <h2
+          class:list={['rg-h', 'rg-h--m', 'rg-box__title', `rg-box__title--m${form.titleSizeMobile}`, { 'rg-nohl-mobile': !form.titleHighlightMobile }]}
+          set:html={highlight(form.title)}
+        />
+        <RatgeberForm
+          formId={form.id}
+          page={page}
+          redirect={form.redirect}
+          phonePlaceholder={form.phonePlaceholder}
+          note={form.note}
+          button={form.button}
+          buttonSubtitle={form.buttonSubtitle}
+          phoneGap={form.phoneGap}
+          phoneGapMobile={form.phoneGapMobile}
+          afterGapDesktop={form.afterGapDesktop}
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rg-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 71px 0 172px;
+    background: var(--color-dark);
+    color: #fff;
+  }
+
+  /* Intro (Spalte 20/24, zentriert) */
+  .rg-hero__intro { text-align: center; }
+  .rg-hero__label { margin: 0 0 25px; }
+  .rg-hero__title {
+    max-width: 1034px;
+    margin: 0 auto 20px;
+    color: #fff;
+  }
+  .rg-hero__text {
+    max-width: 850px;
+    margin: 0 auto 40px;
+    font-size: 18px;
+    line-height: 27px;
+  }
+  .rg-hero__text :global(b) { font-weight: 700; }
+  .rg-hero__text--tight { margin-bottom: 9px; }
+  .rg-hero__label2 { margin: 0 0 45px; }
+
+  /* Formularbox */
+  .rg-box {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 40px;
+    border-radius: 16px;
+    scroll-margin-top: 16px;
+  }
+  .rg-box--mesh {
+    background:
+      radial-gradient(circle at 36% 0%, rgb(77, 77, 77) 0%, rgba(0, 0, 0, 0) 70%),
+      radial-gradient(circle at 100% 100%, rgb(17, 17, 17) 0%, rgba(0, 0, 0, 0) 70%);
+  }
+  .rg-box :global(.rg-box__bg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 25% 75%;
+    border-radius: 16px;
+    pointer-events: none;
+  }
+  .rg-box__media,
+  .rg-box__form { position: relative; min-width: 0; }
+  .rg-box__media { padding-right: 24px; }
+  .rg-box__form {
+    align-self: center;
+    padding-left: 24px;
+  }
+  .rg-box :global(.rg-box__img) { width: 100%; height: auto; }
+  .rg-box :global(.rg-box__img--desk),
+  .rg-box :global(.rg-box__img--both) { margin-bottom: 20px; }
+  .rg-box :global(.rg-box__img--mob) { display: none; }
+
+  .rg-box__title {
+    margin-bottom: 29px;
+    color: #fff;
+    text-align: left;
+  }
+
+  /* Spalten untereinander (Onepage-Tablet) */
+  @media (max-width: 991px) {
+    .rg-box { grid-template-columns: 1fr; }
+    .rg-box__media { padding-right: 0; }
+    .rg-box__form { padding-left: 0; }
+  }
+
+  /* halbe Sektionsabstände */
+  @media (max-width: 768px) {
+    .rg-hero { padding: 45px 0 122px; }
+  }
+
+  /* Mobil-Variante */
+  @media (max-width: 767px) {
+    .rg-box {
+      padding: 24px;
+      background: rgb(32, 32, 32);
+      box-shadow: rgba(17, 17, 26, 0.1) 0 8px 56px 0, rgba(17, 17, 26, 0.1) 0 32px 140px 0;
+    }
+    .rg-box :global(.rg-box__bg),
+    .rg-box :global(.rg-box__img--desk) { display: none; }
+    .rg-box :global(.rg-box__img--mob),
+    .rg-box :global(.rg-box__img--both) {
+      display: block;
+      width: calc(100% + 48px);
+      max-width: none;
+      margin: -40px -24px 24px;
+    }
+    .rg-box__title { margin-bottom: 12px; }
+    .rg-box__title--m24 { font-size: 24px; line-height: 1.3104; }
+  }
+
+  /* Sektionsschalter Desktop/Mobil */
+  @media (min-width: 768px) {
+    .rg-hide-desktop { display: none; }
+  }
+  @media (max-width: 767px) {
+    .rg-hide-mobile { display: none; }
+  }
+</style>

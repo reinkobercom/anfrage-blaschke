@@ -1,0 +1,107 @@
+---
+/**
+ * Zitat Lukas Blaschke (Onepage „layout“ mit Person + Zitat).
+ * Gemessen: Foto 120 px rund, Name 18 px/700, Rolle 14 px, Zitat 22/33 px mit 2 px weißer Linie links,
+ * Spalte 15/24 zentriert, Abstand 60/0 px (mobil 30/0).
+ * Ergänzt (Entscheidung R3): Telefonnummer als tel:-Link unter dem Zitat („ruf uns an“).
+ * Rolle laut Entscheidung „Geschäftsführer“ (live „Inhaber“).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import { site } from '../../data/site';
+import { dankeShared } from './content';
+---
+
+<section class="rg-quote" aria-label={`Persönliche Nachricht von ${site.person.name}`}>
+  <div class="rg-container">
+    <figure class="rg-quote__col">
+      <figcaption class="rg-quote__person">
+        <Image
+          class="rg-quote__photo"
+          src={imageMeta('lukas-blaschke-rechenzentrum')}
+          alt={`${site.person.name}, ${site.person.role} von ${site.name}`}
+          width={120}
+          height={120}
+          widths={[120, 240]}
+          sizes="120px"
+          format="webp"
+          loading="lazy"
+        />
+        <span class="rg-quote__meta">
+          <span class="rg-quote__name">{site.person.name}</span>
+          <span class="rg-quote__role">{site.person.role} · {dankeShared.personPlace}</span>
+        </span>
+      </figcaption>
+      <blockquote class="rg-quote__text">
+        <p>{dankeShared.quote}</p>
+      </blockquote>
+      <p class="rg-quote__call">
+        {dankeShared.callLabel} <a href={site.phone.href}>{site.phone.display}</a>
+      </p>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .rg-quote {
+    background: var(--color-dark);
+    color: #fff;
+    padding: 60px 0 0;
+  }
+  .rg-quote__col {
+    width: 62.5%;
+    margin: 0 auto;
+  }
+  .rg-quote__person {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .rg-quote :global(.rg-quote__photo) {
+    flex: 0 0 120px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .rg-quote__meta { display: flex; flex-direction: column; text-align: left; }
+  .rg-quote__name { font-size: 18px; font-weight: 700; line-height: 27px; }
+  .rg-quote__role { font-size: 14px; line-height: 21px; }
+  .rg-quote__text {
+    max-width: 687px;
+    margin: 0 0 20px 13px;
+    padding-left: 28px;
+    border-left: 2px solid #fff;
+  }
+  .rg-quote__text p {
+    margin: 0;
+    font-size: 22px;
+    line-height: 33px;
+  }
+  .rg-quote__call {
+    margin: 0 0 0 43px;
+    padding-bottom: 20px;
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .rg-quote__call a {
+    color: #fff;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--color-key1);
+    text-underline-offset: 3px;
+    display: inline-block;
+    padding: 10px 0;
+  }
+
+  @media (max-width: 991px) {
+    .rg-quote__col { width: 100%; }
+  }
+  @media (max-width: 768px) {
+    .rg-quote { padding-top: 30px; }
+    .rg-quote__text { margin-left: 4px; }
+    .rg-quote__call { margin-left: 34px; }
+  }
+</style>

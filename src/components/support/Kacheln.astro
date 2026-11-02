@@ -1,0 +1,39 @@
+---
+/** /full-it-wartung „Wir kennen das Problem“ – 3 Kacheln auf hellem Orange. */
+interface Card { label: string; title: string; titleEnd: string; text: string; }
+interface Props { cards: Card[]; }
+const { cards } = Astro.props;
+---
+<section class="ka sp-sec" style="--bg:#ffa054;--pt:80px;--pb:80px;--ptm:40px;--pbm:40px">
+  <div class="sp-in">
+    <p class="sp-label sp-label--key2">Wir kennen das Problem</p>
+    <h2 class="sp-t sp-t--m ka__title">Das kommt dir bekannt vor?<br />Dann bist du hier genau richtig.</h2>
+    <div class="ka__grid">
+      {cards.map((c) => (
+        <article class="ka__card">
+          <p class="sp-label sp-label--light">{c.label}</p>
+          <h3 class="sp-t sp-t--xs sp-t--xs-shrink ka__h">
+            <span class="ka__h1">{c.title}</span>
+            <span class="ka__h2">{c.titleEnd}</span>
+          </h3>
+          <p class="sp-text ka__txt">{c.text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .ka__title { margin-top: 8px; color: #fff; }
+  .ka__grid { margin-top: 30px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; align-items: stretch; }
+  .ka__card {
+    padding: 32px 32px 53px;
+    background: #f5f5f5;
+    box-shadow: rgba(17, 17, 26, 0.1) 0 16px 32px 0, rgba(17, 17, 26, 0.1) 0 95px 140px 0;
+  }
+  .ka__h { margin-top: 20px; color: var(--color-dark); }
+  .ka__h1, .ka__h2 { display: block; }
+  .ka__h2 { color: var(--color-key1); }
+  .ka__txt { margin-top: 21px; color: #575756; }
+  @media (max-width: 992px) { .ka__grid { grid-template-columns: 1fr; gap: 24px; } }
+  @media (max-width: 768px) { .ka__card { padding: 24px 24px 45px; } }
+</style>

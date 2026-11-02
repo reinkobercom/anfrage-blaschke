@@ -1,0 +1,42 @@
+---
+/**
+ * /securitycheck – kostenloser Security-Check (ehem. Onepage, native Sektionen + globale Fußzeile).
+ * Formular-ID live: 9be3467f-… („Formular Aufzählungspunkte“).
+ * Sektionen ein-/ausschalten: src/data/sections/securitycheck.ts · Texte: src/components/security/content.ts
+ * Formular: src/data/form-definitions/security.ts (→ /danke-securitycheck)
+ */
+import Base from '../layouts/Base.astro';
+import { isOn } from '../data/sections';
+import '../components/security/security.css';
+import { securitycheck as variant } from '../components/security/content';
+import SecHeader from '../components/security/SecHeader.astro';
+import SecMobileBadge from '../components/security/SecMobileBadge.astro';
+import SecValueBar from '../components/security/SecValueBar.astro';
+import SecHero from '../components/security/SecHero.astro';
+import SecQuoteStats from '../components/security/SecQuoteStats.astro';
+import SecWhy from '../components/security/SecWhy.astro';
+import SecTestimonial from '../components/security/SecTestimonial.astro';
+import SecWhyFree from '../components/security/SecWhyFree.astro';
+import SecCta from '../components/security/SecCta.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+
+const page = 'securitycheck';
+const formId = '9be3467f-77e1-43f5-958d-c4ebf36ff1fe';
+const title = 'Securitycheck: kostenloser Service für Unternehmer';
+const description = 'Schützen Sie Ihre Daten! Unser Securitycheck ist ein kostenloser Service für Sie. Sichern Sie Ihre IT-Infrastruktur jetzt ab.';
+---
+
+<Base title={title} description={description} bodyBg="#0a0f10" preloadFonts={['roboto-600.woff2', 'manrope-regular.woff2', 'manrope-600.woff2']}>
+  <div class="sec-page">
+    {isOn(page, 'header') && <SecHeader formAnchor="#formular" />}
+    {isOn(page, 'logoSslMobil') && <SecMobileBadge />}
+    {isOn(page, 'wertLeiste') && <SecValueBar />}
+    {isOn(page, 'heroFormular') && <SecHero variant={variant} formId={formId} compactForm={false} />}
+    {isOn(page, 'zitatZahlen') && <SecQuoteStats stats={variant.stats} />}
+    {isOn(page, 'warumWasDuBekommst') && <SecWhy problems={variant.problems} />}
+    {isOn(page, 'referenzen') && <SecTestimonial image={variant.testimonialImage} />}
+    {isOn(page, 'warumKostenlos') && <SecWhyFree />}
+    {isOn(page, 'ctaVerlieren') && <SecCta image={variant.ctaImage} formAnchor="#formular" />}
+  </div>
+  {isOn(page, 'fusszeile') && <GlobalFooter slot="after-main" />}
+</Base>

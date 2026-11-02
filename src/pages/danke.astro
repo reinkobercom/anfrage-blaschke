@@ -1,0 +1,31 @@
+---
+/**
+ * /danke – Danke-Seite nach Anfrage zum kostenlosen 1-Std.-IT-Support
+ * (Ziel der Formulare von /support, /full-it-wartung und /it-support). noindex setzt das Layout.
+ */
+import Base from '../layouts/Base.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+import DankeHeader from '../components/danke/DankeHeader.astro';
+import DankeIntro from '../components/danke/DankeIntro.astro';
+import DankeTimeline from '../components/danke/DankeTimeline.astro';
+import DankeSzenarien from '../components/danke/DankeSzenarien.astro';
+import DankeHinweis from '../components/danke/DankeHinweis.astro';
+import DankeKontakt from '../components/danke/DankeKontakt.astro';
+import { stepsDanke } from '../components/danke/content';
+import { isOn } from '../data/sections';
+
+const page = 'danke';
+---
+
+<Base
+  title="Danke für Ihre Anfrage! IT-Support Blaschke"
+  description="Danke für deine Anfrage bei Blaschke IT: Wir rufen dich innerhalb von 24 Stunden an Werktagen an. So geht es weiter mit Vorab-Gespräch und kostenloser Servicestunde."
+>
+  {isOn(page, 'header') && <DankeHeader backHref="https://blaschke.cloud/" />}
+  {isOn(page, 'intro') && <DankeIntro bg="key2" />}
+  {isOn(page, 'schritte') && <DankeTimeline steps={stepsDanke} />}
+  {isOn(page, 'szenarien') && <DankeSzenarien />}
+  {isOn(page, 'hinweis') && <DankeHinweis />}
+  {isOn(page, 'kontakt') && <DankeKontakt />}
+  {isOn(page, 'footer') && <GlobalFooter slot="after-main" />}
+</Base>

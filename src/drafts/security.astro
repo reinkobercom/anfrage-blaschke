@@ -1,0 +1,261 @@
+---
+/**
+ * ENTWURF /security – NICHT VERÖFFENTLICHT (liegt außerhalb von src/pages → wird nicht gebaut).
+ * Onepage: „Security“ (page_id 1b218aa4-ec6c-4592-96cd-7b07e67ec936). Unfertiges Onepage-Template
+ * („AI-Produktivitäts-Kit“) – Texte, Menü, Bewertungszeile und Fußzeile sind noch Vorlagen-Inhalte,
+ * es gibt kein Formular und kein SEO (Title/Description leer). Hier strukturell übernommen.
+ *
+ * VERÖFFENTLICHEN (erst nach inhaltlicher Überarbeitung!):
+ *   1. Datei nach src/pages/security.astro verschieben (Importpfade bleiben gültig).
+ *   2. Sektionsschalter (const show) nach src/data/sections/security.ts auslagern → isOn('security', …).
+ *   3. noindex-Liste prüfen: src/data/seo.ts (noindexPaths) – solange Vorlagentexte drin sind: '/security' eintragen.
+ *   4. title/description setzen (live leer), Buttons/Menü verlinken (live ohne Ziel),
+ *      Unsplash-Bilder (mXz64B8-3h0, fvxNerA8uk0) nach src/assets/img + images.ts übernehmen.
+ *   5. Bewertungszeile „4.9 von 5 basierend auf 1.000 Bewertungen“ ist ein Vorlagentext → entfernen oder
+ *      durch echte Daten (Trustindex) ersetzen; nie als JSON-LD ausgeben.
+ *   6. Lokale Fußzeile („KI-Prompts“, „© 2026 Company“) durch GlobalFooter ersetzen (Schalter fusszeileGlobal).
+ */
+import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import { imageMeta, images } from '../data/images';
+import { site } from '../data/site';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+
+const show = {
+  /** Kopfzeile: Logo, Menü (4 Punkte ohne Ziel), Button „Sofortigen Zugang erhalten“ */
+  kopfzeile: true,
+  /** Deckblatt: Bild + Label/Titel/Text/Button/Bewertungszeile (dunkler Verlauf) */
+  deckblatt: true,
+  /** Vorteile: 4 Zahlen-Karten */
+  vorteile: true,
+  /** Nutzen: Text + Akkordeon (3) + Bild */
+  nutzenAkkordeon: true,
+  /** Nutzen: Bento (Bild, Text, 2 Halbkreis-Statistiken) */
+  nutzenBento: true,
+  /** Lokale Vorlagen-Fußzeile (Menüs, Copyright „Company“) */
+  fusszeileVorlage: true,
+  /** Globale Fußzeile (statt der Vorlagen-Fußzeile empfohlen) */
+  fusszeileGlobal: false,
+};
+
+const title = 'Security – Blaschke IT'; // live leer
+const description = 'Entwurf'; // live leer
+
+const menu = ['Für wen es ist', 'Produkt', 'Referenzen', 'FAQ'];
+const stats = [
+  { value: '5000+', text: 'Downloads weltweit' },
+  { value: '1000+', text: 'positive Leserbewertungen' },
+  { value: '87 %', text: 'praktische Einblicke' },
+  { value: '90 %', text: 'verbesserte KI-Fähigkeiten' },
+];
+const accordion = [
+  { q: 'Verbesserte Kreativität', a: 'Generieren Sie frische Ideen für Schreiben, Kunst und Problemlösungen. Überwinden Sie kreative Blockaden und finden Sie neue Perspektiven.' },
+  { q: 'Zeitmanagement', a: 'Optimieren Sie Ihren Tagesablauf, verwalten Sie Aufgaben effizient und priorisieren Sie Ihre Arbeitslast mit KI-gesteuerten Erkenntnissen.' },
+  { q: 'Beschleunigtes Lernen', a: 'Nutzen Sie KI, um schnell neue Konzepte zu erfassen, komplexe Informationen zusammenzufassen und Ihr Lernerlebnis anzupassen.' },
+];
+const donuts = [
+  { value: 30, title: 'Durchschnittlich eingesparte Zeit bei täglichen Aufgaben', text: 'Gewinnen Sie jede Woche Zeit, da wiederholende Arbeiten reduziert werden, und konzentrieren Sie sich auf das Wesentliche.' },
+  { value: 90, title: 'Benutzer, die sich organisierter und weniger gestresst fühlen', text: 'Fühlen Sie sich organisierter und haben Sie mehr Kontrolle, mit weniger Stress und einem reibungsloseren täglichen Arbeitsablauf.' },
+];
+const coverKey = 'sicherheitsleitfaden-cover' as const;
+const logo = imageMeta('logo-blaschke-it');
+---
+
+<Base title={title} description={description}>
+  {
+    show.kopfzeile && (
+      <header class="sy-head">
+        <div class="sy-wrap sy-head__inner">
+          <a href="/" aria-label={`${site.name} – Startseite`}>
+            <Image src={logo} alt={site.name} widths={[245, 490]} sizes="245px" width={245} height={Math.round((245 * logo.height) / logo.width)} loading="eager" format="webp" class="sy-head__logo" />
+          </a>
+          <nav aria-label="Hauptmenü">
+            <ul class="sy-head__menu">
+              {menu.map((m) => (<li><span>{m}</span></li>))}
+            </ul>
+          </nav>
+          <span class="sy-btn">Sofortigen Zugang erhalten</span>
+        </div>
+      </header>
+    )
+  }
+
+  {
+    show.deckblatt && (
+      <section class="sy-cover">
+        <div class="sy-wrap sy-cover__grid">
+          <div class="sy-cover__media">
+            <Image src={imageMeta(coverKey)} alt={images[coverKey].alt} widths={[480, 640, 960]} sizes="(max-width: 767px) 100vw, 560px" loading="lazy" format="webp" />
+          </div>
+          <div>
+            <p class="sy-label">Ihr AI-Produktivitäts-Kit</p>
+            <h1 class="sy-h1">Steigern Sie Ihre Produktivität mit bewährten KI-Eingabeaufforderungen</h1>
+            <p class="sy-lead">
+              Diese Vorlage ist ideal für Autoren, Pädagogen, Coaches und Kreative, die ihr digitales Produkt präsentieren möchten. Sie wurde entwickelt, um Ihre Arbeit übersichtlich darzustellen, die wichtigsten Vorteile hervorzuheben und bei potenziellen Lesern oder Kunden Glaubwürdigkeit aufzubauen.
+            </p>
+            <span class="sy-btn sy-btn--l">Sofortigen Zugriff erhalten</span>
+            {/* Vorlagentext – siehe Hinweis 5 oben */}
+            <p class="sy-rating"><span aria-hidden="true">★★★★★</span> 4.9 von 5 basierend auf 1.000 Bewertungen</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    show.vorteile && (
+      <section class="sy-sec">
+        <ul class="sy-wrap sy-stats">
+          {stats.map((s) => (
+            <li class="sy-card">
+              <p class="sy-card__num">{s.value}</p>
+              <p class="sy-card__text">{s.text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    show.nutzenAkkordeon && (
+      <section class="sy-sec sy-sec--light">
+        <div class="sy-wrap sy-two">
+          <div>
+            <p class="sy-label">Warum dieses Buch</p>
+            <h2 class="sy-h2">Optimieren Sie Ihren Workflow mit KI</h2>
+            <p class="sy-lead">Entdecken Sie, wie künstliche Intelligenz die Kreativität steigert, das Zeitmanagement verbessert und Ihr Lernen beschleunigt.</p>
+            <div class="sy-acc">
+              {accordion.map((a) => (
+                <details>
+                  <summary>{a.q}</summary>
+                  <p>{a.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+          {/* Unsplash mXz64B8-3h0 – noch nicht lokal vorhanden */}
+          <div class="sy-placeholder" role="img" aria-label="Bildplatzhalter" />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    show.nutzenBento && (
+      <section class="sy-sec">
+        <div class="sy-wrap sy-bento">
+          {/* Unsplash fvxNerA8uk0 – noch nicht lokal vorhanden */}
+          <div class="sy-placeholder sy-bento__img" role="img" aria-label="Bildplatzhalter" />
+          <div class="sy-bento__text">
+            <p class="sy-label">Schnelle Statistiken</p>
+            <h2 class="sy-h2">Was Sie erreichen können</h2>
+            <p class="sy-lead">Sparen Sie Stunden, bleiben Sie konzentriert und entwickeln Sie neue Ideen mit KI-Prompts, die Ihnen helfen, tägliche Aufgaben zu optimieren und intelligenter zu arbeiten.</p>
+          </div>
+          {donuts.map((d) => (
+            <div class="sy-bento__stat">
+              <svg class="sy-donut" viewBox="0 0 100 55" role="img" aria-label={`${d.value} %`}>
+                <path d="M5 50 A45 45 0 0 1 95 50" pathLength="100" class="sy-donut__track" />
+                <path d="M5 50 A45 45 0 0 1 95 50" pathLength="100" class="sy-donut__bar" style={`stroke-dasharray:${d.value} 100`} />
+                <text x="50" y="48" text-anchor="middle">{d.value} %</text>
+              </svg>
+              <p class="sy-bento__title">{d.title}</p>
+              <p class="sy-card__text">{d.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    show.fusszeileVorlage && (
+      <footer class="sy-foot" slot="after-main">
+        <div class="sy-wrap sy-foot__grid">
+          <div>
+            <p class="sy-foot__brand"><b>KI-Prompts</b></p>
+            <p>Erhalten Sie 100 gebrauchsfertige Prompts für E-Mails, Fokus, Tagesplanung und Brainstorming – das spart Ihnen jede Woche Stunden.</p>
+            <p class="sy-foot__muted">© 2026 Company. Alle Rechte vorbehalten.</p>
+          </div>
+          <div>
+            <p class="sy-foot__head">Menü</p>
+            <ul><li>Für wen es ist</li><li>Produkt</li><li>Testimonials</li><li>FAQ</li></ul>
+          </div>
+          <div>
+            <p class="sy-foot__head">Datenschutz</p>
+            <ul>
+              <li>Nutzungsbedingungen</li>
+              <li><a href={site.legal.datenschutz} rel="noopener">Datenschutzrichtlinie</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="sy-wrap sy-foot__legal">
+          <p>Diese Website steht in keiner Verbindung zu Facebook, Google oder Meta Platforms, Inc. Facebook und Google sind eingetragene Marken ihrer jeweiligen Eigentümer. Wir verwenden Cookies und Remarketing-Pixel, um relevante Werbung anzuzeigen und unsere Website zu verbessern. Die Nutzung dieser Website erfolgt auf eigenes Risiko.</p>
+        </div>
+      </footer>
+    )
+  }
+  {show.fusszeileGlobal && <GlobalFooter slot="after-main" />}
+</Base>
+
+<style>
+  /* Entwurf: Werte aus der DSL (Container 1400, Padding 60), keine Live-Messung möglich. */
+  .sy-wrap { max-width: 1400px; margin: 0 auto; }
+  .sy-head { background: #fff; padding: 8px 24px; }
+  .sy-head__inner { display: grid; grid-template-columns: 19.6fr 58.4fr 19.4fr; gap: 1.3%; align-items: center; }
+  .sy-head__logo { width: 180px; height: auto; }
+  .sy-head__menu { list-style: none; display: flex; justify-content: center; gap: 16px; margin: 0; padding: 0; font-size: 16px; }
+  .sy-head__menu span { opacity: 0.7; }
+  .sy-btn { justify-self: end; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 20px; border-radius: 8px; background: var(--color-key1); color: #fff; font-weight: 600; }
+  .sy-btn--l { padding: 14px 28px; margin-top: 30px; }
+  .sy-cover { padding: 60px 24px; color: #fff; background: radial-gradient(at 38% 48%, #8a8a89 0, transparent 35%), radial-gradient(at 82% 44%, #8a8a89 0, transparent 25%), #000; }
+  .sy-cover__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .sy-cover__media img { width: 80%; margin: 0 auto; border-radius: 16px; }
+  .sy-label { display: inline-block; margin: 0 0 30px; padding: 4px 12px; border-radius: 4px; border: 1px solid rgba(127, 127, 127, 0.3); font-size: 16px; }
+  .sy-h1, .sy-h2 { font-family: var(--font-heading); font-weight: 600; letter-spacing: -0.4px; font-size: 40px; line-height: 1.2; margin: 0 0 20px; }
+  .sy-lead { font-size: 18px; line-height: 1.5; margin: 0 0 30px; }
+  .sy-rating { margin-top: 24px; font-size: 16px; }
+  .sy-rating span { color: var(--color-key1); letter-spacing: 2px; }
+  .sy-sec { padding: 60px 24px; background: #fff; }
+  .sy-sec--light { background: #fff; }
+  .sy-stats { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .sy-card { border: 1px solid rgba(10, 15, 16, 0.16); border-radius: 16px; padding: 26px; }
+  .sy-card__num { font-family: var(--font-heading); font-weight: 600; font-size: 48px; margin: 0 0 15px; }
+  .sy-card__text { margin: 0; font-size: 18px; opacity: 0.7; }
+  .sy-two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .sy-acc details { border-top: 1px solid rgba(10, 15, 16, 0.09); padding: 16px 0; }
+  .sy-acc details:last-child { border-bottom: 1px solid rgba(10, 15, 16, 0.09); }
+  .sy-acc summary { cursor: pointer; font-family: var(--font-heading); font-size: 22px; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+  .sy-acc p { margin: 8px 0 0; font-size: 18px; opacity: 0.48; }
+  .sy-placeholder { min-height: 360px; border-radius: 16px; background: linear-gradient(135deg, #e9e9e9, #c9c9c9); }
+  .sy-bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .sy-bento__img { grid-column: span 2; grid-row: span 2; }
+  .sy-bento__text { grid-column: span 2; }
+  .sy-bento__stat { border-top: 1px solid rgba(10, 15, 16, 0.12); padding-top: 30px; }
+  .sy-bento__title { font-weight: 700; font-size: 18px; margin: 20px 0; }
+  .sy-donut { width: 160px; }
+  .sy-donut path { fill: none; stroke-width: 8; stroke-linecap: round; }
+  .sy-donut__track { stroke: rgba(10, 15, 16, 0.1); }
+  .sy-donut__bar { stroke: var(--color-key1); }
+  .sy-donut text { font-family: var(--font-heading); font-weight: 600; font-size: 16px; }
+  .sy-foot { background: #000; color: #fff; padding: 80px 24px 40px; }
+  .sy-foot__grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; }
+  .sy-foot ul { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 16px; }
+  .sy-foot a { color: inherit; }
+  .sy-foot__brand { font-family: var(--font-heading); font-size: 24px; margin: 0 0 16px; }
+  .sy-foot__head { opacity: 0.33; margin: 0; font-weight: 600; }
+  .sy-foot__muted { opacity: 0.51; }
+  .sy-foot__legal { border-top: 1px solid rgba(255, 255, 255, 0.28); margin-top: 32px; padding-top: 16px; font-size: 14px; opacity: 0.51; }
+  @media (max-width: 991px) {
+    .sy-cover__grid, .sy-two, .sy-foot__grid { grid-template-columns: 1fr; gap: 32px; }
+    .sy-stats, .sy-bento { grid-template-columns: 1fr 1fr; }
+    .sy-head__menu { display: none; }
+    .sy-head__inner { grid-template-columns: 1fr auto; }
+  }
+  @media (max-width: 767px) {
+    .sy-cover, .sy-sec { padding: 30px 24px; }
+    .sy-stats, .sy-bento { grid-template-columns: 1fr; }
+    .sy-bento__img, .sy-bento__text { grid-column: auto; grid-row: auto; }
+    .sy-h1, .sy-h2 { font-size: 30px; }
+  }
+</style>

@@ -1,0 +1,172 @@
+/* Übernommen aus der Onepage-Vibe-Sektion „Formular“ (styles.module.css) */
+.card {
+  background: #0a0a0a;
+  border-top: 3px solid var(--color-kit-key1);
+  padding: 28px 24px;
+}
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.formTitle {
+  font-family: var(--font-kit-header-font);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.formSub {
+  font-family: var(--font-kit-text-font);
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 3px;
+}
+.badge {
+  background: var(--color-kit-key1);
+  color: #fff;
+  font-family: var(--font-kit-text-font);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.avail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #111;
+  border-left: 2px solid var(--color-kit-key1);
+  margin-bottom: 20px;
+}
+.pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3ecf8e;
+  flex-shrink: 0;
+  animation: svc-pulse 2s infinite;
+}
+@keyframes svc-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.availText {
+  font-family: var(--font-kit-text-font);
+  font-size: 12px;
+  color: #aaa;
+}
+.availText strong {
+  color: #3ecf8e;
+  font-weight: 700;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.fg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.label {
+  font-family: var(--font-kit-text-font);
+  font-size: 9px;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+/* font-family: inherit wie live (erbt die Seiten-Grundschrift, s. service.astro) */
+.input, .select {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  padding: 13px 14px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: normal;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+}
+.input::placeholder {
+  color: #2a2a2a;
+}
+.input:focus, .select:focus {
+  border-color: var(--color-kit-key1);
+}
+/* Tastaturfokus zusätzlich sichtbar (live nur Rahmenfarbe) */
+.input:focus-visible, .select:focus-visible {
+  outline: 2px solid var(--color-kit-key1);
+  outline-offset: 0;
+}
+.input[aria-invalid='true'], .select[aria-invalid='true'] {
+  border-color: #e55;
+}
+.select {
+  color: #888;
+  cursor: pointer;
+}
+.select option {
+  color: #fff;
+  background: #111;
+}
+.btn {
+  background: var(--color-kit-key1);
+  color: #fff;
+  border: none;
+  padding: 17px 20px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: normal;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  width: 100%;
+  transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.88; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.disclaimer {
+  font-family: var(--font-kit-text-font);
+  font-size: 10px;
+  color: #888;
+  text-align: center;
+  line-height: 1.6;
+}
+.error {
+  font-family: var(--font-kit-text-font);
+  font-size: 12px;
+  color: #e55;
+  padding: 8px 12px;
+  background: #1a0a0a;
+  border-left: 2px solid #e55;
+}
+.errorPhone {
+  color: #e55;
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .card {
+    padding: 20px 16px;
+  }
+}

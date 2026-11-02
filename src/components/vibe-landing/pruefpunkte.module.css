@@ -1,0 +1,118 @@
+/* Pruefpunkte */
+.section {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 184px 24px;
+  font-family: var(--font-kit-text-font, 'Manrope', sans-serif);
+}
+
+.sectionFull {
+  min-height: var(--con-kit-section-min-height, 100vh);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.inner { max-width: 1120px; margin: 0 auto; width: 100%; }
+
+.head {
+  max-width: 720px;
+  margin-bottom: 20px;
+}
+
+.kicker { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 20px; }
+.kickerRule { width: 26px; height: 1px; background-color: var(--color-kit-key1, #f26d22); }
+
+.lead { max-width: 640px; margin-bottom: 68px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #e6eaea;
+  border-left: 1px solid #e6eaea;
+}
+
+/* Variante mit drei Spalten (Notfallplan-Kapitel) */
+.grid3 { grid-template-columns: repeat(3, 1fr); }
+
+.cell {
+  padding: 26px 24px 30px;
+  border-right: 1px solid #e6eaea;
+  border-bottom: 1px solid #e6eaea;
+  position: relative;
+  transition: background-color 200ms ease;
+}
+
+.cell:hover { background-color: #fbf9f7; }
+
+.num {
+  font-family: var(--font-kit-header-font, 'Roboto', sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--color-kit-key1, #f26d22);
+  display: block;
+  margin-bottom: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cellTitle {
+  font-family: var(--font-kit-header-font, 'Roboto', sans-serif);
+  font-size: 16.5px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: #0d1112;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.bottom {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 56px;
+  align-items: center;
+  margin-top: 68px;
+}
+
+.noteBox {
+  background-color: #fbf7f4;
+  border: 1px solid #f2e0d2;
+  border-radius: 6px;
+  padding: 26px 28px;
+}
+
+.noteHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: var(--color-kit-key1, #f26d22);
+}
+
+.noteTitle {
+  font-family: var(--font-kit-header-font, 'Roboto', sans-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: #0d1112;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.ctaWrap { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+@media (max-width: 1040px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 980px) {
+  .section { padding: 128px 20px; }
+  .bottom { grid-template-columns: 1fr; gap: 28px; align-items: start; }
+}
+
+@media (max-width: 600px) {
+  .section { padding: 104px 16px; }
+  .grid { grid-template-columns: 1fr; }
+  .cell { padding: 22px 18px 24px; }
+  .num { margin-bottom: 12px; }
+  .lead { margin-bottom: 36px; }
+}

@@ -1,0 +1,117 @@
+---
+/**
+ * Onepage „layout“: orange Box mit Lukas Blaschke, „Was hast Du zu verlieren?“, Text und weißem Button
+ * „Jetzt kostenlos sichern“ (Animation „breath“ mit weißem Ripple) → scrollt zum Formular.
+ * Box 834 px (Container 960, 21/24 Spalten), Padding Sektion 50/100 (mobil 25/50), Box 48 (mobil 24).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta, images, type ImageKey } from '../../data/images';
+import { shared } from './content';
+
+interface Props {
+  image: ImageKey;
+  formAnchor?: string;
+}
+const { image, formAnchor = '#formular' } = Astro.props;
+const c = shared.cta;
+const p = shared.person;
+---
+
+<section class="scta" aria-labelledby="scta-h">
+  <div class="scta__box">
+    <div class="scta__person">
+      <Image
+        src={imageMeta(image)}
+        alt={images[image].alt}
+        widths={[120, 240]}
+        sizes="120px"
+        width={120}
+        height={120}
+        loading="lazy"
+        format="webp"
+        class="scta__photo"
+      />
+      <div>
+        <p class="scta__name">{p.name}</p>
+        <p class="scta__role">{p.role}</p>
+      </div>
+    </div>
+    <h2 id="scta-h" class="sec-h-l scta__h">{c.heading}</h2>
+    <p class="sec-text scta__text">
+      {c.paragraphs.map((t, i) => (i < c.paragraphs.length - 1 ? <Fragment>{t}<br /></Fragment> : t))}
+    </p>
+    <a class="sec-btn sec-anim-breath scta__btn" href={formAnchor}>
+      <span class="sec-btn__title">{c.button}</span>
+      <span class="sec-btn__sub">{c.buttonSub}</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .scta {
+    background: #0a0f10;
+    color: #fff;
+    padding: 50px 24px 100px;
+  }
+  .scta__box {
+    max-width: 834px;
+    margin: 0 auto;
+    background: var(--color-key1);
+    border-radius: 4px;
+    padding: 48px;
+    text-align: center;
+  }
+  .scta__person {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .scta__photo {
+    flex: 0 0 auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 100px;
+    object-fit: cover;
+  }
+  .scta__name {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 27px;
+  }
+  .scta__role {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 21px;
+  }
+  .scta__text {
+    margin-top: 10px;
+  }
+  .scta__btn {
+    --sec-ripple: 255, 255, 255;
+    margin: 17px 0 16px;
+    border-radius: 4px;
+    background: #fff;
+    color: var(--color-dark);
+  }
+  .scta__btn:hover {
+    color: var(--color-dark);
+  }
+  @media (max-width: 767px) {
+    .scta {
+      padding: 25px 24px 50px;
+    }
+    .scta__box {
+      padding: 24px;
+    }
+    .scta__person {
+      justify-content: flex-start;
+      gap: 12px;
+    }
+  }
+</style>

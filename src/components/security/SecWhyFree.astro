@@ -1,0 +1,48 @@
+---
+/**
+ * Onepage „layout“: Label „Warum kostenlos?“, „Das ist kein Marketing-Trick.“, Fließtext.
+ * Spalte 763 px mittig, Padding oben 60 (mobil 30), unten 20.
+ */
+import { shared } from './content';
+const w = shared.whyFree;
+---
+
+<section class="swf" aria-labelledby="swf-h">
+  <div class="swf__col">
+    <p class="sec-label swf__label">{w.label}</p>
+    <h2 id="swf-h" class="sec-h-l swf__h">{w.heading}</h2>
+    <p class="sec-text swf__text">{w.text}</p>
+  </div>
+</section>
+
+<style>
+  .swf {
+    background: #0a0f10;
+    color: #fff;
+    padding: 60px 24px 20px;
+  }
+  .swf__col {
+    max-width: 763px;
+    margin: 0 auto;
+  }
+  .swf__label {
+    margin: 0;
+    background: var(--color-key1);
+  }
+  .swf__h {
+    margin-top: 20px;
+  }
+  .swf__text {
+    margin-top: 20px;
+  }
+  @media (max-width: 991px) {
+    .swf__col {
+      max-width: 798px;
+    }
+  }
+  @media (max-width: 767px) {
+    .swf {
+      padding-top: 30px;
+    }
+  }
+</style>

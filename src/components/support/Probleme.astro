@@ -1,0 +1,43 @@
+---
+/**
+ * /support „Probleme“: orange Linie oben, Überschrift, 4 Spalten mit rotem X und Text.
+ */
+import Icon from './Icon.astro';
+interface Props { title: string; items: string[]; }
+const { title, items } = Astro.props;
+---
+
+<section class="pr sp-sec sp-topline" style="--bg:#f5f5f5;--pt:78px;--pb:59px;--ptm:76.5px;--pbm:29.5px">
+  <div class="sp-in">
+    <h2 class="sp-t sp-t--m pr__title">{title}</h2>
+    <ul class="pr__grid">
+      {items.map((t, i) => (
+        <li class="pr__item">
+          <Icon name="x-gradient" class="pr__icon" />
+          <p class:list={['pr__txt', { 'pr__txt--first': i === 0 }]}>{t}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pr__title { color: #010101; }
+  .pr__grid {
+    list-style: none;
+    margin: 28.4px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 48px;
+  }
+  .pr__item { padding-bottom: 20px; }
+  .pr__icon { display: block; width: 39.2px; height: 39.2px; margin-left: 8.4px; }
+  .pr__txt { margin: 18.4px 0 0; font: 600 16px/21.05px var(--font-heading); letter-spacing: -0.4px; color: #010101; }
+  .pr__txt--first { line-height: 22.4px; }
+  @media (max-width: 992px) {
+    .pr__grid { grid-template-columns: 1fr; row-gap: 52.4px; }
+    .pr__item { padding-bottom: 0; }
+    .pr__item:last-child { padding-bottom: 20px; }
+  }
+</style>

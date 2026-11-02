@@ -1,0 +1,26 @@
+---
+/** /service – Sektion 2 „Formular“ (Anker #formular). Formular selbst ist eine React-Insel. */
+import ServiceForm from './ServiceForm';
+import { formular } from './content';
+---
+
+<section id="formular" class="section" aria-label={formular.formTitle}>
+  <div class="container">
+    <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <ServiceForm client:visible {...formular} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    background: #111;
+    padding: 64px 0;
+    scroll-margin-top: 0;
+  }
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+</style>

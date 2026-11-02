@@ -1,0 +1,94 @@
+---
+/**
+ * /it-support (einzige Inhalts-Sektion): radialer Verlauf, links Angebot (H1), rechts dunkle Formularspalte
+ * mit „Was Dich erwartet“, darunter 3 hochzählende Kennzahlen.
+ */
+import Icon from './Icon.astro';
+import LeadForm from './LeadForm.astro';
+import Kennzahl from './Kennzahl.astro';
+
+interface Props { formId: string; page: string; }
+const { formId, page } = Astro.props;
+const list = [
+  'Für Unternehmen ab 10 Mitarbeitern',
+  'Remote oder vor Ort – auch Hardware-Probleme',
+  'Kostenloses Vorab-Gespräch zur Vorbereitung',
+  'Eine Stunde vollständig kostenlos',
+  'Keine Folgepflicht, kein versteckter Vertrag',
+];
+const nums = [
+  { prefix: '<', value: 24, suffix: 'Std.', desc: 'Reaktionszeit' },
+  { value: 100, suffix: '%', desc: 'kostenlos - kein Trick' },
+  { value: 0, suffix: '€', desc: 'Kosten - kein Vertrag' },
+];
+---
+
+<section id="formular" class="its sp-sec" style="--pt:101px;--pb:124px;--ptm:60px;--pbm:63.7px">
+  <div class="sp-in">
+    <div class="its__grid">
+      <div class="its__left">
+        <p class="sp-label its__label">Unser Angebot</p>
+        <h1 class="sp-t sp-t--l its__title">Eine Stunde <span class="sp-o">kostenloser IT-Support</span> für Dich.</h1>
+        <p class="sp-text its__text">Jeder IT-Dienstleister behauptet, er sei gut. Wir zeigen es dir – ohne Vorleistung, ohne Risiko. Eine Stunde lang, 100% kostenlos.</p>
+        <hr class="its__line" />
+      </div>
+      <div class="its__right">
+        <LeadForm formId={formId} page={page} quoteFirst headingTag="h2" buttonText="Jetzt kostenlos buchen" buttonSubtitle="Kein Vertrag · Keine Kosten · Nur Hilfe" note="Nach der Anfrage melden wir uns für ein kostenloses Vorab-Gespräch">
+          <Fragment slot="quote">🟢&nbsp; Verfügbarkeit: <b>innerhalb</b> <b>24h werktags</b></Fragment>
+          <Fragment slot="title">Jetzt <span class="sp-o">kostenlos sichern</span>, ohne wenn und aber.</Fragment>
+          <Fragment slot="after">
+            <h3 class="sp-t sp-t--s its__h3">Was Dich erwartet</h3>
+            <ul class="sp-list its__list">
+              {list.map((t) => (
+                <li class="sp-list__item">
+                  <Icon name="c-check" class="sp-list__icon" />
+                  <span class="sp-list__body"><span>{t}</span></span>
+                </li>
+              ))}
+            </ul>
+          </Fragment>
+        </LeadForm>
+      </div>
+    </div>
+    <div class="its__nums">
+      {nums.map((n) => (
+        <Kennzahl value={n.value} prefix={n.prefix} suffix={n.suffix} desc={n.desc} count align="center" descColor="rgba(242, 109, 34, 0.5)" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initCountUp } from './countup';
+  initCountUp();
+</script>
+
+<style>
+  .its { background: radial-gradient(#343738 0%, #575756 77%); color: #fff; }
+  .its__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 545.8fr) minmax(0, 654.2fr);
+    column-gap: 50px;
+    align-items: start;
+  }
+  .its__label { font-weight: 700; color: #f08604; }
+  .its__title { margin-top: 8px; color: #fff; }
+  .its__text { margin-top: 15px; }
+  .its__line { height: 2px; margin: 20px 0 0; border: 0; background: var(--color-key1); }
+  .its__right { padding: 48px 48px 40px; background: #212121; }
+  .its__h3 { margin-top: 40px; color: #fff; }
+  .its__list { margin-top: -8px; }
+  .its__nums {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  @media (max-width: 992px) {
+    .its__grid { grid-template-columns: 1fr; row-gap: 24px; }
+  }
+  @media (max-width: 768px) {
+    .its__right { padding: 24px 24px 16px; }
+    .its__nums { grid-template-columns: 1fr; row-gap: 24px; margin-top: 62px; }
+    .its__nums > :global(*) { min-height: 102px; }
+  }
+</style>

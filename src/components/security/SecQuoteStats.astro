@@ -1,0 +1,217 @@
+---
+/**
+ * Onepage „Inhalt“: Lukas Blaschke + Zitat, darunter 3 Zahlen-Karten (oranger 1-px-Rahmen, Radius 16).
+ * Zähler laufen wie live beim Sichtkontakt in 1,5 s von 0 hoch (ohne JS: Endwert).
+ * Container 960 px, Padding oben 60 (mobil 30).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta, images } from '../../data/images';
+import { shared, type Stat } from './content';
+
+interface Props {
+  stats: Stat[];
+}
+const { stats } = Astro.props;
+const photoKey = 'lukas-blaschke-rechenzentrum' as const;
+const p = shared.person;
+// Symbole wie live in der Überschriften-Schrift, Wörter (Bei, + Jahre) in der Textschrift
+const isSymbol = (s?: string) => !!s && /^[%€]$/.test(s);
+---
+
+<section class="sqs" aria-label="Lukas Blaschke über den Security-Check">
+  <div class="sqs__inner">
+    <div class="sqs__row">
+      <div class="sqs__person">
+        <div class="sqs__meta">
+          <p class="sqs__name">{p.name}</p>
+          <p class="sqs__role">{p.role}</p>
+        </div>
+        <Image
+          src={imageMeta(photoKey)}
+          alt={images[photoKey].alt}
+          widths={[120, 240]}
+          sizes="120px"
+          width={120}
+          height={120}
+          loading="lazy"
+          format="webp"
+          class="sqs__photo"
+        />
+      </div>
+      <blockquote class="sqs__quote">
+        <p>{shared.quote}</p>
+      </blockquote>
+    </div>
+
+    <ul class="sqs__stats">
+      {
+        stats.map((s) => (
+          <li class="sqs__card">
+            <p class="sqs__number">
+              {s.prefix && <span class="sqs__affix sqs__affix--text">{s.prefix}</span>}
+              <span class="sqs__value" data-count-to={s.value}>{s.value}</span>
+              {s.suffix && (
+                <span class:list={['sqs__affix', isSymbol(s.suffix) ? 'sqs__affix--symbol' : 'sqs__affix--text']}>{s.suffix}</span>
+              )}
+            </p>
+            <p class="sqs__desc">{s.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  // Zähler-Animation (Onepage „count“, 1,5 s). Ohne JS bzw. bei reduzierter Bewegung bleibt der Endwert stehen.
+  const els = document.querySelectorAll<HTMLElement>('[data-count-to]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window) {
+    const run = (el: HTMLElement) => {
+      const to = Number(el.dataset.countTo);
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / 1500);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = String(Math.round(to * eased));
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { run(e.target as HTMLElement); io.unobserve(e.target); }
+      }),
+      { threshold: 0.3 },
+    );
+    els.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top > window.innerHeight) el.textContent = '0';
+      io.observe(el);
+    });
+  }
+</script>
+
+<style>
+  .sqs {
+    background: #0a0f10;
+    color: #fff;
+    padding: 60px 24px 0;
+  }
+  .sqs__inner {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .sqs__row {
+    display: grid;
+    grid-template-columns: 381fr 547fr;
+    column-gap: 32px;
+    align-items: center;
+  }
+  .sqs__person {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 11px;
+    text-align: right;
+  }
+  .sqs__name {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 27px;
+  }
+  .sqs__role {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 21px;
+  }
+  .sqs__photo {
+    flex: 0 0 auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 100px;
+    object-fit: cover;
+  }
+  .sqs__quote {
+    margin: 0 0 0 4px;
+    padding-left: 28px;
+    border-left: 2px solid var(--color-key2);
+  }
+  .sqs__quote p {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 20px;
+    line-height: 30px;
+  }
+  .sqs__stats {
+    list-style: none;
+    margin: 30px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .sqs__card {
+    border: 1px solid var(--color-key1);
+    border-radius: 16px;
+    padding: 12px 24px 24px;
+    text-align: center;
+  }
+  .sqs__number {
+    margin: 0;
+    height: 54px;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 4px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .sqs__value {
+    font-family: var(--font-heading);
+    font-size: 48px;
+    line-height: 54px;
+    font-variant-numeric: tabular-nums;
+  }
+  .sqs__affix {
+    font-size: 28.8px;
+    line-height: 28.8px;
+  }
+  .sqs__affix--text {
+    font-family: var(--font-text);
+  }
+  .sqs__affix--symbol {
+    font-family: var(--font-heading);
+  }
+  .sqs__desc {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  @media (max-width: 991px) {
+    .sqs__inner {
+      max-width: 798px;
+    }
+  }
+  @media (max-width: 767px) {
+    .sqs {
+      padding-top: 30px;
+    }
+    .sqs__row {
+      grid-template-columns: 1fr;
+      row-gap: 24px;
+    }
+    .sqs__quote {
+      margin-left: 6px;
+    }
+    .sqs__stats {
+      grid-template-columns: 1fr;
+      gap: 23px;
+    }
+  }
+</style>

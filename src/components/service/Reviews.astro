@@ -1,0 +1,50 @@
+---
+/** /service – Sektion 6 „Trustindex Bewertungen“ (Widget „reviews“, lädt erst bei Sichtkontakt) */
+import Trustindex from '../Trustindex.astro';
+import { reviews } from './content';
+---
+
+<section class="section">
+  <div class="container">
+    <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <p class="eyebrow">{reviews.eyebrow}</p>
+      <h2 class="headline">{reviews.headline}</h2>
+    </div>
+    <div class="widgetWrap">
+      <Trustindex widget="reviews" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    background: var(--color-kit-dark);
+    padding: 72px 0;
+  }
+  .container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0 0 12px;
+  }
+  .headline {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+  }
+  .widgetWrap {
+    width: 100%;
+  }
+</style>

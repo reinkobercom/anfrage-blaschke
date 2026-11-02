@@ -1,0 +1,64 @@
+---
+/**
+ * Hero der Dankeseiten (Onepage „Info“): Häkchen-Icon, Label, Hauptzeile (H1), Text.
+ * Live dunkel (#0a0f10) – die im Builder hinterlegten Hintergrundbilder/Verläufe werden live nicht
+ * dargestellt und sind daher hier nicht übernommen.
+ * Gemessen: Icon 67 px orange, Spalte 16/24 (828 px), Abstände 15 · 35 · 20 · 19 · 30 px.
+ */
+import type { DankeContent } from './content';
+import { dankeShared } from './content';
+
+interface Props {
+  content: DankeContent;
+}
+const { content: c } = Astro.props;
+---
+
+<section class="rg-dinfo" aria-labelledby="rg-dinfo-title">
+  <div class="rg-container rg-dinfo__inner">
+    <svg class="rg-dinfo__icon" viewBox="0 0 48 48" width="67" height="67" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M24,1C11.3,1,1,11.3,1,24s10.3,23,23,23s23-10.3,23-23S36.7,1,24,1z M36.7,16.7l-16,16 C20.5,32.9,20.3,33,20,33s-0.5-0.1-0.7-0.3l-8-8c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l7.3,7.3l15.3-15.3c0.4-0.4,1-0.4,1.4,0 S37.1,16.3,36.7,16.7z"
+      />
+    </svg>
+    <p class="rg-label rg-label--tag rg-dinfo__label">{dankeShared.label}</p>
+    <h1 id="rg-dinfo-title" class="rg-h rg-h--m rg-dinfo__title">{c.title}</h1>
+    <p class="rg-dinfo__text" set:html={c.text} />
+  </div>
+</section>
+
+<style>
+  .rg-dinfo {
+    background: var(--color-dark);
+    color: #fff;
+    padding: 15px 0 0;
+  }
+  .rg-dinfo__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .rg-dinfo__icon {
+    display: block;
+    width: 67px;
+    height: 67px;
+    margin-bottom: 35px;
+    color: var(--color-key1);
+  }
+  .rg-dinfo__label {
+    margin: 0 0 20px;
+    background: rgb(15, 23, 24);
+  }
+  .rg-dinfo__title { margin-bottom: 19px; color: #fff; }
+  .rg-dinfo__text {
+    max-width: 66.6667%;
+    margin: 0 0 30px;
+    font-size: 16px;
+    line-height: 24px;
+  }
+  @media (max-width: 991px) {
+    .rg-dinfo__text { max-width: none; }
+  }
+</style>

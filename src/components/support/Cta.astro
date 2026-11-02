@@ -1,0 +1,24 @@
+---
+/** Abschluss-CTA auf Orange: Überschrift 64 px zentriert, Text, weißer Button → Formular. */
+interface Props { title: string; text: string; buttonText: string; buttonSubtitle: string; narrow?: boolean; href?: string; }
+const { title, text, buttonText, buttonSubtitle, narrow = false, href = '#formular' } = Astro.props;
+---
+<section class="ct sp-sec" style="--bg:#f26d22;--pt:100px;--pb:120px;--ptm:50px;--pbm:70px">
+  <div class:list={['sp-in ct__in', { 'ct__in--narrow': narrow }]}>
+    <h2 class="sp-t sp-t--xl ct__title">{title}</h2>
+    <p class="sp-text sp-text--l ct__text">{text}</p>
+    <a class="sp-btn sp-btn--l sp-btn--white ct__btn" href={href}>
+      <span class="sp-btn__label">{buttonText}</span>
+      <span class="sp-btn__sub">{buttonSubtitle}</span>
+    </a>
+  </div>
+</section>
+<style>
+  .ct { color: #fff; text-align: center; }
+  .ct__in--narrow { max-width: 986.3px; }
+  .ct__text { margin-top: 30px; }
+  .ct__btn { display: flex; width: fit-content; max-width: 100%; margin: 30px auto 0; }
+  @media (max-width: 768px) {
+    .ct__btn { width: 100%; }
+  }
+</style>

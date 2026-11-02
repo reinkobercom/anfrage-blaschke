@@ -1,0 +1,205 @@
+---
+/**
+ * Kopfzeile der Dankeseiten (Onepage header-v2): Logo links, Outline-Button „Zurück zur Webseite“.
+ * Mobil (≤ 768 px) wie live: Burger-Button öffnet ein Vollbild-Menü mit demselben Button
+ * (ohne JavaScript über die Popover-API).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import { site } from '../../data/site';
+import './shared.css';
+
+interface Props {
+  /** Ziel von „Zurück zur Webseite“ */
+  backHref?: string;
+  backText?: string;
+}
+
+const { backHref = site.mainWebsite, backText = 'Zurück zur Webseite' } = Astro.props;
+const external = /^https?:\/\//.test(backHref);
+const menuId = 'dk-menu';
+const logo = imageMeta('logo-blaschke-it');
+---
+
+<header class="dkh">
+  <div class="dkh__row">
+    <div class="dkh__logo-slot">
+      <a class="dkh__logo" href="/" aria-label={`${site.name} – Startseite`}>
+        <Image src={logo} alt="" widths={[188, 376]} sizes="188px" width={188} height={41} loading="eager" fetchpriority="high" format="webp" />
+      </a>
+    </div>
+    <div class="dkh__btn-slot">
+      <a class="dkh__btn" href={backHref} rel={external ? 'noopener' : undefined}>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><polyline points="12.5 3.5 6 10 12.5 16.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline></svg>
+        <span>{backText}</span>
+      </a>
+    </div>
+    <button class="dkh__burger" type="button" popovertarget={menuId} aria-label="Menü öffnen" aria-controls={menuId}>
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 9h28M2 23h28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    </button>
+  </div>
+
+  <div id={menuId} class="dkh__menu" popover aria-label="Menü">
+    <div class="dkh__menu-head">
+      <a class="dkh__logo" href="/" aria-label={`${site.name} – Startseite`}>
+        <Image src={logo} alt="" widths={[188, 376]} sizes="188px" width={188} height={41} loading="lazy" format="webp" />
+      </a>
+      <button class="dkh__close" type="button" popovertarget={menuId} popovertargetaction="hide" aria-label="Menü schließen">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M22 10 10 22M22 22 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"></path></svg>
+      </button>
+    </div>
+    <div class="dkh__menu-body">
+      <a class="dkh__btn" href={backHref} rel={external ? 'noopener' : undefined}>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><polyline points="12.5 3.5 6 10 12.5 16.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline></svg>
+        <span>{backText}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .dkh {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+  }
+  .dkh__row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 87px;
+    width: min(1250px, 100% - 54px);
+    margin-inline: auto;
+  }
+  /* Onepage: Logo-Atom 76,12 %, Button-Atom 20,03 % der Zeile, Button im Atom zentriert */
+  .dkh__logo-slot {
+    flex: 0 1 76.12%;
+    min-width: 0;
+    display: flex;
+  }
+  .dkh__btn-slot {
+    flex: 0 0 auto;
+    width: 20.03%;
+    min-width: max-content;
+    display: flex;
+    justify-content: center;
+  }
+  .dkh__logo {
+    display: block;
+    width: 188px;
+    height: 41px;
+  }
+  .dkh__logo :global(img) {
+    width: 188px;
+    height: 41px;
+  }
+
+  .dkh__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 7px 28px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px var(--color-key1);
+    color: var(--color-dark);
+    background-color: transparent;
+    text-decoration: none;
+    font-family: var(--font-text);
+    font-size: 15px;
+    line-height: 22.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color 0.3s ease-out;
+  }
+  .dkh__btn span { padding: 4px 0; }
+  .dkh__btn svg {
+    width: 21px;
+    height: 21px;
+    flex: none;
+  }
+  .dkh__btn:hover { background-color: rgba(242, 109, 34, 0.1); }
+
+  .dkh__burger { display: none; }
+
+  @media (max-width: 992px) {
+    .dkh__row { width: min(798px, 100% - 2px); }
+  }
+
+  @media (max-width: 768px) {
+    .dkh__row {
+      width: calc(100% - 48px);
+      justify-content: space-between;
+    }
+    .dkh__btn-slot { display: none; }
+    .dkh__logo-slot { flex: 0 1 auto; }
+    .dkh__burger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      padding: 0;
+      border: 0;
+      border-radius: 4px;
+      background: #f2f2f2;
+      color: var(--color-dark);
+      cursor: pointer;
+      box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0 2px 2px 0, rgba(0, 0, 0, 0.12) 0 1px 5px 0;
+      transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s;
+    }
+    .dkh__burger svg { width: 21px; height: 21px; }
+  }
+
+  /* Vollbild-Menü (mobil) */
+  .dkh__menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #fff;
+    color: var(--color-dark);
+    box-shadow: rgba(17, 17, 26, 0.1) 0 16px 32px 0, rgba(17, 17, 26, 0.1) 0 95px 140px 0;
+    opacity: 0;
+    transition: opacity 0.3s, display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+  }
+  .dkh__menu:popover-open { opacity: 1; }
+  @starting-style {
+    .dkh__menu:popover-open { opacity: 0; }
+  }
+  .dkh__menu::backdrop { background: rgba(0, 0, 0, 0.2); }
+  .dkh__menu-head {
+    position: relative;
+    height: 89px;
+    padding: 24px;
+  }
+  .dkh__close {
+    position: absolute;
+    top: 22px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-dark);
+    cursor: pointer;
+  }
+  .dkh__close svg { width: 20px; height: 20px; }
+  .dkh__menu-body {
+    padding: 24px;
+    transform: translateY(0);
+    transition: transform 0.7s cubic-bezier(0, 0.89, 0.13, 0.99);
+  }
+  @starting-style {
+    .dkh__menu:popover-open .dkh__menu-body { transform: translateY(-16px); }
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+/**
+ * /support Gegenüberstellung „so läuft es meistens“ vs. „Blaschke IT“.
+ * Zwei Onepage-Sektionen: „VS Desktop“ (ab 769 px) und „VS mobile“ (bis 768 px) – per Media-Query umgeschaltet.
+ */
+import Icon from './Icon.astro';
+interface Side { label: string; title: string; items: string[]; }
+interface Props { variant: 'desktop' | 'mobile'; bad: Side; good: Side; }
+const { variant, bad, good } = Astro.props;
+---
+
+{variant === 'desktop' ? (
+  <section class="vs vs--desktop" aria-label="Vergleich">
+    <div class="vs__col vs__col--bad">
+      <p class="sp-label sp-label--gray">{bad.label}</p>
+      <p class="sp-t sp-t--m vs__title vs__title--bad">{bad.title}</p>
+      <ul class="vs__list vs__list--center">
+        {bad.items.map((t) => <li><Icon name="x" class="vs__icon" /><span>{t}</span></li>)}
+      </ul>
+    </div>
+    <div class="vs__col vs__col--good">
+      <p class="sp-label"><span>{good.label}</span></p>
+      <p class="sp-t sp-t--m vs__title">{good.title}</p>
+      <ul class="vs__list">
+        {good.items.map((t) => <li><Icon name="check-line" class="vs__icon" /><span>{t}</span></li>)}
+      </ul>
+    </div>
+  </section>
+) : (
+  <section class="vs vs--mobile" aria-label="Vergleich">
+    <div class="vs__card vs__card--bad">
+      <p class="sp-label sp-label--gray">{bad.label}</p>
+      <p class="sp-t sp-t--m vs__title">{bad.title}</p>
+      <ul class="vs__list">
+        {bad.items.map((t) => <li><Icon name="x" class="vs__icon" /><span>{t}</span></li>)}
+      </ul>
+    </div>
+    <div class="vs__card vs__card--good">
+      <p class="sp-label"><span>{good.label}</span></p>
+      <p class="sp-t sp-t--m vs__title">{good.title}</p>
+      <ul class="vs__list">
+        {good.items.map((t) => <li><Icon name="check-line" class="vs__icon" /><span>{t}</span></li>)}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .vs { position: relative; color: var(--color-dark); background: #fff; }
+  .vs__title { margin-top: 8px; }
+  .vs__list { list-style: none; margin: 20px 0 0; padding: 0; }
+  .vs__list li {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    font: 400 16.8px/25.2px var(--font-text);
+  }
+  .vs__icon { flex: none; width: 28px; height: 28px; margin: 0 16.6px 0 1px; align-self: flex-start; margin-top: 6px; }
+
+  /* Desktop: zwei volle Hälften */
+  .vs--desktop { display: grid; grid-template-columns: 1fr 1fr; min-height: 490.8px; }
+  .vs__col { padding: 50px; }
+  .vs__col--bad { background: #575756; color: #fff; text-align: center; padding-top: 51px; }
+  .vs__col--good { background: #fff; padding-top: 71.8px; border-radius: 4px; }
+  .vs__title--bad { max-width: 318px; margin-left: auto; margin-right: auto; color: #fff; }
+  .vs__list--center li { justify-content: center; }
+  .vs__col--bad .vs__icon { color: #fff; }
+  .vs__col--good .vs__title { max-width: 520px; }
+
+  /* Mobil: zwei Karten untereinander */
+  .vs--mobile { display: none; padding: 0 24px 1px; }
+  .vs__card { padding: 24px; }
+  .vs__card--bad { background: #575756; color: #fff; }
+  .vs__card--bad .vs__icon { color: #fff; }
+  .vs__card--good {
+    margin-top: 24px;
+    padding-bottom: 39px;
+    background: #fff;
+    box-shadow: rgba(17, 17, 26, 0.1) 0 8px 24px 0, rgba(17, 17, 26, 0.05) 0 16px 56px 0;
+  }
+  .vs__card .vs__list { margin-top: 20px; }
+
+  @media (max-width: 992px) {
+    .vs--desktop { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .vs--desktop { display: none; }
+    .vs--mobile { display: block; }
+  }
+</style>

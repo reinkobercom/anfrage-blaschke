@@ -1,0 +1,128 @@
+---
+/**
+ * Danke-Intro: Häkchen-Icon, Label „Anfrage erhalten“, Haupttitel (H1), Text, Lukas Blaschke.
+ * Live: /danke grauer Hintergrund (Key 2), /danke-securitycheck + /danke-service dunkel.
+ */
+import { Image } from 'astro:assets';
+import { imageMeta, images } from '../../data/images';
+import { site } from '../../data/site';
+import { intro } from './content';
+import './shared.css';
+
+interface Props {
+  /** Hintergrund: 'key2' = #575756 (/danke), 'dark' = #0a0f10 */
+  bg?: 'key2' | 'dark';
+}
+
+const { bg = 'dark' } = Astro.props;
+---
+
+<section class:list={['dk-section', 'dki', `dki--${bg}`]} style="--dk-pt:70px;--dk-pb:0px">
+  <div class="dk-wrap dki__inner">
+    <div class="dki__icon" aria-hidden="true">
+      <svg viewBox="0 0 48 48"><path fill="currentColor" d="M24,1C11.3,1,1,11.3,1,24s10.3,23,23,23s23-10.3,23-23S36.7,1,24,1z M36.7,16.7l-16,16 C20.5,32.9,20.3,33,20,33s-0.5-0.1-0.7-0.3l-8-8c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l7.3,7.3l15.3-15.3c0.4-0.4,1-0.4,1.4,0 S37.1,16.3,36.7,16.7z"></path></svg>
+    </div>
+    <p class="dki__label">{intro.label}</p>
+    <h1 class="dki__title">{intro.titleBefore}<span class="dki__hl">{intro.highlight}</span>{intro.titleAfter}</h1>
+    <p class="dki__text">{intro.text}</p>
+    <div class="dki__person">
+      <div class="dki__photo">
+        <Image
+          src={imageMeta('lukas-blaschke-rechenzentrum')}
+          alt={images['lukas-blaschke-rechenzentrum'].alt}
+          widths={[72, 144, 216]}
+          sizes="72px"
+          width={72}
+          height={72}
+          loading="lazy"
+          decoding="async"
+          format="webp"
+        />
+      </div>
+      <div class="dki__person-text">
+        <p class="dki__name">{site.person.name}</p>
+        <p class="dki__role">{site.person.role}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dki { color: #fff; }
+  .dki--key2 { background: var(--color-key2); }
+  .dki--dark { background: var(--color-dark); }
+  .dki__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  /* Icon xl: 96 px Atom, Symbol 67 px */
+  .dki__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    color: var(--color-key1);
+  }
+  .dki__icon svg { width: 67px; height: 67px; }
+  .dki__label {
+    margin: 0 0 20px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: #fff;
+    color: var(--color-key1);
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .dki__title {
+    width: 100%;
+    margin: 0 0 10px;
+    font-family: var(--font-heading);
+    font-size: 32px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: #fff;
+  }
+  .dki__hl { color: var(--color-key1); }
+  .dki__text {
+    margin: 0 0 44px;
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .dki__person {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 50px;
+    text-align: left;
+  }
+  .dki__photo {
+    width: 72px;
+    height: 72px;
+    flex: none;
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .dki__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
+  .dki__name,
+  .dki__role {
+    margin: 0;
+    font-family: var(--font-text);
+    font-weight: 400;
+  }
+  .dki__name { font-size: 18px; line-height: 27px; }
+  .dki__role { font-size: 14px; line-height: 21px; }
+</style>

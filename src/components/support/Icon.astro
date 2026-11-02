@@ -1,0 +1,50 @@
+---
+/**
+ * Icons der Support-Seiten (Nucleo-SVGs wie auf der alten Onepage-Seite). Rein dekorativ (aria-hidden).
+ */
+type Name =
+  | 'x-gradient' | 'x' | 'check-line' | 'c-check' | 'c-question' | 'check'
+  | 'arrow-right' | 'letter' | 'chevron-down' | 'plus' | 'burger' | 'close';
+interface Props { name: Name; class?: string; [key: string]: unknown; }
+const { name, class: cls, ...rest } = Astro.props;
+const uid = `xg-${Math.random().toString(36).slice(2, 8)}`;
+---
+{name === 'x-gradient' && (
+  <svg class={cls} {...rest} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+    <defs><linearGradient id={uid} x1="24" y1="6.74" x2="24" y2="41.26" gradientUnits="userSpaceOnUse"><stop stop-color="#FF666D" /><stop offset="1" stop-color="#E0211F" /></linearGradient></defs>
+    <path fill={`url(#${uid})`} d="M40.971 35.3141L29.6569 24.0001L40.971 12.6861C41.361 12.2951 41.361 11.6621 40.971 11.2721L36.728 7.02907C36.338 6.63907 35.7039 6.63907 35.3139 7.02907L24 18.3431L12.686 7.02907C12.295 6.63907 11.662 6.63907 11.272 7.02907L7.02895 11.2721C6.63895 11.6631 6.63895 12.2961 7.02895 12.6861L18.343 24.0001L7.02895 35.3141C6.63895 35.7041 6.63895 36.3381 7.02895 36.7281L11.272 40.9711C11.663 41.3611 12.295 41.3611 12.686 40.9711L24 29.6571L35.3139 40.9711C35.7039 41.3611 36.338 41.3611 36.728 40.9711L40.971 36.7281C41.361 36.3381 41.361 35.7041 40.971 35.3141Z" />
+  </svg>
+)}
+{name === 'x' && (
+  <svg class={cls} {...rest} viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="currentColor" d="M31.293,13.878l-7.293,7.293-7.293-7.293c-.391-.391-1.024-.391-1.414,0l-1.415,1.415c-.391,.391-.391,1.024,0,1.414l7.293,7.293-7.293,7.293c-.391,.391-.391,1.024,0,1.414l1.415,1.415c.391,.391,1.024,.391,1.414,0l7.293-7.293,7.293,7.293c.391,.391,1.024,.391,1.414,0l1.415-1.415c.391-.391,.391-1.024,0-1.414l-7.293-7.293,7.293-7.293c.391-.391,.391-1.024,0-1.414l-1.415-1.415c-.391-.391-1.024-.391-1.414,0Z" /></svg>
+)}
+{name === 'check-line' && (
+  <svg class={cls} {...rest} viewBox="0 0 20 20" aria-hidden="true" focusable="false"><polyline points="6.5 10.5 8.75 13 13.5 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>
+)}
+{name === 'c-check' && (
+  <svg class={cls} {...rest} viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8,0C3.6,0,0,3.6,0,8s3.6,8,8,8,8-3.6,8-8S12.4,0,8,0Zm3.707,6.707l-4,4c-.195,.195-.451,.293-.707,.293s-.512-.098-.707-.293l-2-2c-.391-.391-.391-1.023,0-1.414s1.023-.391,1.414,0l1.293,1.293,3.293-3.293c.391-.391,1.023-.391,1.414,0s.391,1.023,0,1.414Z" /></svg>
+)}
+{name === 'c-question' && (
+  <svg class={cls} {...rest} viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8,0C3.6,0,0,3.6,0,8s3.6,8,8,8,8-3.6,8-8S12.4,0,8,0Zm0,13c-.552,0-1-.448-1-1s.448-1,1-1,1,.448,1,1-.448,1-1,1Zm1.623-4.908c-.497,.427-.623,.571-.623,.908,0,.553-.448,1-1,1s-1-.447-1-1c0-1.294,.795-1.976,1.322-2.427,.497-.425,.623-.57,.623-.906,0-.183,0-.667-.944-.667-.436,.024-.901,.224-1.258,.561-.401,.378-1.035,.359-1.414-.041-.379-.402-.361-1.035,.041-1.414,.702-.661,1.617-1.054,2.579-1.104h.003c1.812,0,2.993,1.071,2.993,2.666,0,1.293-.795,1.975-1.321,2.425Z" /></svg>
+)}
+{name === 'check' && (
+  <svg class={cls} {...rest} viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8.5,20c-.398,0-.78-.158-1.061-.439L1.086,13.207c-.39-.391-.39-1.024,0-1.414l.707-.707c.391-.391,1.024-.391,1.414,0l5.293,5.293L20.793,4.086c.391-.391,1.024-.391,1.414,0l.707,.707c.391,.391,.391,1.024,0,1.414l-13.353,13.354c-.281,.281-.663,.439-1.061,.439Z" /></svg>
+)}
+{name === 'arrow-right' && (
+  <svg class={cls} {...rest} viewBox="0 0 20 20" aria-hidden="true" focusable="false"><polyline points="8 17 13 10 8 3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>
+)}
+{name === 'letter' && (
+  <svg class={cls} {...rest} viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14,1H2A2,2,0,0,0,0,3v.4L8,7.9l8-4.4V3A2,2,0,0,0,14,1Z" /><path fill="currentColor" d="M7.5,9.9,0,5.7V13a2,2,0,0,0,2,2H14a2,2,0,0,0,2-2V5.7L8.5,9.9A1.243,1.243,0,0,1,7.5,9.9Z" /></svg>
+)}
+{name === 'chevron-down' && (
+  <svg class={cls} {...rest} viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12,15c-0.256,0-0.512-0.098-0.707-0.293L6.586,10L8,8.586l4,4l4-4L17.414,10l-4.707,4.707 C12.512,14.902,12.256,15,12,15z" /></svg>
+)}
+{name === 'plus' && (
+  <svg class={cls} {...rest} viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="square" stroke-width="2"><line class="v" x1="16" y1="2" x2="16" y2="30" /><line x1="30" y1="16" x2="2" y2="16" /></g></svg>
+)}
+{name === 'burger' && (
+  <svg class={cls} {...rest} viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9h28" /><path d="M2 23h28" /></g></svg>
+)}
+{name === 'close' && (
+  <svg class={cls} {...rest} viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><line x1="22" y1="10" x2="10" y2="22" /><line x1="22" y1="22" x2="10" y2="10" /></g></svg>
+)}

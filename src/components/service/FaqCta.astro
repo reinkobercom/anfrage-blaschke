@@ -1,0 +1,213 @@
+---
+/**
+ * /service – Sektion 5 „FAQ & Finaler CTA“.
+ * Akkordeon ohne JavaScript: <details name="…"> (immer nur ein Eintrag offen, wie live).
+ */
+import { faqCta as f } from './content';
+---
+
+<section class="section" aria-labelledby="svc-faq-title">
+  <div class="container">
+    <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <p class="eyebrow" id="svc-faq-title">{f.faqEyebrow}</p>
+      <div class="faqList">
+        {f.faqs.map((item) => (
+          <details class="faqItem" name="svc-faq">
+            <summary class="faqQ">
+              <span>{item.q}</span>
+              <span class="faqTog" aria-hidden="true"></span>
+            </summary>
+            <div class="faqA">{item.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="ctaBlock">
+    <div class="ctaInner">
+      <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+        <h2 class="ctaHeadline">{f.ctaHeadline}</h2>
+        <p class="ctaSub">{f.ctaSub}</p>
+        <a href={f.ctaHref} class="ctaBtn">{f.ctaLabel} &rarr;</a>
+        <ul class="trustRow">
+          {f.ctaTrust.map((t) => (
+            <li class="trustItem">
+              <span class="check" aria-hidden="true">&#10003;</span>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    background: var(--color-kit-dark);
+    padding: 72px 0 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px 64px;
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0 0 24px;
+  }
+  .faqList {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .faqItem {
+    border-bottom: 1px solid #111;
+    interpolate-size: allow-keywords;
+  }
+  .faqQ {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 18px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    font-family: var(--font-kit-header-font);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: normal;
+    color: #fff;
+    text-align: left;
+    list-style: none;
+  }
+  .faqQ::-webkit-details-marker {
+    display: none;
+  }
+  .faqTog {
+    color: var(--color-kit-key1);
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .faqTog::before {
+    content: '+';
+  }
+  .faqItem[open] .faqTog::before {
+    content: '−';
+  }
+  .faqA {
+    font-family: var(--font-kit-text-font);
+    font-size: 15px;
+    color: #ddd;
+    font-weight: 300;
+    line-height: 1.7;
+    padding-bottom: 18px;
+    overflow: hidden;
+  }
+  /* Öffnen: Höhe + Deckkraft 0.25s wie live; Schließen ohne Animation (wie live) */
+  .faqItem::details-content {
+    block-size: 0;
+    overflow: hidden;
+  }
+  .faqItem[open]::details-content {
+    block-size: auto;
+    transition: block-size 0.25s ease, content-visibility 0.25s allow-discrete;
+  }
+  @starting-style {
+    .faqItem[open]::details-content {
+      block-size: 0;
+    }
+  }
+  .faqItem[open] .faqA {
+    animation: svc-faq-fade 0.25s ease both;
+  }
+  @keyframes svc-faq-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .ctaBlock {
+    background: var(--color-kit-key1);
+    padding: 64px 24px;
+  }
+  .ctaInner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .ctaHeadline {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .ctaSub {
+    font-family: var(--font-kit-text-font);
+    font-size: 15px;
+    color: #ffffffcc;
+    margin-bottom: 28px;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  .ctaBtn {
+    display: inline-block;
+    background: #fff;
+    color: var(--color-kit-key1);
+    font-family: var(--font-kit-text-font);
+    font-size: 15px;
+    font-weight: 700;
+    padding: 16px 40px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    transition: opacity 0.2s;
+  }
+  .ctaBtn:hover {
+    opacity: 0.9;
+  }
+  /* Fokus auf orangem Grund in Weiß sichtbar */
+  .ctaBtn:focus-visible {
+    outline-color: #fff;
+  }
+  .trustRow {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .trustItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    color: #ffffffbb;
+  }
+  .check {
+    color: #ffffffcc;
+    font-weight: 700;
+  }
+  @media (max-width: 480px) {
+    .ctaBtn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+/**
+ * Formular-Sektion /support + /full-it-wartung: links Angebot mit Häkchen-Liste, rechts dunkle Formularspalte.
+ * Live: schwarzer Hintergrund, Spalten 11/13 (545,8 | 654,2 px, Abstand 50), Padding 101/154 (mobil 60/114).
+ */
+import Icon from './Icon.astro';
+import LeadForm from './LeadForm.astro';
+
+interface Item { text: string; sub?: string; href?: string; icon?: 'c-check' | 'c-question'; }
+interface Props {
+  formId: string;
+  page: string;
+  label: string;
+  text: string;
+  items: Item[];
+  buttonText: string;
+  buttonSubtitle: string;
+  note: string;
+}
+const { formId, page, label, text, items, buttonText, buttonSubtitle, note } = Astro.props;
+---
+
+<section id="formular" class="fs sp-sec" style="--bg:#000;--pt:101px;--pb:154px;--ptm:60px;--pbm:114px">
+  <div class="sp-in fs__grid">
+    <div class="fs__left">
+      <p class="sp-label">{label}</p>
+      <h2 class="sp-t sp-t--l fs__title"><slot name="title" /></h2>
+      <p class="sp-text fs__text">{text}</p>
+      <ul class="sp-list fs__list">
+        {items.map((it) => (
+          <li class="sp-list__item">
+            <Icon name={it.icon ?? 'c-check'} class="sp-list__icon" />
+            <span class="sp-list__body">
+              {it.href ? <a href={it.href}>{it.text}</a> : <span>{it.text}</span>}
+              {it.sub && <span class="sp-list__sub">{it.sub}</span>}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="fs__right">
+      <LeadForm formId={formId} page={page} buttonText={buttonText} buttonSubtitle={buttonSubtitle} note={note}>
+        <Fragment slot="title"><slot name="formTitle" /></Fragment>
+        <Fragment slot="quote"><slot name="quote" /></Fragment>
+      </LeadForm>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fs { color: #fff; scroll-margin-top: 0; }
+  .fs__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 545.8fr) minmax(0, 654.2fr);
+    column-gap: 50px;
+  }
+  .fs__left { align-self: center; padding-top: 8px; }
+  .fs__title { margin-top: 8px; color: #fff; }
+  .fs__title :global(.sp-o) { color: var(--color-key1); }
+  .fs__text { margin-top: 15px; }
+  .fs__list { margin-top: 22px; }
+  .fs__right { background: #212121; padding: 48px 48px 68px; }
+  @media (max-width: 992px) {
+    .fs__grid { grid-template-columns: 1fr; row-gap: 16px; }
+    .fs__left { padding-top: 0; }
+  }
+  @media (max-width: 768px) {
+    .fs__right { padding: 24px 24px 44px; }
+  }
+</style>

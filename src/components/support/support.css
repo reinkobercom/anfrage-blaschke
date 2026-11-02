@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Gemeinsame Bausteine der Support-Seiten (/support, /full-it-wartung, /it-support)
+   Alle Werte live gemessen (Desktop 1440 px, Tablet 800 px, Mobil 390 px).
+   Breakpoints wie Onepage: ≤ 992 px Spalten untereinander, ≤ 768 px Mobil.
+   ========================================================================== */
+
+.sp-sec {
+  position: relative;
+  padding: var(--pt, 0) 32px var(--pb, 0);
+  background: var(--bg, #fff);
+  color: var(--color-dark);
+}
+.sp-in { max-width: 1250px; margin: 0 auto; position: relative; }
+@media (max-width: 768px) {
+  .sp-sec { padding: var(--ptm, var(--pt, 0)) 24px var(--pbm, var(--pb, 0)); }
+}
+
+/* Orange Trennlinie oben (Onepage „line“ xl: 4 px) */
+.sp-topline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+  background: var(--color-key1);
+  z-index: 1;
+}
+
+/* Labels */
+.sp-label {
+  display: inline-block;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font: 400 12px/20px var(--font-text);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: rgba(255, 160, 84, 0.31);
+  color: var(--color-key1);
+}
+.sp-label--hero { padding: 6px 12px; font-size: 14px; background: rgba(255, 143, 68, 0.42); color: #fff; }
+.sp-label--gray { background: #828281; color: #fff; }
+.sp-label--key2 { background: #575756; color: #fff; }
+.sp-label--light { background: #dadada; color: #010101; }
+.sp-label--pale { background: #f2f2f2; color: var(--color-dark); }
+.sp-label--bold { font-weight: 700; color: #fff; }
+
+/* Überschriften (Roboto 600, ls -0.4 px) */
+.sp-t {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+.sp-t--xl { font-size: 64px; line-height: 80.54px; }
+.sp-t--l { font-size: 48px; line-height: 61.4px; }
+.sp-t--m { font-size: 32px; line-height: 41.6px; }
+.sp-t--s { font-size: 24px; line-height: 31.45px; }
+.sp-t--xs { font-size: 20px; line-height: 26.31px; }
+.sp-o { color: var(--color-key1); }
+@media (max-width: 768px) {
+  .sp-t--xl { font-size: 35.47px; line-height: 44.64px; }
+  .sp-t--l { font-size: 28.98px; line-height: 37.07px; }
+  .sp-t--xs.sp-t--xs-shrink { font-size: 17.62px; line-height: 23.18px; }
+}
+
+.sp-text { margin: 0; font: 400 16px/24px var(--font-text); }
+.sp-text--l { font-size: 18px; line-height: 27px; }
+
+/* Buttons (Onepage „material“) */
+.sp-btn {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: var(--font-text);
+  box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0 2px 2px 0, rgba(0, 0, 0, 0.12) 0 1px 5px 0;
+  transition: box-shadow 0.3s, filter 0.3s;
+}
+@media (hover: hover) {
+  .sp-btn:hover {
+    box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px -1px, rgba(0, 0, 0, 0.14) 0 4px 5px 0, rgba(0, 0, 0, 0.12) 0 1px 10px 0;
+    filter: brightness(1.04);
+  }
+}
+.sp-btn__label { display: block; padding: 4px 0; font-weight: 600; }
+.sp-btn__sub { display: block; font-weight: 400; letter-spacing: 0.5px; opacity: 0.7; }
+.sp-btn--l { min-height: 67.9px; padding: 8px 31px; }
+.sp-btn--l .sp-btn__label { font-size: 17px; line-height: 25.5px; }
+.sp-btn--l .sp-btn__sub { font-size: 13.6px; line-height: 20.4px; margin-top: -2px; }
+.sp-btn--m { min-height: 60.5px; padding: 7px 28px; }
+.sp-btn--m .sp-btn__label { font-size: 15px; line-height: 22.5px; }
+.sp-btn--m .sp-btn__sub { font-size: 12px; line-height: 18px; margin-top: -2px; }
+.sp-btn--primary { background: var(--color-key1); color: #fff; }
+.sp-btn--dark { background: var(--color-dark); color: #fff; }
+.sp-btn--white { background: #fff; color: var(--color-dark); }
+@media (max-width: 768px) {
+  .sp-btn--l { min-height: 70.8px; }
+  .sp-btn--l .sp-btn__label { line-height: 20.4px; }
+  .sp-btn--l .sp-btn__sub { margin-top: 0; }
+  .sp-btn--m { min-height: 64px; }
+  .sp-btn--m .sp-btn__label { line-height: 18px; }
+  .sp-btn--m .sp-btn__sub { margin-top: 0; }
+}
+
+/* Button-Effekte: „floating“ (Hero) und „ripple“ (Formular) – 2,5 s wie live */
+.sp-float { animation: sp-float 2.5s ease-out 0s infinite both; }
+@keyframes sp-float {
+  0%, 100% { transform: translate3d(0, -10%, 0); }
+  50% { transform: translate3d(0, 10%, 0); }
+}
+.sp-ripple { animation: sp-ripple 2.5s ease 0s infinite; }
+@keyframes sp-ripple {
+  0%, 40%, 50% { box-shadow: 0 0 0 0 rgba(242, 109, 34, 0.4), rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0 2px 2px 0, rgba(0, 0, 0, 0.12) 0 1px 5px 0; }
+  85% { box-shadow: 0 0 0 20px rgba(242, 109, 34, 0), rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0 2px 2px 0, rgba(0, 0, 0, 0.12) 0 1px 5px 0; }
+  100% { box-shadow: 0 0 0 0 rgba(242, 109, 34, 0), rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0 2px 2px 0, rgba(0, 0, 0, 0.12) 0 1px 5px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-float, .sp-ripple { animation: none; }
+}
+
+/* Häkchen-Listen (Onepage menu-v2): Icon 21 px, Abstand 13,3 px, Zeile min. 30 px */
+.sp-list { list-style: none; margin: 0; padding: 0; }
+.sp-list__item {
+  display: grid;
+  grid-template-columns: 21px 1fr;
+  column-gap: 13.3px;
+  margin: 0 8px 0 -8px;
+  padding: 8px;
+  font: 400 15.2px/22.8px var(--font-text);
+}
+.sp-list--tight .sp-list__item { margin: 0 5px 0 -5px; padding: 5px; }
+.sp-list__icon { width: 21px; height: 21px; margin: 4.5px 0 0 0.8px; color: var(--color-key1); }
+.sp-list__body { min-height: 30px; display: flex; flex-direction: column; justify-content: center; }
+.sp-list__sub { display: block; margin-top: 5.5px; font-size: 13.68px; line-height: 20.52px; opacity: 0.7; }
+.sp-list a { color: inherit; text-decoration: none; }
+.sp-list a:hover { text-decoration: underline; }
+

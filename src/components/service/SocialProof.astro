@@ -1,0 +1,180 @@
+---
+/** /service – Sektion 4 „Stats, Lukas & Testimonial“ (statisch) */
+import { Image } from 'astro:assets';
+import { imageMeta, images } from '../../data/images';
+import { socialProof as s } from './content';
+---
+
+<section class="section" aria-label="Zahlen und Stimmen">
+  <dl class="statsGrid">
+    {s.stats.map((st, i) => (
+      <div class="stat" data-reveal style={`--reveal-y:16px;--reveal-duration:.4s;--reveal-delay:${(i * 0.08).toFixed(2)}s`}>
+        <dt class="statVal">{st.value}</dt>
+        <dd class="statLabel">{st.label}</dd>
+      </div>
+    ))}
+  </dl>
+
+  <div class="container">
+    <figure class="lukas" data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <div class="lukasImgWrap">
+        <Image
+          src={imageMeta('lukas-blaschke')}
+          alt={images['lukas-blaschke'].alt}
+          class="lukasImg"
+          widths={[60, 120, 180]}
+          sizes="60px"
+          format="webp"
+          loading="lazy"
+        />
+      </div>
+      <div>
+        <figcaption>
+          <span class="lukasName">{s.lukasName}</span>
+          <span class="lukasRole">{s.lukasRole}</span>
+        </figcaption>
+        <blockquote class="lukasQuote">"{s.lukasQuote}"</blockquote>
+      </div>
+    </figure>
+
+    <figure class="testi" data-reveal style="--reveal-y:20px;--reveal-duration:.5s;--reveal-delay:.15s">
+      <div class="stars" role="img" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <blockquote class="testiQuote">"{s.testiQuote}"</blockquote>
+      <figcaption class="testiCite"><strong>{s.testiAuthor}</strong> &#183; {s.testiCompany}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .section {
+    background: var(--color-kit-dark);
+    padding: 0 0 72px;
+  }
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+    gap: 1px;
+    background-color: #1a1a1a;
+    margin: 0 0 56px;
+  }
+  .stat {
+    background: #111;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .statVal {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 900;
+    color: var(--color-kit-key1);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .statLabel {
+    font-family: var(--font-kit-text-font);
+    font-size: 12px;
+    color: #ddd;
+    line-height: 1.45;
+    font-weight: 300;
+    margin: 0;
+  }
+  .container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  figure {
+    margin: 0;
+  }
+  .lukas {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: #111;
+    padding: 24px;
+  }
+  .lukasImgWrap {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--color-kit-key1);
+  }
+  .lukasImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lukasName {
+    display: block;
+    font-family: var(--font-kit-header-font);
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .lukasRole {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 10px;
+  }
+  .lukasQuote {
+    font-family: var(--font-kit-text-font);
+    font-size: 15px;
+    color: #ddd;
+    font-weight: 300;
+    line-height: 1.7;
+    font-style: italic;
+    margin: 0;
+  }
+  .testi {
+    background: #111;
+    border-left: 3px solid var(--color-kit-key1);
+    padding: 24px;
+  }
+  .stars {
+    color: var(--color-kit-key1);
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .testiQuote {
+    font-family: var(--font-kit-text-font);
+    font-size: 14px;
+    color: #ddd;
+    line-height: 1.7;
+    font-style: italic;
+    margin: 0 0 14px;
+    font-weight: 300;
+  }
+  /* live <cite> (inline) – gleiche Optik */
+  .testiCite {
+    display: inline;
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    color: #bbb;
+    font-style: normal;
+  }
+  .testiCite strong {
+    color: #ddd;
+    font-weight: 700;
+  }
+  @media (max-width: 768px) {
+    .statsGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

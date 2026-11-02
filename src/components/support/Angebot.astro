@@ -1,0 +1,93 @@
+---
+/**
+ * /full-it-wartung „Das Angebot im Detail“: links Leistungsliste, rechts weiße Karte „Ohne Risiko testen“, darunter Versprechen.
+ * Live: Hintergrund #575756, Spalten 488,2 | 705,8 px (Abstand 56), Karte Padding 40.
+ */
+import Icon from './Icon.astro';
+import Versprechen from './Versprechen.astro';
+interface Item { text: string; href?: string; }
+interface Props { intro: string; items: Item[]; cardText: string; cardItems: string[]; }
+const { intro, items, cardText, cardItems } = Astro.props;
+---
+<section class="an sp-sec" style="--bg:#575756;--pt:60px;--pb:60px;--ptm:30px;--pbm:30px">
+  <div class="sp-in">
+    <p class="sp-label sp-label--bold">Das Angebot im Detail</p>
+    <h2 class="sp-t sp-t--l an__title">Was 3 Monate <span class="sp-o">kostenlose</span> Full-Wartung bedeutet.</h2>
+    <div class="an__grid">
+      <div class="an__left">
+        <p class="sp-text">{intro}</p>
+        <ul class="sp-list sp-list--tight an__list">
+          {items.map((it) => (
+            <li class="sp-list__item">
+              <Icon name="c-check" class="sp-list__icon" />
+              <span class="sp-list__body">{it.href ? <a href={it.href}>{it.text}</a> : <span>{it.text}</span>}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="an__card">
+        <p class="sp-label sp-label--pale">Konditionen</p>
+        <h3 class="sp-t sp-t--l an__ctitle">Ohne Risiko testen</h3>
+        <p class="sp-text an__ctext">{cardText}</p>
+        <ul class="an__dots">
+          {cardItems.map((t) => (
+            <li><span class="an__dot"><Icon name="check" /></span><span>{t}</span></li>
+          ))}
+        </ul>
+        <a class="sp-btn sp-btn--m sp-btn--primary an__btn" href="#formular">
+          <span class="sp-btn__label">3 Monate kostenlose Full-Wartung testen</span>
+          <span class="sp-btn__sub">Keine versteckten Kosten · Persönliche Beratung &amp; Einrichtung</span>
+        </a>
+      </div>
+    </div>
+    <Versprechen
+      title="Unser Versprechen: optimale Vorbereitung inklusive"
+      text="Bevor wir starten, lernen wir deine IT-Umgebung kennen – damit wir vom ersten Tag an optimal für dich arbeiten können. Ohne Mehraufwand für dich."
+    />
+  </div>
+</section>
+<style>
+  .an { color: #fff; }
+  .an__title { margin-top: 8px; color: #fff; }
+  .an__grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: minmax(0, 488.2fr) minmax(0, 705.8fr);
+    column-gap: 56px;
+    align-items: center;
+  }
+  .an__list { margin-top: 10px; }
+  .an__card { padding: 40px 40px 80px; background: #fff; color: var(--color-dark); }
+  .an__ctitle { margin-top: 20.5px; }
+  .an__ctext { margin-top: 0; }
+  .an__dots { list-style: none; margin: 7px 0 0 -8px; padding: 0; }
+  .an__dots li {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 40px;
+    padding: 8px;
+    font: 600 15.2px/19.76px var(--font-heading);
+    letter-spacing: -0.4px;
+  }
+  .an__dot {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    background: var(--color-dark);
+    color: #fff;
+  }
+  .an__dot :global(svg) { width: 11.2px; height: 11.2px; }
+  .an__btn { display: flex; width: 80%; margin-top: 12px; }
+  @media (max-width: 992px) {
+    .an__grid { grid-template-columns: 1fr; row-gap: 24px; }
+  }
+  @media (max-width: 768px) {
+    .an__card { padding: 24px 24px 64px; }
+    .an__btn { width: 100%; }
+  }
+</style>

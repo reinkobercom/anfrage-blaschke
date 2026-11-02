@@ -1,0 +1,136 @@
+---
+/**
+ * Onepage „Referenzen“: „Was Kunden sagen“, Zitat (weiße 2-px-Linie, 30 % breit, darüber), Person mit 5 Sternen.
+ * Hintergrund rgb(58,58,57), Padding 60/60 (mobil 30/30). Desktop mittig, mobil linksbündig (wie live).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta, type ImageKey } from '../../data/images';
+import { shared } from './content';
+import { starIcon } from './icons';
+
+interface Props {
+  image: ImageKey;
+}
+const { image } = Astro.props;
+const t = shared.testimonial;
+---
+
+<section class="stm" aria-labelledby="stm-h">
+  <div class="stm__inner">
+    <h2 id="stm-h" class="sec-h-l stm__h">{t.heading}</h2>
+    <figure class="stm__figure">
+      <blockquote class="stm__quote">
+        <p>{t.quote}</p>
+      </blockquote>
+      <figcaption class="stm__person">
+        <Image
+          src={imageMeta(image)}
+          alt={`Porträt von ${t.name.split(',')[0]}`}
+          widths={[88, 176]}
+          sizes="88px"
+          width={88}
+          height={88}
+          loading="lazy"
+          format="webp"
+          class="stm__photo"
+        />
+        <span class="stm__meta">
+          <span class="stm__stars" role="img" aria-label={`${t.rating} von 5 Sternen`}>
+            {Array.from({ length: t.rating }).map(() => <span class="stm__star" set:html={starIcon} />)}
+          </span>
+          <span class="stm__name">{t.name}</span>
+          <span class="stm__role">{t.role}</span>
+        </span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .stm {
+    background: rgb(58, 58, 57);
+    color: #fff;
+    padding: 60px 24px;
+  }
+  .stm__inner {
+    max-width: 674px;
+    margin: 0 auto;
+  }
+  .stm__h {
+    text-align: center;
+  }
+  .stm__figure {
+    margin: 0;
+  }
+  .stm__quote {
+    margin: 0 40px;
+  }
+  .stm__quote::before {
+    content: '';
+    display: block;
+    width: 30%;
+    height: 2px;
+    margin: 20px auto;
+    background: #fff;
+  }
+  .stm__quote p {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 20px;
+    line-height: 30px;
+  }
+  .stm__person {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .stm__photo {
+    flex: 0 0 auto;
+    width: 88px;
+    height: 88px;
+    border-radius: 100px;
+    object-fit: cover;
+  }
+  .stm__meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .stm__stars {
+    display: flex;
+    gap: 10.4px;
+    margin: 0 0 9px 4px;
+    color: var(--color-key1);
+  }
+  .stm__star {
+    width: 19.6px;
+    height: 19.6px;
+    display: inline-flex;
+  }
+  .stm__star :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .stm__name {
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22.4px;
+  }
+  .stm__role {
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 21px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  @media (max-width: 767px) {
+    .stm {
+      padding: 30px 24px;
+    }
+    .stm__person {
+      justify-content: flex-start;
+    }
+  }
+</style>

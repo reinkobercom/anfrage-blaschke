@@ -1,0 +1,14 @@
+---
+/** Hinweisbox „Unser Versprechen: …“ (Hintergrund #fff6e6, Padding 48). */
+interface Props { title: string; text: string; }
+const { title, text } = Astro.props;
+---
+<div class="vp">
+  <h3 class="sp-t sp-t--s vp__title">{title}</h3>
+  <p class="sp-text vp__text">{text}</p>
+</div>
+<style>
+  .vp { margin-top: 56px; padding: 48px; background: #fff6e6; color: #000; }
+  .vp__text { margin-top: 10px; max-width: 902px; }
+  @media (max-width: 768px) { .vp { padding: 24px; } }
+</style>

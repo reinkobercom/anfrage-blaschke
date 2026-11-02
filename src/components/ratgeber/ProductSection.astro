@@ -1,0 +1,117 @@
+---
+/**
+ * Inhalt des Ratgebers (Onepage-Sektion „Product“): animiertes Cover links, Liste rechts.
+ * Live war die Sektion eine Formular-Hülle ohne Felder und die Listeneinträge leere Menü-Buttons –
+ * hier als einfache Liste (gleiche Optik inkl. Hover-Abblenden der übrigen Einträge).
+ * Gemessen: Desktop Abstand 30/60 px, Cover 325 × 400 px (Radius 16), Text ab x 476;
+ * mobil Abstand halbiert, Cover volle Breite.
+ */
+import CoverVideo from './CoverVideo.astro';
+import { highlight, type OptinContent } from './content';
+
+interface Props {
+  content: OptinContent['product'];
+}
+const { content: c } = Astro.props;
+---
+
+<section class="rg-product rg-root" aria-labelledby="rg-product-title">
+  <div class="rg-container rg-product__grid">
+    <div class="rg-product__media">
+      <CoverVideo class="rg-product__video" video={c.video} label={c.videoLabel} posterWidth={340} />
+    </div>
+    <div class="rg-product__body">
+      <h2 id="rg-product-title" class="rg-h rg-h--s rg-product__title" set:html={highlight(c.title)} />
+      <ul class="rg-product__list">
+        {
+          c.items.map((item) => (
+            <li class="rg-product__item">
+              <span class="rg-product__check" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="9" height="9">
+                  <path
+                    fill="currentColor"
+                    d="M8.5,20c-.398,0-.78-.158-1.061-.439L1.086,13.207c-.39-.391-.39-1.024,0-1.414l.707-.707c.391-.391,1.024-.391,1.414,0l5.293,5.293L20.793,4.086c.391-.391,1.024-.391,1.414,0l.707,.707c.391,.391,.391,1.024,0,1.414l-13.353,13.354c-.281,.281-.663,.439-1.061,.439Z"
+                  />
+                </svg>
+              </span>
+              <span class="rg-product__text">{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="rg-product__note"><i>{c.note}</i></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rg-product {
+    background: #fff;
+    color: var(--color-dark);
+    padding: 31px 0 60px;
+  }
+  .rg-product__grid {
+    display: grid;
+    grid-template-columns: 26% 1fr;
+    column-gap: 4.48%;
+    align-items: center;
+  }
+  .rg-product__media { align-self: start; }
+  .rg-product :global(.rg-product__video) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1.23;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    background: #ececec;
+  }
+  .rg-product__body { min-width: 0; }
+  .rg-product__title { margin-bottom: 13px; }
+
+  .rg-product__list {
+    list-style: none;
+    margin: 0 0 8px -8px;
+    padding: 0;
+  }
+  .rg-product__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 8px;
+    transition: opacity 0.3s;
+  }
+  @media (hover: hover) {
+    .rg-product__list:hover .rg-product__item { opacity: 0.6; }
+    .rg-product__list:hover .rg-product__item:hover { opacity: 1; }
+  }
+  .rg-product__check {
+    flex: 0 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: var(--color-key1);
+    color: #fff;
+  }
+  .rg-product__text {
+    font-size: 16.8px;
+    line-height: 25.2px;
+  }
+  .rg-product__note {
+    margin: 0;
+    font-size: 14px;
+    line-height: 21px;
+  }
+
+  @media (max-width: 991px) {
+    .rg-product__grid { grid-template-columns: 1fr; }
+    .rg-product :global(.rg-product__video) { margin-bottom: 44px; }
+  }
+  @media (max-width: 768px) {
+    .rg-product { padding: 15px 0 30px; }
+  }
+</style>

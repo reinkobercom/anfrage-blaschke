@@ -1,0 +1,379 @@
+---
+/**
+ * ENTWURF – Quiz „IT-Sicherheitscheck“ (Onepage-Formular 838cca75-…, Seite /sicherheitscheck, unveröffentlicht).
+ * Wird nur von src/drafts/sicherheitscheck.astro verwendet und daher aktuell nicht gebaut.
+ *
+ * Ablauf wie im Onepage-Entwurf: 6 Fragen (je eine Seite, Antwortkacheln in 2 Spalten),
+ * Kontaktdaten (Name*, Telefonnummer*, E-Mail), danach Dankeschritt. Fortschrittsbalken oben,
+ * Navigation „Vorheriger Schritt“ / „Nächster Schritt“ / „Mein Ergebnis anzeigen →“.
+ * Antworten gehen als Zusatzwerte (extra) in die Lead-Mail.
+ * Ohne JavaScript: alle Schritte untereinander, klassischer POST an /api/lead.
+ *
+ * Korrekturen ggü. Entwurf: Frage 2 hatte denselben Feld-Slug wie Frage 5 („Zugänge“) → eigener Name.
+ * Template-Reste im Dankeschritt („In Onepage können einzelne Schritte …“, „Hier steht ein Hinweistext“)
+ * werden nicht ausgegeben – Texte vor Veröffentlichung mit dem Kunden klären.
+ */
+interface Props {
+  formId?: string;
+}
+const { formId = '838cca75-d091-4c7e-b87d-6d770a7c95ff' } = Astro.props;
+const page = Astro.url.pathname.replace(/\/$/, '');
+
+type Question = { name: string; label: string; multi?: boolean; options: string[] };
+const questions: Question[] = [
+  {
+    name: 'backup',
+    label: 'Wann wurde euer Backup zuletzt erfolgreich getestet?',
+    options: ['Innerhalb der letzten 30 Tage', 'Vor 3–12 Monaten', 'Vor mehr als einem Jahr', 'Wir haben kein regelmäßiges Backup', 'Weiß ich nicht'],
+  },
+  {
+    name: 'ex_mitarbeiter',
+    label: 'Haben ehemalige Mitarbeiter noch Zugang zu euren Systemen, E-Mails oder Cloud-Diensten?',
+    options: ['Nein, wir deaktivieren Zugänge sofort beim Austritt', 'Wahrscheinlich nicht – aber überprüft haben wir es nicht', 'Ja, einige haben noch Zugang', 'Weiß ich nicht'],
+  },
+  {
+    name: 'updates',
+    label: 'Wie aktuell ist die Software auf euren Firmenrechnern?',
+    options: [
+      'Alle Systeme werden regelmäßig automatisch aktualisiert',
+      'Wir machen Updates – aber nicht immer sofort',
+      'Updates werden manuell gemacht – meistens wenn etwas nicht funktioniert',
+      'Wir wissen es ehrlich gesagt nicht genau',
+    ],
+  },
+  {
+    name: 'speicherort',
+    label: 'Wo werden eure Unternehmensdaten gespeichert?',
+    options: [
+      'Auf deutschen oder europäischen Servern – DSGVO-konform',
+      'Bei Microsoft 365, Google oder einem anderen US-Anbieter',
+      'Auf einem lokalen Server bei uns im Büro',
+      'Ich bin mir nicht sicher',
+    ],
+  },
+  {
+    name: 'passwoerter',
+    label: 'Wie regelt ihr Passwörter und Zugangsdaten in eurem Unternehmen?',
+    multi: true,
+    options: ['Wir nutzen einen Passwortmanager und haben klare Regeln', 'Jeder Mitarbeiter regelt das selbst', 'Wir haben ein Standard-Passwort, das viele kennen', 'Weiß ich nicht'],
+  },
+  {
+    name: 'zustaendigkeit',
+    label: 'Wer ist bei euch für IT-Sicherheit verantwortlich?',
+    multi: true,
+    options: [
+      'Ein externer IT-Dienstleister, der sich aktiv darum kümmert',
+      'Wir haben einen Mitarbeiter, der nur dafür zuständig ist',
+      'Ein Mitarbeiter, der das nebenbei macht',
+      'Das läuft irgendwie mit – niemand konkret zuständig',
+      'Ich als Geschäftsführer – neben allem anderen',
+    ],
+  },
+];
+const total = questions.length + 1;
+---
+
+<div class="squiz" data-quiz data-form-id={formId}>
+  <div class="squiz__progress" aria-hidden="true"><span data-quiz-bar style={`width:${100 / (total + 1)}%`}></span></div>
+  <form class="squiz__form" method="post" action="/api/lead" novalidate>
+    <input type="hidden" name="formId" value={formId} />
+    <input type="hidden" name="page" value={page} />
+    <div class="hp-field" aria-hidden="true">
+      <label>Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+    </div>
+
+    {
+      questions.map((q, i) => (
+        <fieldset class="squiz__step" data-step={i}>
+          <legend class="sec-h-l squiz__q">{q.label}</legend>
+          <p class="sr-only">Frage {i + 1} von {questions.length}{q.multi ? ' – Mehrfachauswahl möglich' : ''}</p>
+          <div class="squiz__options">
+            {q.options.map((o) => (
+              <label class="squiz__opt">
+                <input type={q.multi ? 'checkbox' : 'radio'} name={q.name} value={o} />
+                <span>{o}</span>
+              </label>
+            ))}
+          </div>
+          <p class="squiz__err" data-step-err hidden>Bitte wähle eine Antwort aus.</p>
+        </fieldset>
+      ))
+    }
+
+    <fieldset class="squiz__step squiz__step--contact" data-step={questions.length}>
+      <legend class="sec-h-l squiz__q">Dein Ergebnis ist bereit.</legend>
+      <p class="sec-text squiz__intro">
+        Wir haben deine Antworten ausgewertet. Damit du weißt, was sie für deinen Betrieb bedeuten, schaut sich unser IT-Sicherheitsexperte dein Ergebnis persönlich an und meldet sich kurz bei dir.<br /><br />Kostenlos. Kein Pitch. Einfach Klarheit.
+      </p>
+      <label class="squiz__label" for="squiz-name">Vollständiger Name<span class="sr-only"> (Pflichtfeld)</span></label>
+      <input class="squiz__input" id="squiz-name" name="name" type="text" placeholder="Max Mustermann" autocomplete="name" required />
+      <label class="squiz__label" for="squiz-tel">Telefonnummer<span class="sr-only"> (Pflichtfeld)</span></label>
+      <input class="squiz__input" id="squiz-tel" name="telefon" type="tel" inputmode="tel" placeholder="017123..." autocomplete="tel" required />
+      <label class="squiz__label" for="squiz-mail">E-Mail</label>
+      <input class="squiz__input" id="squiz-mail" name="email" type="email" inputmode="email" placeholder="beispiel@gmail.com" autocomplete="email" />
+      <p class="sec-text-s squiz__privacy"><span aria-hidden="true">🔒 </span>Keine Datenweitergabe, kein Newsletter, keine Callcenter-Anrufe.</p>
+      <p class="squiz__err" data-step-err hidden>Bitte gib deinen Namen und deine Telefonnummer an.</p>
+      <p class="squiz__err" data-quiz-msg role="alert" hidden></p>
+    </fieldset>
+
+    <div class="squiz__nav">
+      <button type="button" class="squiz__prev" data-quiz-prev>Vorheriger Schritt</button>
+      <button type="button" class="sec-btn squiz__next" data-quiz-next>Nächster Schritt</button>
+      <button type="submit" class="sec-btn squiz__next" data-quiz-submit>Mein Ergebnis anzeigen →</button>
+    </div>
+  </form>
+
+  <div class="squiz__done" data-quiz-done hidden tabindex="-1">
+    <p class="sec-h-l">Vielen Dank, dass Du uns kontaktiert hast</p>
+    <ol class="squiz__next-steps">
+      <li><span class="squiz__num">1</span><span>Die Überprüfung<br />dauert 24 Stunden</span></li>
+      <li><span class="squiz__num">2</span><span>Wir kontaktieren Dich<br />per Telefon</span></li>
+      <li><span class="squiz__num">3</span><span>Wir besprechen die Details und<br />organisieren die Installation</span></li>
+    </ol>
+  </div>
+</div>
+
+<script>
+  import { submitLead } from '../../lib/client';
+
+  document.querySelectorAll<HTMLElement>('[data-quiz]').forEach((root) => {
+    const form = root.querySelector('form')!;
+    const steps = [...root.querySelectorAll<HTMLFieldSetElement>('[data-step]')];
+    const bar = root.querySelector<HTMLElement>('[data-quiz-bar]')!;
+    const prev = root.querySelector<HTMLButtonElement>('[data-quiz-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-quiz-next]')!;
+    const submit = root.querySelector<HTMLButtonElement>('[data-quiz-submit]')!;
+    const done = root.querySelector<HTMLElement>('[data-quiz-done]')!;
+    const msg = root.querySelector<HTMLElement>('[data-quiz-msg]')!;
+    let current = 0;
+    root.classList.add('is-enhanced');
+
+    const show = (i: number) => {
+      current = i;
+      steps.forEach((s, k) => (s.hidden = k !== i));
+      prev.hidden = i === 0;
+      next.hidden = i === steps.length - 1;
+      submit.hidden = i !== steps.length - 1;
+      bar.style.width = `${((i + 1) / (steps.length + 1)) * 100}%`;
+    };
+    const valid = (i: number) => {
+      const s = steps[i];
+      const err = s.querySelector<HTMLElement>('[data-step-err]')!;
+      let ok: boolean;
+      if (i < steps.length - 1) ok = !!s.querySelector('input:checked');
+      else ok = ['name', 'telefon'].every((n) => (form.elements.namedItem(n) as HTMLInputElement).value.trim());
+      err.hidden = ok;
+      return ok;
+    };
+
+    next.addEventListener('click', () => { if (valid(current)) { show(current + 1); steps[current].querySelector('legend')?.focus?.(); } });
+    prev.addEventListener('click', () => show(current - 1));
+    // Einfachauswahl: automatisch weiter (wie Onepage-Antwortkacheln)
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.type === 'radio' && current < steps.length - 1) window.setTimeout(() => show(current + 1), 250);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!valid(current)) return;
+      const data = new FormData(form);
+      const extra = steps.slice(0, -1).map((s) => ({
+        label: s.querySelector('legend')!.textContent!.trim(),
+        value: data.getAll((s.querySelector('input') as HTMLInputElement).name).join(', '),
+      }));
+      submit.disabled = true;
+      const res = await submitLead({
+        formId: root.dataset.formId!,
+        values: { name: String(data.get('name') ?? ''), telefon: String(data.get('telefon') ?? ''), email: String(data.get('email') ?? '') },
+        extra,
+        honeypot: String(data.get('website') ?? ''),
+      });
+      submit.disabled = false;
+      if (res.ok) {
+        form.hidden = true;
+        bar.style.width = '100%';
+        done.hidden = false;
+        done.focus();
+        return;
+      }
+      msg.textContent = res.message ?? '';
+      msg.hidden = !res.message;
+    });
+
+    show(0);
+  });
+</script>
+
+<style>
+  .squiz {
+    position: relative;
+    max-width: 1250px;
+    margin: 0 auto;
+    background: #fff;
+    color: var(--color-dark);
+    border-radius: 16px;
+    padding: 48px;
+    overflow: hidden;
+  }
+  .squiz__progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: rgba(10, 15, 16, 0.08);
+  }
+  .squiz__progress span {
+    display: block;
+    height: 100%;
+    background: var(--color-key1);
+    transition: width 0.3s;
+  }
+  .squiz__step {
+    border: 0;
+    margin: 0 0 32px;
+    padding: 0;
+    max-width: 83%;
+  }
+  .squiz__step--contact {
+    max-width: 62.5%;
+  }
+  .squiz__q {
+    padding: 0;
+    margin-bottom: 24px;
+    color: var(--color-dark);
+  }
+  .squiz__options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .squiz__opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: rgba(10, 15, 16, 0.15) 0 0 0 1px;
+    font-family: var(--font-text);
+    font-size: 15px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s;
+  }
+  .squiz__opt:hover,
+  .squiz__opt:has(input:checked) {
+    box-shadow: var(--color-key1) 0 0 0 2px;
+    background: rgba(242, 109, 34, 0.06);
+  }
+  .squiz__opt input {
+    accent-color: var(--color-key1);
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+  }
+  .squiz__intro {
+    margin-bottom: 20px;
+  }
+  .squiz__label {
+    display: block;
+    margin: 14px 0 8px;
+    font-family: var(--font-text);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .squiz__input {
+    width: 100%;
+    height: 56px;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: rgba(10, 15, 16, 0.15) 0 0 0 1px;
+    font-family: var(--font-text);
+    font-size: 15px;
+  }
+  .squiz__input:focus {
+    outline: none;
+    box-shadow: var(--color-key1) 0 0 0 2px;
+  }
+  .squiz__privacy {
+    margin-top: 16px;
+  }
+  .squiz__err {
+    margin: 12px 0 0;
+    color: #d93025;
+    font-family: var(--font-text);
+    font-size: 14px;
+  }
+  .squiz__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .squiz__prev {
+    min-height: 44px;
+    padding: 0 8px;
+    border: 0;
+    background: none;
+    font-family: var(--font-text);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-dark);
+    cursor: pointer;
+  }
+  .squiz__next {
+    margin-left: auto;
+    border-radius: 8px;
+    background: var(--color-key1);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  /* Ohne JS: alle Schritte sichtbar, nur Absenden */
+  .squiz:not(.is-enhanced) [data-quiz-prev],
+  .squiz:not(.is-enhanced) [data-quiz-next] {
+    display: none;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  .squiz__done:focus {
+    outline: none;
+  }
+  .squiz__next-steps {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .squiz__next-steps li {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .squiz__num {
+    font-size: 48px;
+    color: var(--color-key1);
+  }
+  @media (max-width: 767px) {
+    .squiz {
+      padding: 32px 24px 24px;
+    }
+    .squiz__step,
+    .squiz__step--contact {
+      max-width: none;
+    }
+    .squiz__options,
+    .squiz__next-steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

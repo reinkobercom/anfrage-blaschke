@@ -1,0 +1,155 @@
+---
+/**
+ * Onepage „layout“: „Warum das wichtig ist / … jeden betrifft“ (3 Punkte mit Icons)
+ * + orange Box „Was du bekommst / Voller Service. Null Kosten.“ (4 Haken) + „Gesamtwert des Checks: 500€“ (Hand-Unterstreichung).
+ * Spalte 763 px mittig, Padding 60/61 (mobil 30/30). Die versteckten Preisangaben der Onepage-Vorlage („14.99€“) werden nicht ausgegeben.
+ */
+import { shared, type Variant } from './content';
+import { problemIcons, checkIcon, handUnderline } from './icons';
+
+interface Props {
+  problems: Variant['problems'];
+}
+const { problems } = Astro.props;
+const b = shared.benefits;
+---
+
+<section class="swy" aria-labelledby="swy-h">
+  <div class="swy__col">
+    <h2 id="swy-h" class="sec-h-l">{problems.heading}</h2>
+    <ul class="swy__list swy__list--problems">
+      {
+        problems.items.map((it, i) => (
+          <li class="swy__item">
+            <span class="swy__icon" set:html={problemIcons[it.icon](`swy-p${i}-`)} />
+            <div>
+              <h3 class="sec-h-xs">{it.title}</h3>
+              <p class="sec-text-s swy__desc">{it.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="swy__box">
+      <p class="sec-label swy__label">{b.label}</p>
+      <h2 class="sec-h-l swy__boxh">{b.heading}</h2>
+      <ul class="swy__list swy__list--benefits">
+        {
+          b.items.map((it, i) => (
+            <li class="swy__item">
+              <span class="swy__icon" set:html={checkIcon(`swy-b${i}-`)} />
+              <div>
+                <h3 class="sec-h-xs">{it.title}</h3>
+                <p class="sec-text-s swy__desc">{it.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <hr class="swy__line" />
+      <p class="sec-h-m swy__total">
+        {b.totalLabel}<span class="swy__underline"> {b.totalValue}<span class="swy__scribble" set:html={handUnderline} /></span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .swy {
+    background: #0a0f10;
+    color: #fff;
+    padding: 60px 24px 61px;
+  }
+  .swy__col {
+    max-width: 763px;
+    margin: 0 auto;
+  }
+  .swy__list {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .swy__list--problems {
+    margin-bottom: 44px;
+  }
+  .swy__list--benefits {
+    margin-top: 13px;
+  }
+  .swy__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 6px;
+  }
+  .swy__icon {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+  }
+  .swy__icon :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .swy__desc {
+    margin-top: 4px;
+  }
+  .swy__box {
+    background: var(--color-key1);
+    border-radius: 4px;
+    padding: 48px;
+  }
+  .swy__label {
+    background: var(--color-dark);
+    margin: 0;
+  }
+  .swy__boxh {
+    margin-top: 20px;
+  }
+  .swy__line {
+    width: 97%;
+    height: 2px;
+    margin: 19px 0 15px;
+    border: 0;
+    background: #fff;
+  }
+  .swy__total {
+    text-align: right;
+  }
+  .swy__underline {
+    position: relative;
+    display: inline-block;
+    white-space: pre;
+  }
+  .swy__scribble {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 8.5px;
+    color: #fff;
+    pointer-events: none;
+  }
+  .swy__scribble :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  @media (max-width: 991px) {
+    .swy__col {
+      max-width: 798px;
+    }
+  }
+  @media (max-width: 767px) {
+    .swy {
+      padding: 30px 24px 30px;
+    }
+    .swy__box {
+      padding: 24px;
+    }
+  }
+</style>

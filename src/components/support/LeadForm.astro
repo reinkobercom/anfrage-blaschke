@@ -1,0 +1,210 @@
+---
+/**
+ * Dunkle Formularspalte (Onepage form): Titel, Verfügbarkeits-Zitat, Name/Unternehmen/E-Mail/Telefon/Mitarbeiterzahl,
+ * Button mit „ripple“-Effekt, Hinweis. Versand an /api/lead (funktioniert auch ohne JS), mit JS über submitLead()
+ * inkl. Feldfehlern; nach Erfolg → /danke (UTM-Parameter werden wie bisher angehängt).
+ */
+interface Props {
+  formId: string;
+  page: string;
+  buttonText: string;
+  buttonSubtitle: string;
+  note: string;
+  /** Zitat vor der Überschrift (/it-support) */
+  quoteFirst?: boolean;
+  /** Abstand Hinweis → Ende der Spalte (live 20, /it-support mit Liste 40) */
+  headingTag?: 'h2' | 'h3';
+}
+const { formId, page, buttonText, buttonSubtitle, note, quoteFirst = false, headingTag = 'h3' } = Astro.props;
+const H = headingTag;
+const uid = formId.replace(/[^a-z0-9]/gi, '').slice(0, 8);
+const options = ['10 - 20 Mitarbeiter', '20 - 50 Mitarbeiter', '50 - 75 Mitarbeiter', '75 - 100 Mitarbeiter', '100+ Mitarbeiter'];
+---
+
+<div class="lf">
+  {quoteFirst && <blockquote class="lf__quote lf__quote--first"><slot name="quote" /></blockquote>}
+  <H class="sp-t sp-t--s lf__title" id={`lf-title-${uid}`}><slot name="title" /></H>
+  {!quoteFirst && <blockquote class="lf__quote"><slot name="quote" /></blockquote>}
+
+  <form class="lf__form" method="post" action="/api/lead" data-lead-form aria-labelledby={`lf-title-${uid}`} novalidate>
+    <input type="hidden" name="formId" value={formId} />
+    <input type="hidden" name="page" value={page} />
+    <div class="hp-field" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+    <fieldset class="lf__row lf__row--2">
+      <legend class="sr-only">Name</legend>
+      <div class="lf__field">
+        <label class="lf__label" for={`vorname-${uid}`}>Vorname</label>
+        <input class="lf__input" id={`vorname-${uid}`} name="vorname" type="text" placeholder="Max" autocomplete="given-name" required />
+        <p class="lf__err" data-err="vorname" hidden></p>
+      </div>
+      <div class="lf__field">
+        <label class="lf__label" for={`nachname-${uid}`}>Nachname</label>
+        <input class="lf__input" id={`nachname-${uid}`} name="nachname" type="text" placeholder="Mustermann" autocomplete="family-name" required />
+        <p class="lf__err" data-err="nachname" hidden></p>
+      </div>
+    </fieldset>
+
+    <div class="lf__field lf__row">
+      <label class="lf__label" for={`unternehmen-${uid}`}>Unternehmen</label>
+      <input class="lf__input" id={`unternehmen-${uid}`} name="unternehmen" type="text" placeholder="Musterunternehmen" autocomplete="organization" required />
+      <p class="lf__err" data-err="unternehmen" hidden></p>
+    </div>
+
+    <div class="lf__field lf__row">
+      <label class="lf__label" for={`email-${uid}`}>E-Mail</label>
+      <div class="lf__wrap">
+        <svg class="lf__ico" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M14,1H2A2,2,0,0,0,0,3v.4L8,7.9l8-4.4V3A2,2,0,0,0,14,1Z" /><path fill="currentColor" d="M7.5,9.9,0,5.7V13a2,2,0,0,0,2,2H14a2,2,0,0,0,2-2V5.7L8.5,9.9A1.243,1.243,0,0,1,7.5,9.9Z" /></svg>
+        <input class="lf__input lf__input--ico" id={`email-${uid}`} name="email" type="email" placeholder="beispiel@gmail.com" autocomplete="email" inputmode="email" required />
+      </div>
+      <p class="lf__err" data-err="email" hidden></p>
+    </div>
+
+    <div class="lf__field lf__row">
+      <label class="lf__label" for={`telefon-${uid}`}>Telefon</label>
+      <div class="lf__wrap">
+        <svg class="lf__flag" viewBox="0 0 5 3" aria-hidden="true"><rect width="5" height="1" y="0" fill="#000" /><rect width="5" height="1" y="1" fill="#D00" /><rect width="5" height="1" y="2" fill="#FFCE00" /></svg>
+        <input class="lf__input lf__input--ico" id={`telefon-${uid}`} name="telefon" type="tel" placeholder="0171..." autocomplete="tel" inputmode="tel" required />
+      </div>
+      <p class="lf__err" data-err="telefon" hidden></p>
+    </div>
+
+    <div class="lf__field lf__row">
+      <label class="lf__label" for={`mitarbeiterzahl-${uid}`}>Mitarbeiterzahl</label>
+      <div class="lf__wrap">
+        <select class="lf__input lf__select" id={`mitarbeiterzahl-${uid}`} name="mitarbeiterzahl" required>
+          <option value="" selected disabled>Wähle eine Option aus</option>
+          {options.map((o) => <option value={o}>{o}</option>)}
+        </select>
+        <svg class="lf__chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12,15c-0.256,0-0.512-0.098-0.707-0.293L6.586,10L8,8.586l4,4l4-4L17.414,10l-4.707,4.707 C12.512,14.902,12.256,15,12,15z" /></svg>
+      </div>
+      <p class="lf__err" data-err="mitarbeiterzahl" hidden></p>
+    </div>
+
+    <button class="lf__btn sp-btn sp-btn--m sp-btn--primary sp-ripple" type="submit">
+      <span class="sp-btn__label">{buttonText}</span>
+      <span class="sp-btn__sub">{buttonSubtitle}</span>
+    </button>
+    <p class="lf__msg" role="alert" hidden></p>
+  </form>
+  <p class="sp-text lf__note">{note}</p>
+  <slot name="after" />
+</div>
+
+<script>
+  import { submitLead, goTo } from '../../lib/client';
+
+  const MSG: Record<string, string> = {
+    valueMissing: 'Bitte füllen Sie dieses Feld aus.',
+    typeMismatch: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+  };
+
+  function utmQuery() {
+    const out = new URLSearchParams();
+    new URLSearchParams(location.search).forEach((v, k) => { if (k.startsWith('utm_')) out.append(k, v); });
+    const q = out.toString();
+    return q ? `?${q}` : '';
+  }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-lead-form]').forEach((form) => {
+    const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const msg = form.querySelector<HTMLElement>('.lf__msg')!;
+    const setErr = (name: string, text: string) => {
+      const p = form.querySelector<HTMLElement>(`[data-err="${name}"]`);
+      const input = form.elements.namedItem(name) as HTMLInputElement | null;
+      if (p) { p.textContent = text; p.hidden = !text; }
+      if (input) {
+        input.toggleAttribute('aria-invalid', !!text);
+        if (p && text) { p.id = p.id || `${input.id}-err`; input.setAttribute('aria-describedby', p.id); }
+        else input.removeAttribute('aria-describedby');
+      }
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.hidden = true;
+      let firstBad: HTMLElement | null = null;
+      form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('.lf__input').forEach((el) => {
+        let text = '';
+        if (el.validity.valueMissing) text = el.tagName === 'SELECT' ? 'Bitte wählen Sie eine Option aus.' : MSG.valueMissing;
+        else if (el.validity.typeMismatch) text = MSG.typeMismatch;
+        setErr(el.name, text);
+        if (text && !firstBad) firstBad = el;
+      });
+      if (firstBad) { (firstBad as HTMLElement).focus(); return; }
+
+      const fd = new FormData(form);
+      const values: Record<string, string> = {};
+      ['vorname', 'nachname', 'unternehmen', 'email', 'telefon', 'mitarbeiterzahl'].forEach((k) => (values[k] = String(fd.get(k) ?? '')));
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      const res = await submitLead({ formId: String(fd.get('formId')), values, honeypot: String(fd.get('website') ?? '') });
+      if (res.ok) {
+        goTo(`${res.redirect || '/danke'}${utmQuery()}`);
+        return;
+      }
+      btn.disabled = false;
+      btn.removeAttribute('aria-busy');
+      Object.entries(res.errors ?? {}).forEach(([k, v]) => setErr(k, v));
+      msg.textContent = res.message || 'Bitte prüfen Sie Ihre Angaben.';
+      msg.hidden = false;
+    });
+  });
+</script>
+
+<style>
+  .lf { color: #fff; }
+  .lf__title { color: #fff; }
+  .lf__title :global(.sp-o) { color: var(--color-key1); }
+  .lf__quote {
+    margin: 20px 40px 0 4px;
+    padding-left: 28px;
+    border-left: 2px solid var(--color-key1);
+    color: var(--color-key1);
+    font: 400 18px/27px var(--font-text);
+  }
+  .lf__quote :global(b) { font-weight: 700; }
+  .lf__quote--first { margin-top: 0; }
+  .lf__quote--first + .lf__title { margin-top: 20px; }
+  .lf__form { margin: 0; }
+  .lf__row { margin: 20px 0 0; padding: 0; border: 0; min-width: 0; }
+  .lf__row--2 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 14px; }
+  .lf__label { display: block; font: 600 14px/24px var(--font-text); color: #fff; }
+  .lf__wrap { position: relative; }
+  .lf__input {
+    display: block;
+    width: 100%;
+    height: 48px;
+    margin-top: 7px;
+    padding: 11.3px 14px 12.7px;
+    border: 0;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: rgba(255, 255, 255, 0.2) 0 0 0 1px;
+    color: #fff;
+    font: 400 14px/normal var(--font-text);
+    transition: box-shadow 0.3s;
+    appearance: none;
+  }
+  .lf__wrap .lf__input { margin-top: 0; }
+  .lf__wrap { margin-top: 7px; }
+  .lf__input::placeholder { color: rgba(255, 255, 255, 0.3); opacity: 1; }
+  .lf__input:focus { outline: none; box-shadow: rgba(255, 255, 255, 0.6) 0 0 0 1px; }
+  .lf__input:focus-visible { box-shadow: var(--color-key1) 0 0 0 2px; }
+  .lf__input[aria-invalid] { box-shadow: #ff6b6b 0 0 0 1px; }
+  .lf__input--ico { padding-left: 48px; }
+  .lf__ico { position: absolute; left: 14.2px; top: 14.2px; width: 19.6px; height: 19.6px; color: #fff; pointer-events: none; }
+  .lf__flag { position: absolute; left: 12px; top: 16px; width: 24px; height: 16px; pointer-events: none; }
+  .lf__select { padding-right: 48px; cursor: pointer; }
+  .lf__select:invalid { color: rgba(255, 255, 255, 0.3); }
+  .lf__select option { color: var(--color-dark); background: #fff; }
+  .lf__chev { position: absolute; right: 14.2px; top: 14.2px; width: 19.6px; height: 19.6px; color: #fff; pointer-events: none; }
+  .lf__err { margin: 6px 0 0; font: 400 13px/18px var(--font-text); color: #ff9b9b; }
+  .lf__btn { display: flex; width: 100%; margin-top: 20px; }
+  .lf__btn[disabled] { opacity: 0.7; cursor: progress; }
+  .lf__msg { margin: 12px 0 0; font: 400 14px/20px var(--font-text); color: #ffb3b3; }
+  .lf__note { margin-top: 10px; text-align: center; }
+  @media (max-width: 768px) {
+    .lf__row--2 { grid-template-columns: 1fr; row-gap: 14px; }
+  }
+</style>

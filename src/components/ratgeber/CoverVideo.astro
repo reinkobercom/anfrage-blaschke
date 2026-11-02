@@ -1,0 +1,37 @@
+---
+/**
+ * Animiertes Cover (ehemals GIF) als stummes Endlos-Video mit Standbild.
+ * Größe/Seitenverhältnis bestimmt die einbindende Komponente über die Klasse.
+ */
+import { getImage } from 'astro:assets';
+import { imageMeta, videos } from '../../data/images';
+
+interface Props {
+  video: keyof typeof videos;
+  /** Beschreibung für Screenreader */
+  label: string;
+  class?: string;
+  /** Breite des Standbilds in px (wird 2× für Retina erzeugt) */
+  posterWidth?: number;
+}
+
+const { video, label, class: className = '', posterWidth = 560 } = Astro.props;
+const v = videos[video];
+const meta = imageMeta(v.poster);
+const poster = await getImage({ src: meta, width: Math.min(meta.width, posterWidth * 2), format: 'webp', quality: 78 });
+---
+
+<video
+  class={className}
+  src={v.src}
+  poster={poster.src}
+  width={meta.width}
+  height={meta.height}
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="metadata"
+  aria-label={label}
+>
+</video>

@@ -1,0 +1,124 @@
+---
+/**
+ * „Lieber direkt? – Du erreichst uns auch so.“: Karten Telefon (tel:) und E-Mail (mailto:).
+ * Optik wie live (Links ohne Unterstreichung); die ganze Karte ist klickbar.
+ */
+import { kontakt as defaults } from './content';
+import './shared.css';
+
+type Item = { label: string; value: string; href: string; note: string };
+interface Props {
+  label?: string;
+  title?: string;
+  phone?: Item;
+  email?: Item;
+}
+
+const { label = defaults.label, title = defaults.title, phone = defaults.phone, email = defaults.email } = Astro.props;
+const headingId = 'dk-kontakt-titel';
+const items = [
+  { ...phone, mod: 'phone' },
+  { ...email, mod: 'email' },
+];
+---
+
+<section class="dk-section dkk" style="--dk-pt:100px;--dk-pb:100px" aria-labelledby={headingId}>
+  <div class="dk-wrap">
+    <div class="dkk__head">
+      <p class="dk-pill dkk__pill">{label}</p>
+      <h2 class="dk-h2" id={headingId}>{title}</h2>
+    </div>
+    <div class="dkk__cards">
+      {
+        items.map((it) => (
+          <div class:list={['dkk__card', `dkk__card--${it.mod}`]}>
+            <p class="dkk__label">{it.label}</p>
+            <p class="dk-h3 dkk__value">
+              <a href={it.href}>{it.value}</a>
+            </p>
+            <p class="dkk__note">{it.note}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .dkk { background: #fff; color: var(--color-dark); }
+  .dkk__head { text-align: center; margin-bottom: 30px; }
+  .dkk__pill { margin-bottom: 8px; }
+
+  /* Onepage-Raster: 24 Spalten, Abstand 48 px; Karten 11 bzw. 10 Spalten, zentriert */
+  .dkk__cards {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 48px;
+  }
+  .dkk__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 32px;
+    background: #fff;
+    text-align: center;
+    box-shadow: rgba(17, 17, 26, 0.05) 0 4px 32px 0, rgba(17, 17, 26, 0.05) 0 8px 48px 0;
+  }
+  .dkk__card--phone { width: calc((100% - 1104px) * 11 / 24 + 480px); }
+  .dkk__card--email { width: calc((100% - 1104px) * 10 / 24 + 432px); }
+
+  .dkk__label {
+    margin: 0 0 20px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    background: #f2f2f2;
+    color: var(--color-dark);
+    font-family: var(--font-text);
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .dkk__value {
+    max-width: 100%;
+    color: var(--color-key1);
+    overflow-wrap: anywhere;
+  }
+  .dkk__card--phone .dkk__value { margin-bottom: 5px; }
+  .dkk__card--email .dkk__value { margin-bottom: 10px; }
+  .dkk__value a {
+    color: inherit;
+    text-decoration: none;
+  }
+  /* ganze Karte klickbar (größere Klickfläche, keine Optikänderung) */
+  .dkk__value a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .dkk__value a:hover { text-decoration: underline; }
+  .dkk__value a:focus-visible { outline: none; }
+  .dkk__value a:focus-visible::after {
+    outline: 2px solid var(--color-key1);
+    outline-offset: 2px;
+  }
+  .dkk__note {
+    margin: 0 0 20px;
+    color: var(--color-key2);
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  @media (max-width: 992px) {
+    .dkk__cards { flex-direction: column; gap: 24px; }
+    .dkk__card--phone,
+    .dkk__card--email { width: 100%; }
+  }
+  @media (max-width: 768px) {
+    .dkk__card { padding: 24px; }
+  }
+</style>

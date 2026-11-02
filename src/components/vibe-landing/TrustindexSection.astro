@@ -1,0 +1,22 @@
+---
+/** Sektion „Trustindex Bewertungen“ (Widget „reviews“, Container max. 1250 px). */
+import Trustindex from '../Trustindex.astro';
+import styles from './trustindex.module.css';
+
+interface Props {
+  content: { eyebrow: string; headline: string };
+}
+const { content: c } = Astro.props;
+---
+
+<section class={styles.section}>
+  <div class={styles.container}>
+    <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <span class={styles.eyebrow}>{c.eyebrow}</span>
+      <h2 class={styles.headline}>{c.headline}</h2>
+    </div>
+    <div class={styles.widgetWrap}>
+      <Trustindex widget="reviews" />
+    </div>
+  </div>
+</section>

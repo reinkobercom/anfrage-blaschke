@@ -1,0 +1,69 @@
+---
+/**
+ * Rückruf-Sektion (Zweit-Optin): Textspalte statisch, Formular-Panel als React-Insel (client:visible).
+ */
+import Title from '../siteui/title';
+import Text from '../siteui/text';
+import Icon from '../siteui/icon';
+import Person from './Person';
+import RueckrufPanel from './RueckrufPanel';
+import { resolveImage } from '../../lib/resolve-image';
+import styles from './rueckruf.module.css';
+
+interface Props {
+  content: Record<string, any>;
+  formId: string;
+  org: 'kanzlei' | 'betrieb';
+  /** Dankeseiten-Variante (weniger Innenabstand) */
+  dense?: boolean;
+  eventName?: string;
+  idPrefix?: string;
+}
+const { content: c, formId, org, dense = false, eventName, idPrefix } = Astro.props;
+const points: { text: string }[] = Array.isArray(c.points) ? c.points : [];
+const lukas = await resolveImage('lukas-blaschke', { widths: [120, 180] });
+---
+
+<section id={c.anchorId} class:list={[styles.section, { [styles.sectionDense]: dense }]} style={`background-color:${c.bgColor}`}>
+  <div class={styles.inner}>
+    <div class={styles.grid}>
+      <div>
+        <div class={styles.kicker}>
+          <span class={styles.kickerRule}></span>
+          <Text kicker tone="accent" as="span">{c.kicker}</Text>
+        </div>
+
+        <Title as="h2" size="lg" tone="inverse" className={styles.head}>
+          {c.headStart}{' '}<em>{c.headAccent}</em>{c.headEnd}
+        </Title>
+
+        <Text size="md" tone="inverseMuted" className={styles.paragraph}>{c.paragraph}</Text>
+
+        <ul class={styles.pointList}>
+          {
+            points.map((p) => (
+              <li class={styles.pointItem}>
+                <span class={styles.pointIcon}>
+                  <Icon name="check" size={16} />
+                </span>
+                <Text size="sm" tone="inverseMuted" as="span">{p.text}</Text>
+              </li>
+            ))
+          }
+        </ul>
+
+        {
+          c.personName && (
+            <div class={styles.personBlock}>
+              <Person photo={lukas} name={c.personName} role={c.personRole} theme="inverse" size="md" avatarSize={60} ringColor="var(--color-kit-key1)" />
+            </div>
+          )
+        }
+      </div>
+
+      <div class={styles.panel} data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+        <RueckrufPanel client:visible content={c} formId={formId} org={org} eventName={eventName} idPrefix={idPrefix} />
+      </div>
+    </div>
+  </div>
+</section>

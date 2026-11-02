@@ -1,0 +1,328 @@
+---
+/**
+ * Formularkarte „Jetzt Security-Check sichern“ (natives Onepage-Formular, ein Schritt).
+ * Felder wie live: Vorname/Nachname, Unternehmen*, E-Mail, Telefon, Mitarbeiteranzahl*.
+ * Versand: /api/lead (funktioniert ohne JS als klassischer POST), mit JS über submitLead()
+ * inkl. Feldfehlern; danach Weiterleitung auf /danke-securitycheck (UTM-Parameter werden wie live mitgegeben).
+ * Formular-Definition: src/data/form-definitions/security.ts
+ */
+import { shared, employeeOptions } from './content';
+import { chevronIcon } from './icons';
+
+interface Props {
+  formId: string;
+  /** true = alle Felder kompakt (13 px / 40 px hoch) wie auf /security-check */
+  compact?: boolean;
+}
+const { formId, compact = false } = Astro.props;
+const page = Astro.url.pathname.replace(/\/$/, '');
+const size = (def: 'm' | 'xs') => (compact ? 'xs' : def);
+const uid = `sf-${formId.slice(0, 6)}`;
+const f = shared.form;
+---
+
+<div class="sf">
+  <h2 class="sec-h-l sf__heading">{f.heading}</h2>
+  <form class="sf__form" method="post" action="/api/lead" novalidate data-sec-form data-form-id={formId}>
+    <input type="hidden" name="formId" value={formId} />
+    <input type="hidden" name="page" value={page} />
+    <div class="hp-field" aria-hidden="true">
+      <label>Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+    </div>
+
+    <div class="sf__row2">
+      <div class:list={['sf__field', `sf__field--${size('m')}`]}>
+        <label class="sf__label" for={`${uid}-vorname`}>Vorname</label>
+        <input class="sf__input" id={`${uid}-vorname`} name="vorname" type="text" placeholder="Johannes" autocomplete="given-name" aria-describedby={`${uid}-vorname-err`} />
+        <p class="sf__err" id={`${uid}-vorname-err`} data-err-for="vorname" hidden></p>
+      </div>
+      <div class:list={['sf__field', `sf__field--${size('m')}`]}>
+        <label class="sf__label" for={`${uid}-nachname`}>Nachname</label>
+        <input class="sf__input" id={`${uid}-nachname`} name="nachname" type="text" placeholder="Müller" autocomplete="family-name" aria-describedby={`${uid}-nachname-err`} />
+        <p class="sf__err" id={`${uid}-nachname-err`} data-err-for="nachname" hidden></p>
+      </div>
+    </div>
+
+    <div class="sf__field sf__field--xs">
+      <label class="sf__label" for={`${uid}-unternehmen`}>Unternehmen<span class="sr-only"> (Pflichtfeld)</span></label>
+      <input class="sf__input" id={`${uid}-unternehmen`} name="unternehmen" type="text" placeholder="Muster GmbH" autocomplete="organization" required aria-required="true" aria-describedby={`${uid}-unternehmen-err`} />
+      <p class="sf__err" id={`${uid}-unternehmen-err`} data-err-for="unternehmen" hidden></p>
+    </div>
+
+    <div class:list={['sf__field', `sf__field--${size('m')}`]}>
+      <label class="sf__label" for={`${uid}-email`}>E-Mail</label>
+      <input class="sf__input" id={`${uid}-email`} name="email" type="email" inputmode="email" placeholder="beispiel@gmail.com" autocomplete="email" aria-describedby={`${uid}-email-err`} />
+      <p class="sf__err" id={`${uid}-email-err`} data-err-for="email" hidden></p>
+    </div>
+
+    <div class:list={['sf__field', `sf__field--${size('m')}`]}>
+      <label class="sf__label" for={`${uid}-telefon`}>Telefon</label>
+      <div class="sf__phone">
+        <span class="sf__flag" aria-hidden="true"></span>
+        <input class="sf__input sf__input--phone" id={`${uid}-telefon`} name="telefon" type="tel" inputmode="tel" placeholder="Gib Deine Telefonnummer ein" autocomplete="tel" aria-describedby={`${uid}-telefon-err`} />
+      </div>
+      <p class="sf__err" id={`${uid}-telefon-err`} data-err-for="telefon" hidden></p>
+    </div>
+
+    <div class="sf__field sf__field--xs">
+      <label class="sf__label" for={`${uid}-ma`}>Mitarbeiteranzahl<span class="sr-only"> (Pflichtfeld)</span></label>
+      <div class="sf__select">
+        <select class="sf__input" id={`${uid}-ma`} name="mitarbeiteranzahl" required aria-required="true" aria-describedby={`${uid}-ma-err`}>
+          <option value="" disabled selected>Wählen Sie eine Option aus</option>
+          {employeeOptions.map((o) => <option value={o}>{o}</option>)}
+        </select>
+        <span class="sf__chevron" set:html={chevronIcon} />
+      </div>
+      <p class="sf__err" id={`${uid}-ma-err`} data-err-for="mitarbeiteranzahl" hidden></p>
+    </div>
+
+    <button class="sec-btn sec-anim-pulsate sf__submit" type="submit">
+      <span class="sec-btn__title">{f.button}</span>
+      <span class="sec-btn__sub">{f.buttonSub}</span>
+    </button>
+    <p class="sf__msg" role="alert" data-form-msg hidden></p>
+    <p class="sf__note">{f.note}</p>
+  </form>
+</div>
+
+<script>
+  import { submitLead, goTo, PHONE_DISPLAY } from '../../lib/client';
+
+  const REDIRECT = '/danke-securitycheck';
+  const REQUIRED: Record<string, string> = { unternehmen: 'Bitte ausfüllen.', mitarbeiteranzahl: 'Bitte wählen Sie eine Option aus.' };
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  // Wie live: nur UTM-Parameter an die Dankeseite weiterreichen.
+  function withUtm(url: string) {
+    const q = new URLSearchParams();
+    new URLSearchParams(location.search).forEach((v, k) => { if (k.startsWith('utm_')) q.set(k, v); });
+    const s = q.toString();
+    return s ? `${url}?${s}` : url;
+  }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-sec-form]').forEach((form) => {
+    const msg = form.querySelector<HTMLElement>('[data-form-msg]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+    const setError = (name: string, text?: string) => {
+      const el = form.querySelector<HTMLElement>(`[data-err-for="${name}"]`);
+      const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      if (!el || !input) return;
+      el.textContent = text ?? '';
+      el.hidden = !text;
+      input.toggleAttribute('aria-invalid', !!text);
+      input.closest('.sf__field')?.classList.toggle('has-error', !!text);
+    };
+    const showMsg = (text?: string) => { msg.textContent = text ?? ''; msg.hidden = !text; };
+
+    // Rückmeldung nach Versand ohne JavaScript (?fehler=…)
+    const fehler = new URLSearchParams(location.search).get('fehler');
+    if (fehler) showMsg(fehler === 'pflichtfelder'
+      ? 'Bitte füllen Sie die Pflichtfelder (Unternehmen, Mitarbeiteranzahl) aus.'
+      : `Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an: ${PHONE_DISPLAY}.`);
+
+    form.addEventListener('input', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.name) setError(t.name);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showMsg();
+      const data = new FormData(form);
+      const values: Record<string, string> = {};
+      ['vorname', 'nachname', 'unternehmen', 'email', 'telefon', 'mitarbeiteranzahl'].forEach((k) => { values[k] = String(data.get(k) ?? '').trim(); });
+
+      let first: string | null = null;
+      for (const [k, text] of Object.entries(REQUIRED)) {
+        if (!values[k]) { setError(k, text); first ??= k; }
+      }
+      if (values.email && !EMAIL_RE.test(values.email)) { setError('email', 'Bitte prüfen Sie die E-Mail-Adresse.'); first ??= 'email'; }
+      if (first) {
+        form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+        return;
+      }
+
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+      const res = await submitLead({
+        formId: form.dataset.formId!,
+        values,
+        honeypot: String(data.get('website') ?? ''),
+      });
+      if (res.ok) {
+        goTo(withUtm(res.redirect || REDIRECT));
+        return;
+      }
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+      Object.entries(res.errors ?? {}).forEach(([k, v]) => setError(k, v));
+      showMsg(res.message);
+    });
+  });
+</script>
+
+<style>
+  .sf {
+    background: #fff;
+    color: var(--color-dark);
+    border-radius: 16px;
+    padding: 48px;
+  }
+  .sf__heading {
+    color: var(--color-dark);
+    margin-bottom: 19px;
+  }
+  .sf__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .sf__row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 13px;
+  }
+  .sf__field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .sf__label {
+    font-family: var(--font-text);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 24px;
+    color: var(--color-dark);
+    margin-bottom: 8px;
+  }
+  .sf__field--xs .sf__label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .sf__input {
+    width: 100%;
+    height: 56px;
+    margin: 0;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: rgba(10, 15, 16, 0.15) 0 0 0 1px, rgba(10, 15, 16, 0.15) 0 0 0 0.1px inset;
+    font-family: var(--font-text);
+    font-size: 15px;
+    color: var(--color-dark);
+    outline: none;
+    transition: box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .sf__field--xs .sf__input {
+    height: 40px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+  .sf__input::placeholder {
+    color: rgba(10, 15, 16, 0.3);
+    opacity: 1;
+  }
+  .sf__input:focus-visible,
+  .sf__input:focus {
+    box-shadow: var(--color-key1) 0 0 0 2px;
+  }
+  .has-error .sf__input {
+    box-shadow: #d93025 0 0 0 1px, #d93025 0 0 0 0.1px inset;
+  }
+  .sf__phone {
+    position: relative;
+  }
+  .sf__flag {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    width: 24px;
+    height: 16px;
+    margin-top: -8px;
+    background: linear-gradient(#000 0 33.33%, #dd0000 33.33% 66.66%, #ffce00 66.66%);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+  .sf__input--phone,
+  .sf__field--xs .sf__input--phone {
+    padding-left: 56px;
+  }
+  .sf__select {
+    position: relative;
+  }
+  .sf__select select {
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  .sf__select select:invalid {
+    color: rgba(10, 15, 16, 0.3);
+  }
+  .sf__select option {
+    color: var(--color-dark);
+  }
+  .sf__chevron {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    margin-top: -12px;
+    color: var(--color-dark);
+    pointer-events: none;
+  }
+  .sf__chevron :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .sf__err {
+    margin: 6px 0 0;
+    font-family: var(--font-text);
+    font-size: 13px;
+    line-height: 18px;
+    color: #d93025;
+  }
+  .sf__submit {
+    width: 100%;
+    min-height: 61px;
+    border-radius: 8px;
+    background: var(--color-key1);
+    color: #fff;
+  }
+  .sf__submit[disabled] {
+    cursor: progress;
+    opacity: 0.8;
+  }
+  .sf__msg {
+    margin: -11px 0 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #fdecec;
+    color: #a32222;
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 21px;
+  }
+  .sf__note {
+    margin: -11px 0 0;
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 21px;
+    color: var(--color-dark);
+  }
+  @media (max-width: 767px) {
+    .sf {
+      padding: 24px;
+    }
+    .sf__row2 {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .sf__submit {
+      min-height: 64px;
+    }
+  }
+</style>

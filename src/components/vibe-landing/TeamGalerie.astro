@@ -1,0 +1,100 @@
+---
+/**
+ * „Team Galerie“ – fünf Teamfotos, Klick öffnet die Lightbox (natives <dialog>, kleines Script).
+ * Bilder als WebP in passenden Größen; die große Lightbox-Version lädt erst beim Öffnen.
+ */
+import type { ImageKey } from '../../data/images';
+import { resolveImage } from '../../lib/resolve-image';
+import styles from './galerie.module.css';
+
+interface Props {
+  content: { eyebrow: string; headline: string; subline?: string };
+  images?: ImageKey[];
+}
+
+const {
+  content: c,
+  images = [
+    'team-blaschke-it-gruppenfoto',
+    'mitarbeiter-headset-telefon',
+    'mitarbeiter-headset-arbeitsplatz',
+    'mitarbeiterin-headset-arbeitsplatz',
+    'support-mitarbeiter-headset-schreibtisch',
+  ] as ImageKey[],
+} = Astro.props;
+
+const items = await Promise.all(
+  images.map(async (key) => ({
+    thumb: await resolveImage(key, { widths: [320, 480, 640], sizes: '(max-width: 600px) 50vw, 240px' }),
+    large: await resolveImage(key, { widths: [960, 1800], sizes: '(max-width: 948px) 100vw, 900px' }),
+  })),
+);
+---
+
+<section class={styles.section} data-vl-gallery>
+  <div class={styles.container}>
+    <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <span class={styles.eyebrow}>{c.eyebrow}</span>
+      <h2 class={styles.headline}>{c.headline}</h2>
+      {c.subline && <p class={styles.subline}>{c.subline}</p>}
+    </div>
+
+    <div class={styles.grid}>
+      {
+        items.map((it, i) => (
+          <div class={styles.cardReveal} data-reveal style={`--reveal-y:0px;--reveal-duration:.4s;--reveal-delay:${(i * 0.08).toFixed(2)}s;display:flex`}>
+            <button
+              type="button"
+              class={styles.imgCard}
+              data-large-src={it.large.src}
+              data-large-srcset={it.large.srcSet}
+              data-alt={it.thumb.alt}
+              aria-label={`Bild vergrößern: ${it.thumb.alt}`}
+              aria-haspopup="dialog"
+            >
+              <img
+                class={styles.img}
+                src={it.thumb.src}
+                srcset={it.thumb.srcSet}
+                sizes={it.thumb.sizes}
+                width={it.thumb.width}
+                height={it.thumb.height}
+                alt={it.thumb.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            </button>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <dialog class={styles.lightbox} aria-label="Bildansicht">
+    <div class={styles.lightboxInner}>
+      <img class={styles.lightboxImg} alt="" sizes="(max-width: 948px) 100vw, 900px" />
+      <button type="button" class={styles.lightboxClose} aria-label="Schließen">&#10005;</button>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  // Lightbox wie live: Klick auf ein Bild öffnet, Klick irgendwo (oder Esc) schließt.
+  document.querySelectorAll<HTMLElement>('[data-vl-gallery]').forEach((root) => {
+    const dialog = root.querySelector('dialog');
+    const img = dialog?.querySelector('img');
+    if (!dialog || !img) return;
+    let opener: HTMLElement | null = null;
+    root.querySelectorAll<HTMLButtonElement>('button[data-large-src]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        opener = btn;
+        img.srcset = btn.dataset.largeSrcset || '';
+        img.src = btn.dataset.largeSrc || '';
+        img.alt = btn.dataset.alt || '';
+        dialog.showModal();
+      });
+    });
+    dialog.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => opener?.focus());
+  });
+</script>

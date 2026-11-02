@@ -1,0 +1,46 @@
+---
+/**
+ * Eine Kennzahl (Onepage „number“): Wert Roboto 48/72, Präfix/Suffix Manrope 28,8 – alles in Orange.
+ * Live-Maße: Zeile 41,6 px hoch, Wert-Zeilenbox (72 px) beginnt 12 px oberhalb, Präfix/Suffix 27,5 px unter der Wert-Oberkante.
+ */
+interface Props {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  /** „%“ (Onepage percent – Roboto statt Manrope) */
+  unit?: string;
+  desc: string;
+  count?: boolean;
+  align?: 'left' | 'center';
+  descColor?: string;
+}
+const { value, prefix, suffix, unit, desc, count = false, align = 'left', descColor } = Astro.props;
+---
+
+<div class:list={['kz', { 'kz--center': align === 'center' }]}>
+  <p class="kz__row">
+    {prefix && <span class="kz__aff">{prefix}</span>}
+    <span class="kz__val" data-count={count ? value : undefined}>{value}</span>
+    {suffix && <span class="kz__aff">{suffix}</span>}
+    {unit && <span class="kz__aff kz__aff--unit">{unit}</span>}
+  </p>
+  <p class="kz__desc" style={descColor ? `color:${descColor}` : undefined}>{desc}</p>
+</div>
+
+<style>
+  .kz__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 4.3px;
+    height: 41.6px;
+    margin: 0;
+    color: var(--color-key1);
+    white-space: nowrap;
+  }
+  .kz--center .kz__row { justify-content: center; }
+  .kz__val { margin-top: -12px; font: 600 48px/72px var(--font-heading); font-variant-numeric: tabular-nums; }
+  .kz__aff { margin-top: 15.5px; font: 600 28.8px/28.8px var(--font-text); }
+  .kz__aff--unit { font-family: var(--font-heading); margin-top: 16.5px; }
+  .kz__desc { margin: 0; padding-top: 16px; font: 400 16px/24px var(--font-text); color: rgba(0, 0, 0, 0.5); }
+  .kz--center .kz__desc { text-align: center; }
+</style>

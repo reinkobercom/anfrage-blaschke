@@ -1,0 +1,23 @@
+---
+/**
+ * Bewertungen (Onepage-Sektion „Slider“, nur Custom-Code): Trustindex-Bewertungs-Widget.
+ * Live: weißer Hintergrund (das hinterlegte Unsplash-Bild ist nicht aktiv), Abstand 60/57 px, mobil halbiert.
+ */
+import Trustindex from '../Trustindex.astro';
+---
+
+<section class="rg-trust" aria-label="Bewertungen unserer Kunden">
+  <div class="rg-container">
+    <Trustindex widget="reviews" />
+  </div>
+</section>
+
+<style>
+  .rg-trust {
+    background: #fff;
+    padding: 60px 0 57px;
+  }
+  @media (max-width: 768px) {
+    .rg-trust { padding: 30px 0 28px; }
+  }
+</style>

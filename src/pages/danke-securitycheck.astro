@@ -1,0 +1,29 @@
+---
+/**
+ * /danke-securitycheck – Danke-Seite nach Anfrage zum IT-Security-Check
+ * (Ziel der Formulare von /securitycheck und /security-check). noindex setzt das Layout.
+ */
+import Base from '../layouts/Base.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+import DankeHeader from '../components/danke/DankeHeader.astro';
+import DankeIntro from '../components/danke/DankeIntro.astro';
+import DankeTimeline from '../components/danke/DankeTimeline.astro';
+import DankeHinweis from '../components/danke/DankeHinweis.astro';
+import DankeKontakt from '../components/danke/DankeKontakt.astro';
+import { stepsSecuritycheck } from '../components/danke/content';
+import { isOn } from '../data/sections';
+
+const page = 'danke-securitycheck';
+---
+
+<Base
+  title="Danke"
+  description="Danke für deine Anfrage zum Security-Check von Blaschke IT: Wir melden uns innerhalb von 24 Stunden an Werktagen – danach Vorab-Gespräch, Security-Scan und dein PDF-Report."
+>
+  {isOn(page, 'header') && <DankeHeader backHref="https://blaschke.cloud/" />}
+  {isOn(page, 'intro') && <DankeIntro bg="dark" />}
+  {isOn(page, 'schritte') && <DankeTimeline steps={stepsSecuritycheck} />}
+  {isOn(page, 'hinweis') && <DankeHinweis />}
+  {isOn(page, 'kontakt') && <DankeKontakt />}
+  {isOn(page, 'footer') && <GlobalFooter slot="after-main" />}
+</Base>

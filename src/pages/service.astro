@@ -1,0 +1,72 @@
+---
+/**
+ * /service – „3 Monate Full-Service-Wartung“ (ehem. Onepage, 8 Vibe-Sektionen + globale Fußzeile).
+ * Sektionen ein-/ausschalten: src/data/sections/service.ts · Texte: src/components/service/content.ts
+ */
+import Base from '../layouts/Base.astro';
+import { isOn } from '../data/sections';
+import Hero from '../components/service/Hero.astro';
+import PainCards from '../components/service/PainCards.astro';
+import FormSection from '../components/service/FormSection.astro';
+import OfferSteps from '../components/service/OfferSteps.astro';
+import SocialProof from '../components/service/SocialProof.astro';
+import FaqCta from '../components/service/FaqCta.astro';
+import Reviews from '../components/service/Reviews.astro';
+import TeamGallery from '../components/service/TeamGallery.astro';
+import GlobalFooter from '../components/native/GlobalFooter.astro';
+import { faqCta } from '../components/service/content';
+import heroImage from '../assets/img/support-mitarbeiter-mehrere-monitore.jpg';
+
+const title = 'Blaschke IT – Professionelle IT-Lösungen für Dich';
+const description =
+  'Dein zuverlässiger Partner für IT-Support und Beratung. Lukas Blaschke bietet maßgeschneiderte Lösungen für deine IT-Infrastruktur. Jetzt Kontakt aufnehmen!';
+
+const faqJsonLd = isOn('service', 'faqCta')
+  ? [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqCta.faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
+    ]
+  : [];
+---
+
+<Base
+  title={title}
+  description={description}
+  ogImage={heroImage}
+  jsonLd={faqJsonLd}
+  preloadFonts={['roboto-900.woff2', 'manrope-300.woff2']}
+>
+  <div class="svc-page">
+    {isOn('service', 'hero') && <Hero />}
+    {isOn('service', 'painCards') && <PainCards />}
+    {isOn('service', 'formular') && <FormSection />}
+    {isOn('service', 'angebotSteps') && <OfferSteps />}
+    {isOn('service', 'statsLukasTestimonial') && <SocialProof />}
+    {isOn('service', 'faqCta') && <FaqCta />}
+    {isOn('service', 'bewertungen') && <Reviews />}
+    {isOn('service', 'teamGalerie') && <TeamGallery />}
+  </div>
+  {isOn('service', 'fusszeile') && <GlobalFooter slot="after-main" />}
+</Base>
+
+<style is:global>
+  /*
+   * Grundkontext wie live in Onepage: 14px / 24px, Schwarz. Onepage setzt auf diesen Seiten keine
+   * Grundschrift – daher erben Eingabefelder, Absende-Button und Sterne live die Browser-Serifenschrift
+   * (Times). 1:1 übernommen; Vorschlag in den Build-Notes: hier var(--font-text) eintragen.
+   */
+  .svc-page {
+    --svc-inherit-font: 'Times New Roman', Times, serif;
+    font-family: var(--svc-inherit-font);
+    font-size: 14px;
+    line-height: 24px;
+    color: #000;
+  }
+</style>

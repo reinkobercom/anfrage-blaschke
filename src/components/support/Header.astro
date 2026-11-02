@@ -1,0 +1,131 @@
+---
+/**
+ * Kopfzeile (Onepage header-v2): Logo links, Button rechts → Formular.
+ * Mobil (≤ 768 px) wie live: Menü-Knopf öffnet eine weiße Vollbild-Ebene mit Logo, Schließen und Button.
+ * Umsetzung ohne Framework über die Popover-API (Fallback: Button-Link direkt sichtbar).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import { site } from '../../data/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  ctaText: string;
+  ctaSubtitle: string;
+  href?: string;
+}
+const { ctaText, ctaSubtitle, href = '#formular' } = Astro.props;
+const logo = imageMeta('logo-blaschke-it');
+---
+
+<header class="hd">
+  <div class="hd__in">
+    <a class="hd__logo" href="/" aria-label={`${site.name} – Startseite`}>
+      <Image src={logo} alt={site.name} widths={[188, 376]} sizes="188px" width={188} height={41} loading="eager" decoding="async" format="webp" />
+    </a>
+    <a class="hd__cta sp-btn sp-btn--dark" href={href}>
+      <span class="hd__label">{ctaText}</span>
+      <span class="hd__sub">{ctaSubtitle}</span>
+    </a>
+    <button class="hd__burger" type="button" popovertarget="hd-menu" aria-label="Menü öffnen">
+      <Icon name="burger" />
+    </button>
+  </div>
+  <div id="hd-menu" class="hd__panel" popover>
+    <div class="hd__panel-top">
+      <a class="hd__logo" href="/" aria-label={`${site.name} – Startseite`}>
+        <Image src={logo} alt={site.name} widths={[188, 376]} sizes="188px" width={188} height={41} loading="lazy" decoding="async" format="webp" />
+      </a>
+      <button class="hd__close" type="button" popovertarget="hd-menu" popovertargetaction="hide" aria-label="Menü schließen">
+        <Icon name="close" />
+      </button>
+    </div>
+    <a class="hd__panel-cta sp-btn sp-btn--dark" href={href} data-close-menu>
+      <span class="hd__label">{ctaText}</span>
+      <span class="hd__sub">{ctaSubtitle}</span>
+    </a>
+  </div>
+</header>
+
+<script>
+  // Menü schließen, wenn der Button in der mobilen Ebene angeklickt wird (Sprung zum Formular)
+  document.querySelectorAll<HTMLElement>('[data-close-menu]').forEach((a) =>
+    a.addEventListener('click', () => (a.closest('[popover]') as HTMLElement & { hidePopover?: () => void })?.hidePopover?.()),
+  );
+</script>
+
+<style>
+  .hd { position: relative; background: #fff; padding: 0 32px; }
+  .hd__in {
+    max-width: 1250px;
+    height: 88px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .hd__logo { display: block; width: 187.5px; height: 40.9px; margin-top: 0.5px; }
+  .hd__logo :global(img) { width: 100%; height: 100%; object-fit: contain; }
+  .hd__cta, .hd__panel-cta { min-height: 56px; padding: 7px 28px; font-family: var(--font-heading); }
+  .hd__label { display: block; padding: 4px 0; font: 600 15px/19.5px var(--font-heading); letter-spacing: -0.4px; }
+  .hd__sub { display: block; margin-top: -4px; font: 400 12px/15.6px var(--font-heading); letter-spacing: 0.5px; opacity: 0.7; }
+  .hd__burger {
+    display: none;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: #f2f2f2;
+    color: var(--color-dark);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0 2px 2px 0, rgba(0, 0, 0, 0.12) 0 1px 5px 0;
+  }
+  .hd__burger :global(svg) { width: 21px; height: 21px; }
+  .hd__panel {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 24px;
+    border: 0;
+    background: #fff;
+    color: var(--color-dark);
+    z-index: 10000;
+  }
+  .hd__panel::backdrop { background: rgba(0, 0, 0, 0.2); }
+  .hd__panel-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .hd__panel .hd__logo { margin-top: 0; }
+  .hd__close {
+    width: 44px;
+    height: 44px;
+    margin: -1px -12px 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hd__close :global(svg) { width: 20px; height: 20px; }
+  .hd__panel-cta { width: 288px; min-height: 62px; margin-top: 48px; }
+  @media (max-width: 768px) {
+    .hd { padding: 0 24px; }
+    .hd__in { height: 87px; }
+    .hd__cta { display: none; }
+    .hd__burger { display: inline-flex; }
+  }
+  @supports not selector(:popover-open) {
+    @media (max-width: 768px) {
+      .hd__cta { display: inline-flex; padding: 7px 14px; }
+      .hd__burger { display: none; }
+    }
+  }
+</style>

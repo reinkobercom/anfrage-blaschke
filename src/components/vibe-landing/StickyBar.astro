@@ -1,0 +1,84 @@
+---
+/**
+ * Mobile Sticky-Leiste (/kanzlei-it-check), 1:1 aus dem Seiten-Code der alten Seite:
+ * nur < 981 px, erscheint ab 30 % Scrolltiefe, Button scrollt ganz nach oben zum Check.
+ */
+interface Props {
+  label?: string;
+  note?: string;
+}
+const { label = 'Risikocheck starten', note = '8 Fragen · rund 2 Minuten' } = Astro.props;
+---
+
+<div id="bit-sticky" hidden>
+  <button type="button">{label}</button>
+  <small>{note}</small>
+</div>
+
+<script>
+  const bar = document.getElementById('bit-sticky');
+  if (bar) {
+    bar.querySelector('button')?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    const update = () => {
+      const max = document.body.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? window.pageYOffset / max : 0;
+      bar.hidden = !(window.innerWidth < 981 && pct > 0.3);
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>
+
+<style>
+  #bit-sticky {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: block;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.96);
+    border-top: 1px solid #e4e8e8;
+    box-shadow: 0 -6px 24px -14px rgba(13, 17, 18, 0.35);
+    line-height: 24px;
+  }
+  #bit-sticky[hidden] {
+    display: none;
+  }
+  #bit-sticky button {
+    display: block;
+    width: 100%;
+    border: 0;
+    cursor: pointer;
+    background: #f26d22;
+    color: #fff;
+    font-family: Manrope, system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 14px 20px;
+    border-radius: 4px;
+  }
+  #bit-sticky button:focus-visible {
+    outline: 2px solid #0d1112;
+    outline-offset: 2px;
+  }
+  #bit-sticky small {
+    display: block;
+    text-align: center;
+    font-family: Manrope, system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #6a7275;
+    margin-top: 7px;
+  }
+  @media (min-width: 981px) {
+    #bit-sticky {
+      display: none !important;
+    }
+  }
+</style>

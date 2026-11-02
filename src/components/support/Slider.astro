@@ -1,0 +1,83 @@
+---
+/**
+ * Bilder-Laufband (Onepage Slider, Endlos-Autoscroll 60 px/s, Pause bei Hover).
+ * 6 Spalten: [1 Bild] [2] [2] [1] [2] [2]. Desktop: Einzelbild 1/3, Doppel 1/6 der Breite; mobil (≤ 768 px) jede Spalte 100 %.
+ * Reines CSS (Spur doppelt, translateX); Dauer per Mini-Script aus der Spurbreite berechnet (gleiche Geschwindigkeit wie live).
+ */
+import { Picture } from 'astro:assets';
+import { images, imageMeta, type ImageKey } from '../../data/images';
+
+const cols: { keys: ImageKey[] }[] = [
+  { keys: ['techniker-serverrack'] },
+  { keys: ['support-mitarbeiter-headset-schreibtisch', 'hardware-montage'] },
+  { keys: ['laptop-reparatur', 'mitarbeiterin-am-arbeitsplatz'] },
+  { keys: ['team-blaschke-it-gruppenfoto'] },
+  { keys: ['mitarbeiter-am-arbeitsplatz', 'mitarbeiter-headset-telefon-2'] },
+  { keys: ['besprechung-dashboard', 'team-im-rechenzentrum'] },
+];
+const imgs = cols.map((c) => c.keys.map((k) => imageMeta(k)));
+---
+
+<section class="sl" aria-label="Eindrücke aus dem Team von Blaschke IT">
+  <div class="sl__viewport" data-slider>
+    <div class="sl__track">
+      {[0, 1].map((copy) => (
+        <ul class="sl__set" aria-hidden={copy === 1 ? 'true' : undefined}>
+          {cols.map((c, ci) => (
+            <li class:list={['sl__col', c.keys.length === 1 ? 'sl__col--single' : 'sl__col--pair']}>
+              {c.keys.map((k, ki) => (
+                <Picture
+                  src={imgs[ci][ki]}
+                  alt={copy === 1 ? '' : images[k].alt}
+                  widths={c.keys.length === 1 ? [390, 480, 780, 960] : [240, 390, 480, 780]}
+                  sizes={c.keys.length === 1 ? '(max-width: 768px) 100vw, 33.4vw' : '(max-width: 768px) 100vw, 16.7vw'}
+                  formats={['avif', 'webp']}
+                  loading="lazy"
+                  decoding="async"
+                  class="sl__img"
+                />
+              ))}
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Laufgeschwindigkeit wie live (Embla AutoScroll speed 1 ≈ 60 px/s), unabhängig von der Bildschirmbreite
+  const set = () =>
+    document.querySelectorAll<HTMLElement>('[data-slider]').forEach((v) => {
+      const s = v.querySelector<HTMLElement>('.sl__set');
+      if (s) v.style.setProperty('--sl-dur', `${(s.offsetWidth / 60).toFixed(2)}s`);
+    });
+  set();
+  addEventListener('resize', set, { passive: true });
+</script>
+
+<style>
+  .sl { padding-top: 60px; background: #fff; overflow: hidden; }
+  .sl { container-type: inline-size; }
+  .sl__viewport { --pair-w: calc(100cqw / 6); overflow: hidden; }
+  .sl__track { display: flex; width: max-content; animation: sl-move var(--sl-dur, 32s) linear infinite; }
+  .sl__viewport:hover .sl__track { animation-play-state: paused; }
+  .sl__set { display: flex; list-style: none; margin: 0; padding: 0; }
+  .sl__col { display: flex; flex-direction: column; flex: none; }
+  .sl__col--pair { width: var(--pair-w); }
+  .sl__col--single { width: calc(var(--pair-w) * 2); }
+  .sl__col :global(picture) { display: block; }
+  .sl__col--pair :global(img) { width: 100%; aspect-ratio: 240 / 169.2; object-fit: cover; }
+  .sl__col--single :global(picture) { height: calc(var(--pair-w) * 169.2 / 240 * 2); }
+  .sl__col--single :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @keyframes sl-move { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (max-width: 768px) {
+    .sl { padding-top: 30px; }
+    .sl__viewport { --pair-w: 100cqw; }
+    .sl__col--single { width: 100cqw; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sl__track { animation: none; }
+    .sl__viewport { overflow-x: auto; }
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+/**
+ * „Das werden wir oft gefragt.“ – Akkordeon als <details> (ohne JS). Linien oben 2 px #dadada, Plus → Minus (0,3 s).
+ */
+import Icon from './Icon.astro';
+interface Props { items: { q: string; a: string }[]; }
+const { items } = Astro.props;
+---
+<section id="faq" class="fq sp-sec" style="--bg:#f5f5f5;--pt:60px;--pb:68px;--ptm:30px;--pbm:38px">
+  <div class="sp-in">
+    <p class="sp-label">Fragen &amp; Antworten</p>
+    <h2 class="sp-t sp-t--m fq__title">Das werden wir oft gefragt.</h2>
+    <div class="fq__list">
+      {items.map((it) => (
+        <details class="fq__item">
+          <summary class="fq__q">
+            <span class="sp-t sp-t--xs fq__qt">{it.q}</span>
+            <span class="fq__toggle"><Icon name="plus" class="fq__icon" /></span>
+          </summary>
+          <div class="fq__a"><p>{it.a}</p></div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .fq__title { margin-top: 8px; color: #010101; }
+  .fq__list { margin-top: 30px; }
+  .fq__item { position: relative; padding: 24px 0; border-top: 2px solid #dadada; margin-top: -2px; }
+  .fq__item:first-child { margin-top: 0; }
+  .fq__item:last-child { border-bottom: 2px solid #dadada; }
+  .fq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+    color: #000;
+  }
+  .fq__q::-webkit-details-marker { display: none; }
+  .fq__qt { flex: 1; min-width: 0; }
+  .fq__toggle {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28.8px;
+    height: 21px;
+    color: var(--color-key1);
+    transition: transform 0.3s;
+  }
+  .fq__icon { width: 19.6px; height: 19.6px; }
+  .fq__icon :global(.v) { transition: transform 0.3s; transform-origin: 16px 16px; }
+  .fq__item[open] .fq__toggle { transform: rotate(180deg); }
+  .fq__item[open] .fq__icon :global(.v) { transform: rotate(90deg); }
+  .fq__a p { margin: 8px 0 0; font: 400 16px/24px var(--font-text); color: rgba(10, 15, 16, 0.48); }
+  /* weiches Aufklappen in modernen Browsern */
+  .fq__item::details-content { block-size: 0; overflow: hidden; transition: block-size 0.3s, content-visibility 0.3s allow-discrete; }
+  .fq__item[open]::details-content { block-size: auto; }
+  @supports (interpolate-size: allow-keywords) { .fq { interpolate-size: allow-keywords; } }
+</style>

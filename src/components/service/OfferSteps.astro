@@ -1,0 +1,223 @@
+---
+/** /service – Sektion 3 „Angebot & Steps“ (statisch) */
+import { offer } from './content';
+---
+
+<section class="section">
+  <div class="container">
+    <div class="grid">
+      <div class="offerBox" data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+        <p class="eyebrow">{offer.offerEyebrow}</p>
+        <h2 class="offerTitle">{offer.offerTitle}</h2>
+        <ul class="offerList">
+          {offer.offerItems.map((text) => (
+            <li class="offerItem">
+              <span class="ck" aria-hidden="true">&#10003;</span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="priceNote">
+          <span class="priceLabel">{offer.priceLabel}</span>
+          <span class="priceVal">{offer.priceValue}</span>
+        </p>
+      </div>
+
+      <div>
+        <p class="eyebrow">{offer.stepsEyebrow}</p>
+        <h2 class="stepsTitle">{offer.stepsTitle}</h2>
+        <ol class="stepsList">
+          {offer.steps.map((step, i) => (
+            <li class="step" data-reveal style={`--reveal-duration:.4s;--reveal-delay:${(i * 0.1).toFixed(1)}s`}>
+              <span class="stepNum" aria-hidden="true">{i + 1}</span>
+              <div>
+                <span class="stepTag">{step.tag}</span>
+                <span class="stepTitle">{step.title}</span>
+                <span class="stepDesc">{step.desc}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    background: var(--color-kit-dark);
+    padding: 72px 0;
+  }
+  .container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0 0 12px;
+  }
+  .offerBox {
+    background: #111;
+    border-top: 3px solid var(--color-kit-key1);
+    padding: 28px 24px;
+  }
+  .offerTitle {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  /* Browser-Standard wie live: margin-top 1em, padding-left 40px */
+  .offerList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 1em 0 20px;
+    padding-left: 40px;
+  }
+  .offerItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: var(--font-kit-text-font);
+    font-size: 15px;
+    color: #eee;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .ck {
+    width: 18px;
+    height: 18px;
+    background: var(--color-kit-key1);
+    color: #fff;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .priceNote {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    margin: 4px 0 0;
+  }
+  .priceLabel {
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    color: #bbb;
+    font-weight: 300;
+  }
+  .priceVal {
+    font-family: var(--font-kit-header-font);
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--color-kit-key1);
+    letter-spacing: -1px;
+  }
+  .stepsTitle {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 24px;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .stepsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid #111;
+  }
+  .step:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  /* framer-motion: x 16 → 0 (statt y) */
+  :global(html.js) .step[data-reveal] {
+    transform: translateX(16px);
+  }
+  :global(html.js) .step[data-reveal].is-visible {
+    transform: none;
+  }
+  .stepNum {
+    width: 28px;
+    height: 28px;
+    background: var(--color-kit-key1);
+    color: #fff;
+    font-family: var(--font-kit-header-font);
+    font-weight: 900;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .stepTag {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--color-kit-key1);
+    margin-bottom: 4px;
+  }
+  .stepTitle {
+    display: block;
+    font-family: var(--font-kit-header-font);
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .stepDesc {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 14px;
+    color: #ddd;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .step[data-reveal] { transform: none; }
+  }
+</style>

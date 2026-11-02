@@ -1,0 +1,76 @@
+---
+/**
+ * CTA (Onepage-Sektion „CTA“): pulsierender Button + Trustindex-Badge darunter.
+ * Entscheidung: Button scrollt zum Formular (#formular); der alte, tote Link
+ * „/kostenrechner-kellerabdichtung“ und der Sprung zum Logo entfallen.
+ * Gemessen: Abstand 10/90 px (mobil 5/45), Button Radius 4, Innenabstand 8/31 px, 17 px/600.
+ */
+import Trustindex from '../Trustindex.astro';
+import type { OptinContent } from './content';
+
+interface Props {
+  content: OptinContent['cta'];
+}
+const { content: c } = Astro.props;
+---
+
+<section class="rg-cta" aria-label="Ratgeber anfordern">
+  <div class="rg-container rg-cta__inner">
+    <a class="rg-cta__btn rg-shadow rg-pulsate" href="#formular">
+      {
+        c.icon && (
+          <svg class="rg-cta__icon" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="7.5 16.5 14 10 7.5 3.5" />
+          </svg>
+        )
+      }
+      <span class="rg-cta__text">
+        <span class="rg-cta__label">{c.text}</span>
+        {c.subtitle && <span class="rg-cta__sub">{c.subtitle}</span>}
+      </span>
+    </a>
+    <div class="rg-cta__badge">
+      <Trustindex widget="badge" center />
+    </div>
+  </div>
+</section>
+
+<style>
+  .rg-cta {
+    background: #fff;
+    padding: 10px 0 90px;
+  }
+  .rg-cta__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .rg-cta__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    max-width: 100%;
+    margin-bottom: 20px;
+    padding: 8px 31px;
+    border-radius: 4px;
+    background: var(--color-key1);
+    color: #fff;
+    font-family: var(--font-text);
+    text-decoration: none;
+    text-align: center;
+  }
+  .rg-cta__icon { flex: 0 0 30px; width: 30px; height: 30px; }
+  .rg-cta__text { display: flex; flex-direction: column; }
+  .rg-cta__icon + .rg-cta__text { text-align: left; }
+  .rg-cta__label { padding: 4px 0; font-size: 17px; font-weight: 600; line-height: 25.5px; }
+  .rg-cta__sub { font-size: 13.6px; line-height: 20.4px; letter-spacing: 0.5px; opacity: 0.7; }
+  .rg-cta__badge { width: 100%; }
+
+  @media (max-width: 768px) {
+    .rg-cta { padding: 5px 0 45px; }
+  }
+  @media (max-width: 767px) {
+    .rg-cta__label { line-height: 20.4px; }
+  }
+</style>

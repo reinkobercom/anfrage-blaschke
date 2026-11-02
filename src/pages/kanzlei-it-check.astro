@@ -1,0 +1,42 @@
+---
+/**
+ * /kanzlei-it-check – Kanzlei-IT-Risikocheck (ehemals Onepage, alle Sektionen React/vibe).
+ * Inhalte: src/components/vibe-landing/content/kanzlei.ts · Sektionen schalten: src/data/sections/kanzlei-it-check.ts
+ */
+import Base from '../layouts/Base.astro';
+import HeroShell from '../components/vibe-landing/HeroShell.astro';
+import Situation from '../components/vibe-landing/Situation';
+import Pruefpunkte from '../components/vibe-landing/Pruefpunkte';
+import TrustindexSection from '../components/vibe-landing/TrustindexSection.astro';
+import WerDahinter from '../components/vibe-landing/WerDahinter';
+import TeamGalerie from '../components/vibe-landing/TeamGalerie.astro';
+import Rueckruf from '../components/vibe-landing/Rueckruf.astro';
+import Faq from '../components/vibe-landing/Faq.astro';
+import Abschluss from '../components/vibe-landing/Abschluss';
+import StickyBar from '../components/vibe-landing/StickyBar.astro';
+import { faqJsonLd } from '../components/vibe-landing/faq-jsonld';
+import vl from '../components/vibe-landing/vl.module.css';
+import * as c from '../components/vibe-landing/content/kanzlei';
+import { isOn } from '../data/sections';
+
+const page = 'kanzlei-it-check';
+---
+
+<Base
+  title="Kanzlei-IT-Risikocheck für Rechtsanwälte und Steuerberater | Blaschke IT"
+  description="Acht Fragen zu Backup, Zugriff und Ausfallsicherheit. Ihre Einschätzung sehen Sie direkt im Anschluss – kostenlos und ohne Verkaufsgespräch."
+  jsonLd={isOn(page, 'faq') ? [faqJsonLd(c.faq.faqs)] : []}
+>
+  <div class={vl.page}>
+    {isOn(page, 'hero') && <HeroShell variant="kanzlei" content={c.hero} />}
+    {isOn(page, 'situation') && <Situation content={c.situation} />}
+    {isOn(page, 'pruefpunkte') && <Pruefpunkte content={c.pruefpunkte} columns={4} />}
+    {isOn(page, 'trustindex') && <TrustindexSection content={c.trustindex} />}
+    {isOn(page, 'werDahinter') && <WerDahinter content={c.werDahinter} />}
+    {isOn(page, 'galerie') && <TeamGalerie content={c.galerie} />}
+    {isOn(page, 'rueckruf') && <Rueckruf content={c.rueckruf} formId={c.rueckruf.formId} org="kanzlei" />}
+    {isOn(page, 'faq') && <Faq content={c.faq} phoneInContact />}
+    {isOn(page, 'abschluss') && <Abschluss content={c.abschluss} />}
+  </div>
+  {isOn(page, 'sticky') && <StickyBar slot="after-main" />}
+</Base>

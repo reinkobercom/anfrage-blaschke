@@ -1,0 +1,95 @@
+---
+/** /service – Sektion 1 „Pain Cards“ (statisch, Einblendung per data-reveal) */
+import { painCards } from './content';
+---
+
+<section class="section">
+  <div class="container">
+    <div data-reveal style="--reveal-y:20px;--reveal-duration:.5s">
+      <p class="eyebrow">{painCards.eyebrow}</p>
+      <h2 class="title">{painCards.title}</h2>
+    </div>
+    <div class="grid">
+      {painCards.cards.map((card, i) => (
+        <div class="card" data-reveal style={`--reveal-y:24px;--reveal-duration:.45s;--reveal-delay:${(i * 0.12).toFixed(2)}s`}>
+          <p class="cardTag">{card.tag}</p>
+          <h3 class="cardHeadline">{card.headline}</h3>
+          <p class="cardBody">{card.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    background: var(--color-kit-dark);
+    padding: 72px 0 64px;
+  }
+  .container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0 0 12px;
+  }
+  .title {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: #111;
+    border-left: 3px solid var(--color-kit-key1);
+    padding: 22px 20px;
+  }
+  .cardTag {
+    display: block;
+    font-family: var(--font-kit-text-font);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-kit-key1);
+    margin: 0 0 10px;
+  }
+  .cardHeadline {
+    font-family: var(--font-kit-header-font);
+    font-size: clamp(16px, 2vw, 18px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+  .cardBody {
+    font-family: var(--font-kit-text-font);
+    font-size: 15px;
+    color: #ddd;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  @media (max-width: 480px) {
+    .section {
+      padding: 48px 0;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

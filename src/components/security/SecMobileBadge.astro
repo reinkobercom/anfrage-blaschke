@@ -1,0 +1,39 @@
+---
+/**
+ * Mobile Kopfzeile (Onepage-Sektion „layout“, nur ≤ 767 px sichtbar): Logo + „🔒 SSL-verschlüsselt · DSGVO-konform“.
+ * Live 89 px hoch: Logo 125 × 27 px oben 13 px, Text 12 px.
+ */
+import { Image } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import { site } from '../../data/site';
+import { shared } from './content';
+
+const logo = imageMeta('logo-blaschke-it');
+const w = 125;
+const h = Math.round((w * logo.height) / logo.width);
+---
+
+<div class="smb sec-only-mobile">
+  <Image src={logo} alt={site.name} widths={[125, 250, 375]} sizes="125px" width={w} height={h} loading="eager" format="webp" class="smb__logo" />
+  <p class="smb__text"><span aria-hidden="true">🔒 </span>{shared.sslBadge}</p>
+</div>
+
+<style>
+  .smb {
+    background: #fff;
+    color: var(--color-dark);
+    padding: 13px 24px 20px;
+    text-align: center;
+  }
+  .smb__logo {
+    width: 125px;
+    height: auto;
+    margin: 0 auto 10px;
+  }
+  .smb__text {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 12px;
+    line-height: 18px;
+  }
+</style>

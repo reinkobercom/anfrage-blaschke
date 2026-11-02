@@ -1,0 +1,93 @@
+---
+/**
+ * /handwerk-rueckruf-danke – „Danke Rückruf“.
+ * Pixel wie live: beim Laden „Contact“ + „RueckrufHandwerk“ (custom), Klick auf Download „NotfallplanDownload“ (custom).
+ * Live ohne Cover-Bild (coverImage leer) → bleibt so.
+ */
+import Title from '../siteui/title';
+import Text from '../siteui/text';
+import Icon from '../siteui/icon';
+import Person from './Person';
+import PdfButton from './PdfButton';
+import DankeKopf from './DankeKopf.astro';
+import { resolveImage } from '../../lib/resolve-image';
+import styles from './danke-rueckruf.module.css';
+import vl from './vl.module.css';
+
+interface Props {
+  content: Record<string, any>;
+}
+const { content: c } = Astro.props;
+const steps: { title: string; body: string }[] = Array.isArray(c.steps) ? c.steps : [];
+const lukas = await resolveImage('lukas-blaschke', { widths: [120, 180] });
+---
+
+<section id={c.anchorId} class={styles.section} style={`background-color:${c.bgColor}`}>
+  <div class={styles.inner}>
+    <DankeKopf topbarClass={styles.topbar} logoClass={styles.logoImg} alt={c.logoAlt} />
+
+    <div class={styles.grid}>
+      <div class={vl.fadeUp}>
+        <span class={styles.check} aria-hidden="true">
+          <Icon name="check" size={26} />
+        </span>
+
+        <div class={styles.kicker}>
+          <span class={styles.kickerRule}></span>
+          <Text kicker tone="accent" as="span">{c.kicker}</Text>
+        </div>
+
+        <Title as="h1" size="xl" className={styles.headline}>
+          {c.headStart}{' '}<em>{c.headAccent}</em>
+        </Title>
+
+        <Text size="lg" tone="muted" className={styles.subline}>{c.subline}</Text>
+
+        <p class={styles.stepsTitle}>{c.stepsTitle}</p>
+        <ul class={styles.stepList}>
+          {
+            steps.map((s, i) => (
+              <li class={styles.stepItem}>
+                <span class={styles.stepNum} aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <span class={styles.stepTitle}>{s.title}</span>
+                  <Text size="sm" tone="muted">{s.body}</Text>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        {
+          c.personName && (
+            <div class={styles.personBlock}>
+              <Person photo={lukas} name={c.personName} role={c.personRole} theme="light" size="md" avatarSize={60} />
+              <Text size="sm" tone="muted" className={styles.personNote}>{c.personNote}</Text>
+            </div>
+          )
+        }
+      </div>
+
+      <div class={vl.fadeUp} style="--fade-y:26px;--fade-duration:.55s;--fade-delay:.1s">
+        <div class={styles.sideBox}>
+          <span class={styles.boxLabel}>{c.boxLabel}</span>
+          <h2 class={styles.boxTitle}>{c.boxTitle}</h2>
+          <Text size="sm" tone="muted">{c.boxBody}</Text>
+          <div class={styles.boxCta}>
+            <PdfButton href={c.pdfHref} label={c.pdfLabel} size="md" trackDownload />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { track } from '../../lib/client';
+  // Beim Laden der Dankeseite (wie live)
+  track('track', 'Contact');
+  track('trackCustom', 'RueckrufHandwerk');
+  document.querySelectorAll('[data-track-download]').forEach((a) =>
+    a.addEventListener('click', () => track('trackCustom', 'NotfallplanDownload')),
+  );
+</script>

@@ -1,0 +1,62 @@
+---
+/**
+ * „Zahlen, die für sich sprechen.“ – identisch auf /support und /full-it-wartung.
+ * Auch für die ausgeblendete Sektion „Transparente Konditionen“ (Karten mit Label) genutzt.
+ */
+import Kennzahl from './Kennzahl.astro';
+interface Item { label?: string; value: number; prefix?: string; suffix?: string; unit?: string; desc: string; descColor?: string; }
+interface Props { label: string; items: Item[]; id?: string; }
+const { label, items, id } = Astro.props;
+---
+
+<section class="za sp-sec" id={id} style="--bg:#f5f5f5;--pt:80px;--pb:80px;--ptm:40px;--pbm:40px">
+  <div class="sp-in">
+    <p class="sp-label">{label}</p>
+    <h2 class="sp-t sp-t--m za__title"><slot /></h2>
+    <div class="za__grid">
+      {items.map((it) => (
+        <div class="za__card">
+          {it.label && <p class="za__clabel">{it.label}</p>}
+          <Kennzahl value={it.value} prefix={it.prefix} suffix={it.suffix} unit={it.unit} desc={it.desc} descColor={it.descColor} />
+        </div>
+      ))}
+    </div>
+    <slot name="after" />
+  </div>
+</section>
+
+<style>
+  .za__title { margin-top: 8px; color: #010101; }
+  .za__grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .za__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px;
+    background: #fff;
+    box-shadow: rgba(17, 17, 26, 0.05) 0 4px 32px 0, rgba(17, 17, 26, 0.05) 0 8px 48px 0;
+  }
+  .za__clabel {
+    align-self: flex-start;
+    margin: 0 0 8px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    background: rgba(255, 160, 84, 0.31);
+    color: var(--color-key1);
+    font: 400 12px/20px var(--font-text);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  @media (max-width: 992px) {
+    .za__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 768px) {
+    .za__grid { grid-template-columns: 1fr; }
+    .za__card { padding: 24px; }
+  }
+</style>

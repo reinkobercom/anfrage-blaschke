@@ -1,0 +1,56 @@
+---
+/**
+ * „So funktionierts“ – 4 Schritte mit hochzählenden Nummern (Onepage count, 1,5 s).
+ */
+interface Step { title: string; text: string; }
+interface Props { steps: Step[]; }
+const { steps } = Astro.props;
+---
+
+<section class="ab sp-sec sp-topline" style="--pt:65px;--pb:100px;--ptm:64px;--pbm:50px">
+  <div class="sp-in">
+    <p class="sp-label">So funktioniert’s</p>
+    <h2 class="sp-t sp-t--m ab__title"><slot /></h2>
+    <ol class="ab__grid">
+      {steps.map((s, i) => (
+        <li class="ab__step">
+          <span class="ab__num" data-count={i + 1} aria-hidden="true">{i + 1}</span>
+          <h3 class="sp-t sp-t--xs sp-t--xs-shrink ab__h"><span class="sp-sr-only">Schritt {i + 1}: </span>{s.title}</h3>
+          <p class="sp-text ab__txt">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { initCountUp } from './countup';
+  initCountUp();
+</script>
+
+<style>
+  .ab__title { margin-top: 8px; }
+  .ab__grid {
+    list-style: none;
+    margin: 30px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 50px;
+  }
+  .ab__num {
+    display: inline-block;
+    min-width: 50.3px;
+    padding: 12.8px 16px;
+    background: var(--color-key1);
+    color: #fff;
+    font: 600 32px/28.8px var(--font-heading);
+    font-variant-numeric: tabular-nums;
+  }
+  .ab__h { margin-top: 20px; }
+  .ab__txt { margin-top: 5px; color: #575756; }
+  .sp-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (max-width: 992px) {
+    .ab__grid { grid-template-columns: 1fr; row-gap: 24px; }
+  }
+</style>

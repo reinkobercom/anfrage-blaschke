@@ -1,0 +1,39 @@
+---
+/**
+ * Logo-Kopf der Lead-Magnet-Seiten (Onepage „layout“, nur Logo).
+ * Live: weiß, Logo 250 × 55 px zentriert, Abstand 27/31 px (mobil halbiert: 13/16 px).
+ */
+import { Image } from 'astro:assets';
+import { imageMeta } from '../../data/images';
+import { site } from '../../data/site';
+---
+
+<header class="rg-logo">
+  <a class="rg-logo__link" href="/" aria-label={`${site.name} – Startseite`}>
+    <Image
+      src={imageMeta('logo-blaschke-it')}
+      alt={site.name}
+      width={250}
+      height={55}
+      widths={[250, 500]}
+      sizes="250px"
+      format="webp"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </a>
+</header>
+
+<style>
+  .rg-logo {
+    background: #fff;
+    padding: 27px 24px 32px;
+    display: flex;
+    justify-content: center;
+  }
+  .rg-logo__link { display: block; line-height: 0; }
+  .rg-logo :global(img) { width: 250px; height: 55px; object-fit: contain; }
+  @media (max-width: 768px) {
+    .rg-logo { padding: 13px 24px 16px; }
+  }
+</style>
